@@ -6,5 +6,5 @@ CXX_FLAGS = -std=c++1y -lglfw -lGL -lOpenGL -lGLEW -pthread -lfreetype
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/kronos/Desktop/voxel-world/source -I/home/kronos/Desktop/voxel-world/source/middleware -I/home/kronos/Desktop/voxel-world/source/middleware/stb -I/home/kronos/Desktop/voxel-world/source/rendering -I/usr/lib/nvidia-375 -I/usr/local/lib -I/usr/include/GL -I/usr/include/freetype2 
+CXX_INCLUDES = -I/home/kronos/Desktop/voxel-world/source -I/home/kronos/Desktop/voxel-world/source/middleware -I/home/kronos/Desktop/voxel-world/source/middleware/stb -I/home/kronos/Desktop/voxel-world/source/rendering -I/home/kronos/Desktop/voxel-world/source/rendering/Camera -I/home/kronos/Desktop/voxel-world/source/Helpers -I/usr/lib/nvidia-375 -I/usr/local/lib -I/usr/include/GL -I/usr/include/freetype2 
 

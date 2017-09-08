@@ -129,52 +129,52 @@ CMakeFiles/voxel-world.dir/source/rendering/rendering.cpp.o.provides: CMakeFiles
 CMakeFiles/voxel-world.dir/source/rendering/rendering.cpp.o.provides.build: CMakeFiles/voxel-world.dir/source/rendering/rendering.cpp.o
 
 
-CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o: CMakeFiles/voxel-world.dir/flags.make
-CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o: source/rendering/Camera.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/kronos/Desktop/voxel-world/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o -c /home/kronos/Desktop/voxel-world/source/rendering/Camera.cpp
+CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o: CMakeFiles/voxel-world.dir/flags.make
+CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o: source/rendering/Camera/Camera.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/kronos/Desktop/voxel-world/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o -c /home/kronos/Desktop/voxel-world/source/rendering/Camera/Camera.cpp
 
-CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kronos/Desktop/voxel-world/source/rendering/Camera.cpp > CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.i
+CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kronos/Desktop/voxel-world/source/rendering/Camera/Camera.cpp > CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.i
 
-CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kronos/Desktop/voxel-world/source/rendering/Camera.cpp -o CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.s
+CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kronos/Desktop/voxel-world/source/rendering/Camera/Camera.cpp -o CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.s
 
-CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o.requires:
+CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o.requires:
 
-.PHONY : CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o.requires
+.PHONY : CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o.requires
 
-CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o.provides: CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o.requires
-	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o.provides.build
-.PHONY : CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o.provides
+CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o.provides: CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o.requires
+	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o.provides.build
+.PHONY : CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o.provides
 
-CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o.provides.build: CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o
+CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o.provides.build: CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o
 
 
-CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o: CMakeFiles/voxel-world.dir/flags.make
-CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o: source/wavefront-loader.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/kronos/Desktop/voxel-world/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o"
-	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o -c /home/kronos/Desktop/voxel-world/source/wavefront-loader.cpp
+CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o: CMakeFiles/voxel-world.dir/flags.make
+CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o: source/Helpers/wavefront-loader.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/kronos/Desktop/voxel-world/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o"
+	/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o -c /home/kronos/Desktop/voxel-world/source/Helpers/wavefront-loader.cpp
 
-CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kronos/Desktop/voxel-world/source/wavefront-loader.cpp > CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.i
+CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/kronos/Desktop/voxel-world/source/Helpers/wavefront-loader.cpp > CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.i
 
-CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kronos/Desktop/voxel-world/source/wavefront-loader.cpp -o CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.s
+CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/kronos/Desktop/voxel-world/source/Helpers/wavefront-loader.cpp -o CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.s
 
-CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o.requires:
+CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o.requires:
 
-.PHONY : CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o.requires
+.PHONY : CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o.requires
 
-CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o.provides: CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o.requires
-	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o.provides.build
-.PHONY : CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o.provides
+CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o.provides: CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o.requires
+	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o.provides.build
+.PHONY : CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o.provides
 
-CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o.provides.build: CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o
+CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o.provides.build: CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o
 
 
 # Object files for target voxel-world
@@ -182,8 +182,8 @@ voxel__world_OBJECTS = \
 "CMakeFiles/voxel-world.dir/source/main.cpp.o" \
 "CMakeFiles/voxel-world.dir/source/rendering/context-creation.cpp.o" \
 "CMakeFiles/voxel-world.dir/source/rendering/rendering.cpp.o" \
-"CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o" \
-"CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o"
+"CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o" \
+"CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o"
 
 # External object files for target voxel-world
 voxel__world_EXTERNAL_OBJECTS =
@@ -191,8 +191,8 @@ voxel__world_EXTERNAL_OBJECTS =
 build/voxel-world: CMakeFiles/voxel-world.dir/source/main.cpp.o
 build/voxel-world: CMakeFiles/voxel-world.dir/source/rendering/context-creation.cpp.o
 build/voxel-world: CMakeFiles/voxel-world.dir/source/rendering/rendering.cpp.o
-build/voxel-world: CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o
-build/voxel-world: CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o
+build/voxel-world: CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o
+build/voxel-world: CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o
 build/voxel-world: CMakeFiles/voxel-world.dir/build.make
 build/voxel-world: CMakeFiles/voxel-world.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/kronos/Desktop/voxel-world/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable build/voxel-world"
@@ -206,8 +206,8 @@ CMakeFiles/voxel-world.dir/build: build/voxel-world
 CMakeFiles/voxel-world.dir/requires: CMakeFiles/voxel-world.dir/source/main.cpp.o.requires
 CMakeFiles/voxel-world.dir/requires: CMakeFiles/voxel-world.dir/source/rendering/context-creation.cpp.o.requires
 CMakeFiles/voxel-world.dir/requires: CMakeFiles/voxel-world.dir/source/rendering/rendering.cpp.o.requires
-CMakeFiles/voxel-world.dir/requires: CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o.requires
-CMakeFiles/voxel-world.dir/requires: CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o.requires
+CMakeFiles/voxel-world.dir/requires: CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o.requires
+CMakeFiles/voxel-world.dir/requires: CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o.requires
 
 .PHONY : CMakeFiles/voxel-world.dir/requires
 

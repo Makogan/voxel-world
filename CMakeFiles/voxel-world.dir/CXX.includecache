@@ -6,6 +6,26 @@
 
 #IncludeRegexTransform: 
 
+/home/kronos/Desktop/voxel-world/source/Helpers/wavefront-loader.cpp
+wavefront-loader.hpp
+/home/kronos/Desktop/voxel-world/source/Helpers/wavefront-loader.hpp
+algorithm
+-
+
+/home/kronos/Desktop/voxel-world/source/Helpers/wavefront-loader.hpp
+fstream
+-
+iostream
+-
+sstream
+-
+vector
+-
+stdlib.h
+-
+string
+-
+
 /home/kronos/Desktop/voxel-world/source/global.hpp
 Camera.hpp
 /home/kronos/Desktop/voxel-world/source/Camera.hpp
@@ -14,11 +34,11 @@ Camera.hpp
 context-creation.hpp
 /home/kronos/Desktop/voxel-world/source/context-creation.hpp
 
-/home/kronos/Desktop/voxel-world/source/rendering/Camera.cpp
+/home/kronos/Desktop/voxel-world/source/rendering/Camera/Camera.cpp
 Camera.hpp
-/home/kronos/Desktop/voxel-world/source/rendering/Camera.hpp
+/home/kronos/Desktop/voxel-world/source/rendering/Camera/Camera.hpp
 
-/home/kronos/Desktop/voxel-world/source/rendering/Camera.hpp
+/home/kronos/Desktop/voxel-world/source/rendering/Camera/Camera.hpp
 glm/glm.hpp
 -
 glm/gtc/matrix_transform.hpp
@@ -81,16 +101,16 @@ ft2build.h
 -
 ../global.hpp
 /home/kronos/Desktop/voxel-world/source/global.hpp
-../wavefront-loader.hpp
-/home/kronos/Desktop/voxel-world/source/wavefront-loader.hpp
-
-/home/kronos/Desktop/voxel-world/source/wavefront-loader.cpp
 wavefront-loader.hpp
-/home/kronos/Desktop/voxel-world/source/wavefront-loader.hpp
-algorithm
+/home/kronos/Desktop/voxel-world/source/rendering/wavefront-loader.hpp
+
+/usr/include/freetype2/freetype/config/ftheader.h
+
+/usr/include/freetype2/ft2build.h
+freetype/config/ftheader.h
 -
 
-/home/kronos/Desktop/voxel-world/source/wavefront-loader.hpp
+source/Helpers/wavefront-loader.hpp
 fstream
 -
 iostream
@@ -102,12 +122,6 @@ vector
 stdlib.h
 -
 string
--
-
-/usr/include/freetype2/freetype/config/ftheader.h
-
-/usr/include/freetype2/ft2build.h
-freetype/config/ftheader.h
 -
 
 source/global.hpp
@@ -156,7 +170,7 @@ math.h
 assert.h
 -
 
-source/rendering/Camera.hpp
+source/rendering/Camera/Camera.hpp
 glm/glm.hpp
 -
 glm/gtc/matrix_transform.hpp
@@ -207,20 +221,6 @@ ft2build.h
 -
 ../global.hpp
 source/global.hpp
-../wavefront-loader.hpp
-source/wavefront-loader.hpp
-
-source/wavefront-loader.hpp
-fstream
--
-iostream
--
-sstream
--
-vector
--
-stdlib.h
--
-string
--
+wavefront-loader.hpp
+source/rendering/wavefront-loader.hpp
 

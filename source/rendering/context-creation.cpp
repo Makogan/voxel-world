@@ -1,6 +1,37 @@
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/*
+*	Author:	Camilo Talero
+*
+*
+*	Version: 0.0.1
+*
+*	File defining all relevant OpenGL and GLFW related functions needed to create an 
+*	OpenGL context and GLFW window.
+*/
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*
+*	Includes and macros
+*/
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #include "context-creation.hpp"
 
-GLFWwindow* init()
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//========================================================================================
+/*
+*	Opengl Context Creation:
+*/
+//========================================================================================
+
+/*
+* Function to create the OpenGL context.
+* 
+* return GLFWwindow*: the pointer to the GLFW window containing the current context.
+*/
+GLFWwindow* create_context()
 {
     GLFWwindow* window = createWindow();
     
@@ -33,7 +64,7 @@ GLFWwindow* init()
 
     return window;
 }
-
+//########################################################################################
 
 //========================================================================================
 /*
@@ -41,6 +72,11 @@ GLFWwindow* init()
 */
 //========================================================================================
 
+/*
+* Check for OpenGL errors and print the appropriate error message if needed.
+*
+* return int: the number of the generated error.
+*/
 int openGLerror()
 {
 	GLenum errorNum = glGetError();
@@ -98,8 +134,11 @@ void callBackInit(GLFWwindow* window)
 
 }
 
-//Initialize window
-//WARNING: Not sure if this is correct, if bugs appear suspect this function!
+/*
+* Method to create a GLFW window, window will be maximized and decorated.
+*
+* return GLFWwindow*: a pointer to teh created window.
+*/
 GLFWwindow* createWindow()
 {
 	//Initialize GLFW
@@ -161,6 +200,11 @@ int cursorSelectNode(GLFWwindow *window)
 *	GLFW callback functions:
 */
 //========================================================================================
+
+/*
+* GLFW callback functions for Interrupt based event handling.
+* More information at http://www.glfw.org/docs/latest/input_guide.html
+*/
 
 void error_callback(int error, const char* description)
 {

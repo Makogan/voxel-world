@@ -3,7 +3,7 @@
 *	Author:	Camilo Talero
 *
 *
-*	Version:	Template
+*	Version: 0.0.1
 *
 *	Implementation of the camera header. Defines the behaviour for a generic camera.
 */

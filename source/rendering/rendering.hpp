@@ -1,3 +1,19 @@
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/*
+*	Author:	Camilo Talero
+*
+*
+*	Version: 0.0.1
+*
+*	Header to expose rendering functions to other compilation units.
+*/
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*
+*	Includes and macros
+*/
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #pragma once
 
 #define GLEW_DYNAMIC
@@ -21,10 +37,11 @@
 #include FT_FREETYPE_H
 
 #include "../global.hpp"
-#include "../wavefront-loader.hpp"
+#include "wavefront-loader.hpp"
 
 using namespace std;
 using namespace glm;
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /*
@@ -92,6 +109,7 @@ void loop(GLFWwindow*);
 void end(GLFWwindow* window);
 //########################################################################################
 
+//change this, this is very bad practice!
 extern vector<GLuint> programs;
 extern vector<Shader> shaders;
 extern vector<Geometry> shapes;

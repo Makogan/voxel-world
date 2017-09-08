@@ -1,51 +1,33 @@
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/*
+*	Author:	Camilo Talero
+*
+*
+*	Version: 0.0.1
+*
+*	File to define methods that abstract and simplify the use of opengl for rendering.
+*/
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*
+*	Includes and macros
+*/
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #include "rendering.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
-
-bool InitializeTexture(Texture* texture, const char* filename, GLuint target = GL_TEXTURE_2D)
-{
-	int numComponents;
-	stbi_set_flip_vertically_on_load(true);
-	unsigned char *data = stbi_load(filename, &texture->width, &texture->height, &numComponents, 0);
-	if (data != nullptr)
-	{
-		texture->target = target;
-		glGenTextures(1, &texture->textureID);
-		glBindTexture(texture->target, texture->textureID);
-		GLuint format = numComponents == 3 ? GL_RGB : GL_RGBA;
-		//cout << numComponents << endl;
-		glTexImage2D(texture->target, 0, format, texture->width, texture->height, 0, format, GL_UNSIGNED_BYTE, data);
-
-		// Note: Only wrapping modes supported for GL_TEXTURE_RECTANGLE when defining
-		// GL_TEXTURE_WRAP are GL_CLAMP_TO_EDGE or GL_CLAMP_TO_BORDER
-		glTexParameteri(texture->target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(texture->target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(texture->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(texture->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-		// Clean up
-		glBindTexture(texture->target, 0);
-		stbi_image_free(data);
-	}
-	return true; //error
-}
-
-void DestroyTexture(Texture *texture)
-{
-	glBindTexture(texture->target, 0);
-	glDeleteTextures(1, &texture->textureID);
-}
-//--------------------------------------------------------------------------------------\\
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
 /*
 *	Rendering Functions:
 */
 //========================================================================================
-void setDrawingMode(int mode, GLuint program)
+/*void setDrawingMode(int mode, GLuint program)
 {
 	glUseProgram(program);
 	GLint loc = glGetUniformLocation(program, "drawMode");
@@ -57,7 +39,7 @@ void setDrawingMode(int mode, GLuint program)
 			<< endl;
 	}
 	glUniform1i(loc, mode);
-}
+}*/
 
 //Need more versions of this:
 void loadGeometryArrays(GLuint program, Geometry &g)
@@ -107,11 +89,6 @@ int loadColor(vec4 color, GLuint program)
 {
 	glUseProgram(program);
 	GLint loc = glGetUniformLocation(program, "color");
-	/*if (loc == -1)
-	{
-		cerr << "Uniform: error loading \"color\"." << endl;
-		return -1;
-	}*/
 	glUniform4f(loc, color[0], color[1], color[2], color[3]);
 
 	return 1;
@@ -300,6 +277,54 @@ void deleteGeometry(Geometry &g)
 }
 //########################################################################################
 
+//========================================================================================
+/*
+*	Texture Functions:
+*/
+//========================================================================================
+
+bool createTexture(Texture* texture, const char* filename, GLuint target = GL_TEXTURE_2D)
+{
+	int numComponents;
+	stbi_set_flip_vertically_on_load(true);
+	unsigned char *data = stbi_load(filename, &texture->width, &texture->height, &numComponents, 0);
+	if (data != nullptr)
+	{
+		texture->target = target;
+		glGenTextures(1, &texture->textureID);
+		glBindTexture(texture->target, texture->textureID);
+		GLuint format = numComponents == 3 ? GL_RGB : GL_RGBA;
+		//cout << numComponents << endl;
+		glTexImage2D(texture->target, 0, format, texture->width, texture->height, 0, format, GL_UNSIGNED_BYTE, data);
+
+		// Note: Only wrapping modes supported for GL_TEXTURE_RECTANGLE when defining
+		// GL_TEXTURE_WRAP are GL_CLAMP_TO_EDGE or GL_CLAMP_TO_BORDER
+		glTexParameteri(texture->target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(texture->target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(texture->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(texture->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		// Clean up
+		glBindTexture(texture->target, 0);
+		stbi_image_free(data);
+	}
+	return true; //error
+}
+
+void DestroyTexture(Texture *texture)
+{
+	glBindTexture(texture->target, 0);
+	glDeleteTextures(1, &texture->textureID);
+}
+
+//########################################################################################
+
+//========================================================================================
+/*
+*	Extras (all the following should only be temporal, remeber to refactor your code!):
+*/
+//========================================================================================
+
 /*
 *	InitDefaultProgram and InitDefaultShader are examples on how to initialize
 *	the OpenGL pipeline. It is recommended to re-implement these.
@@ -368,3 +393,4 @@ void end(GLFWwindow* window)
     glfwDestroyWindow(window);
     glfwTerminate();
 }
+//########################################################################################

@@ -123,6 +123,33 @@ voxel-world/fast:
 	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/build
 .PHONY : voxel-world/fast
 
+source/Helpers/wavefront-loader.o: source/Helpers/wavefront-loader.cpp.o
+
+.PHONY : source/Helpers/wavefront-loader.o
+
+# target to build an object file
+source/Helpers/wavefront-loader.cpp.o:
+	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.o
+.PHONY : source/Helpers/wavefront-loader.cpp.o
+
+source/Helpers/wavefront-loader.i: source/Helpers/wavefront-loader.cpp.i
+
+.PHONY : source/Helpers/wavefront-loader.i
+
+# target to preprocess a source file
+source/Helpers/wavefront-loader.cpp.i:
+	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.i
+.PHONY : source/Helpers/wavefront-loader.cpp.i
+
+source/Helpers/wavefront-loader.s: source/Helpers/wavefront-loader.cpp.s
+
+.PHONY : source/Helpers/wavefront-loader.s
+
+# target to generate assembly for a file
+source/Helpers/wavefront-loader.cpp.s:
+	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/Helpers/wavefront-loader.cpp.s
+.PHONY : source/Helpers/wavefront-loader.cpp.s
+
 source/main.o: source/main.cpp.o
 
 .PHONY : source/main.o
@@ -150,32 +177,32 @@ source/main.cpp.s:
 	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/main.cpp.s
 .PHONY : source/main.cpp.s
 
-source/rendering/Camera.o: source/rendering/Camera.cpp.o
+source/rendering/Camera/Camera.o: source/rendering/Camera/Camera.cpp.o
 
-.PHONY : source/rendering/Camera.o
+.PHONY : source/rendering/Camera/Camera.o
 
 # target to build an object file
-source/rendering/Camera.cpp.o:
-	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.o
-.PHONY : source/rendering/Camera.cpp.o
+source/rendering/Camera/Camera.cpp.o:
+	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.o
+.PHONY : source/rendering/Camera/Camera.cpp.o
 
-source/rendering/Camera.i: source/rendering/Camera.cpp.i
+source/rendering/Camera/Camera.i: source/rendering/Camera/Camera.cpp.i
 
-.PHONY : source/rendering/Camera.i
+.PHONY : source/rendering/Camera/Camera.i
 
 # target to preprocess a source file
-source/rendering/Camera.cpp.i:
-	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.i
-.PHONY : source/rendering/Camera.cpp.i
+source/rendering/Camera/Camera.cpp.i:
+	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.i
+.PHONY : source/rendering/Camera/Camera.cpp.i
 
-source/rendering/Camera.s: source/rendering/Camera.cpp.s
+source/rendering/Camera/Camera.s: source/rendering/Camera/Camera.cpp.s
 
-.PHONY : source/rendering/Camera.s
+.PHONY : source/rendering/Camera/Camera.s
 
 # target to generate assembly for a file
-source/rendering/Camera.cpp.s:
-	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/rendering/Camera.cpp.s
-.PHONY : source/rendering/Camera.cpp.s
+source/rendering/Camera/Camera.cpp.s:
+	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/rendering/Camera/Camera.cpp.s
+.PHONY : source/rendering/Camera/Camera.cpp.s
 
 source/rendering/context-creation.o: source/rendering/context-creation.cpp.o
 
@@ -231,33 +258,6 @@ source/rendering/rendering.cpp.s:
 	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/rendering/rendering.cpp.s
 .PHONY : source/rendering/rendering.cpp.s
 
-source/wavefront-loader.o: source/wavefront-loader.cpp.o
-
-.PHONY : source/wavefront-loader.o
-
-# target to build an object file
-source/wavefront-loader.cpp.o:
-	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.o
-.PHONY : source/wavefront-loader.cpp.o
-
-source/wavefront-loader.i: source/wavefront-loader.cpp.i
-
-.PHONY : source/wavefront-loader.i
-
-# target to preprocess a source file
-source/wavefront-loader.cpp.i:
-	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.i
-.PHONY : source/wavefront-loader.cpp.i
-
-source/wavefront-loader.s: source/wavefront-loader.cpp.s
-
-.PHONY : source/wavefront-loader.s
-
-# target to generate assembly for a file
-source/wavefront-loader.cpp.s:
-	$(MAKE) -f CMakeFiles/voxel-world.dir/build.make CMakeFiles/voxel-world.dir/source/wavefront-loader.cpp.s
-.PHONY : source/wavefront-loader.cpp.s
-
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -267,21 +267,21 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... voxel-world"
 	@echo "... edit_cache"
+	@echo "... source/Helpers/wavefront-loader.o"
+	@echo "... source/Helpers/wavefront-loader.i"
+	@echo "... source/Helpers/wavefront-loader.s"
 	@echo "... source/main.o"
 	@echo "... source/main.i"
 	@echo "... source/main.s"
-	@echo "... source/rendering/Camera.o"
-	@echo "... source/rendering/Camera.i"
-	@echo "... source/rendering/Camera.s"
+	@echo "... source/rendering/Camera/Camera.o"
+	@echo "... source/rendering/Camera/Camera.i"
+	@echo "... source/rendering/Camera/Camera.s"
 	@echo "... source/rendering/context-creation.o"
 	@echo "... source/rendering/context-creation.i"
 	@echo "... source/rendering/context-creation.s"
 	@echo "... source/rendering/rendering.o"
 	@echo "... source/rendering/rendering.i"
 	@echo "... source/rendering/rendering.s"
-	@echo "... source/wavefront-loader.o"
-	@echo "... source/wavefront-loader.i"
-	@echo "... source/wavefront-loader.s"
 .PHONY : help
 
 
