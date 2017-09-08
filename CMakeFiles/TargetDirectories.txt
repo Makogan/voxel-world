@@ -1,0 +1,3 @@
+/home/kronos/Desktop/voxel-world/CMakeFiles/rebuild_cache.dir
+/home/kronos/Desktop/voxel-world/CMakeFiles/voxel-world.dir
+/home/kronos/Desktop/voxel-world/CMakeFiles/edit_cache.dir
