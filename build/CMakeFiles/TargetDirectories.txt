@@ -1,0 +1,3 @@
+/home/ugd/camilo.talero/voxel-world/build/CMakeFiles/rebuild_cache.dir
+/home/ugd/camilo.talero/voxel-world/build/CMakeFiles/voxel-world.dir
+/home/ugd/camilo.talero/voxel-world/build/CMakeFiles/edit_cache.dir

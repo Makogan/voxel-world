@@ -43,12 +43,24 @@ GLFWwindow* create_context()
     glewInit(); glGetError();
     // An error will always be thrown when initializing glew.
     // It can be safely discarded so we call glGetError() to delete it and move on.
-    
+	
+	shaders.push_back(Shader());
+	shaders.push_back(Shader());
+	createShader(shaders[0], "./Shaders/VertexShader.glsl", GL_VERTEX_SHADER);
+	createShader(shaders[1], "./Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
+
+	programs.push_back(glCreateProgram());
+	glAttachShader(programs[0], shaders[0].shaderID);
+	glAttachShader(programs[0], shaders[1].shaderID);
+	glLinkProgram(programs[0]);
+	glUseProgram(programs[0]);
+	shaders[0].program=programs[0];
+	shaders[1].program=programs[0];
     // Example code, delete or modify
     //**********************************************************************************
     
-        initDefaultShaders(shaders);
-        initDefaultProgram(programs, shaders);
+       /* initDefaultShaders(shaders);
+        initDefaultProgram(programs, shaders);*/
     
         createGeometry(shapes[0]);
         createGeometry(shapes[1]);

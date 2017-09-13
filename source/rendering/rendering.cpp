@@ -369,7 +369,7 @@ void loop(GLFWwindow* window)
 		glClearColor(0, 0.f, 0.f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		loadColor(vec4(1,1,1,1), programs[0]);
-		setDrawingMode(1, programs[0]);
+		//setDrawingMode(1, programs[0]);
 		shapes[0].vertices.clear();
 		load_obj("Objs/corner1.obj", (vector<float>*) &shapes[0].vertices, (vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);
 		loadGeometryArrays(programs[0], shapes[0]);
