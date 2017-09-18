@@ -20,6 +20,16 @@
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*
+*	Global Values
+*/
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Camera cam;//Global camera, main camera used for rendering and perspective projection
+
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 //========================================================================================
 /*
 *	Opengl Context Creation:
@@ -44,32 +54,36 @@ GLFWwindow* create_context()
     // An error will always be thrown when initializing glew.
     // It can be safely discarded so we call glGetError() to delete it and move on.
 	
+	//add 2 new shaders to the global list of shaders
 	shaders.push_back(Shader());
 	shaders.push_back(Shader());
+
+	//Crete a vertex and a fragment shader. bare minimum for rendering
 	createShader(shaders[0], "./Shaders/VertexShader.glsl", GL_VERTEX_SHADER);
 	createShader(shaders[1], "./Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
 
+	//Add a new program to the global shading programs list
 	programs.push_back(glCreateProgram());
+	//Attach both shaders to the program
 	glAttachShader(programs[0], shaders[0].shaderID);
 	glAttachShader(programs[0], shaders[1].shaderID);
+	//Link the program to the current context
 	glLinkProgram(programs[0]);
+	//Set the program as the current activated shading program
 	glUseProgram(programs[0]);
+	//Update both shader structures to keep track of the program they have been attached to
 	shaders[0].program=programs[0];
 	shaders[1].program=programs[0];
-    // Example code, delete or modify
-    //**********************************************************************************
-    
-       /* initDefaultShaders(shaders);
-        initDefaultProgram(programs, shaders);*/
-    
-        createGeometry(shapes[0]);
-        createGeometry(shapes[1]);
-    //***********************************************************************************
-    
+	
+	//TODO: this should not be here, delete once it's nto needed
+    createGeometry(shapes[0]);//Create a geometry object 
+	
+	//Create a new camera object with defiend orientation, position, and dimensions
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     cam = *(new Camera(mat3(1), vec3(0,-20,0), width, height));
 
+	//Set default OpenGL values for rendering
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
     glPointSize(10.f);
@@ -122,12 +136,6 @@ int openGLerror()
 	}
 	return errorNum;
 }
-
-double calculateFPS(double prevTime, double currentTime)
-{
-	double elapsedTime = currentTime - prevTime;
-	return 1/elapsedTime;
-}
 //########################################################################################
 
 //========================================================================================
@@ -160,21 +168,25 @@ GLFWwindow* createWindow()
 		return NULL;
 	}
 
+	//Get the primiray monitor of the current system's info
 	const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
-	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height-40,
-		"OpenGL Template", NULL, NULL);
-	if (!window)
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);//OpenGL major version
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);//OpenGL minor version
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);//Set Forward compatibility
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//Use GLFW defaults
+	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);//Make the window decorated
+	//Create a GLFW window with the main monitors width, reduced height, 
+	//name, on windowed mode, not sharing resources with any context
+	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height-40, 
+		"Voxel World", NULL, NULL);
+	if (!window)//Check for errors
 	{
-
 		cerr<< "Failed to glfwCreateWindow.\nTerminating program." << endl;
 		return NULL;
 	}
-	//glfwMaximizeWindow(window);
+	//TODO: delete or uncomment at one point
+	//glfwMaximizeWindow(window);//Make the window maximized
+	//Set the current window to be the current OpenGL context
 	glfwMakeContextCurrent(window);
 
 	return window;

@@ -23,8 +23,8 @@ include_directories("/usr/local/lib")
 
 SET(CMAKE_CXX_FLAGS "-std=c++1y -lglfw -lGL -lOpenGL -lGLEW -pthread -lfreetype")
 
-add_executable(voxel-world ${PROJECT_SOURCE_DIR}/main.cpp)
-target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/rendering/context-creation.cpp)
-target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/rendering/rendering.cpp)
-target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/rendering/Camera/Camera.cpp)
-target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/wavefront-loader.cpp)
+add_executable(voxel-world.exe ${PROJECT_SOURCE_DIR}/main.cpp)
+target_sources(voxel-world.exe PUBLIC ${PROJECT_SOURCE_DIR}/rendering/context-creation.cpp)
+target_sources(voxel-world.exe PUBLIC ${PROJECT_SOURCE_DIR}/rendering/rendering.cpp)
+target_sources(voxel-world.exe PUBLIC ${PROJECT_SOURCE_DIR}/rendering/Camera/Camera.cpp)
+target_sources(voxel-world.exe PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/wavefront-loader.cpp)

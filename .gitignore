@@ -1,0 +1,16 @@
+# Ignore Extensions #
+
+*.exe
+*.log
+
+# Ignore directories #
+
+.vscode
+
+# Ignore  CMake files and Make #
+
+Makefile
+
+*CMake*
+
+!CMakeLists.txt

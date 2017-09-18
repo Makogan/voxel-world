@@ -144,7 +144,7 @@ void load_obj(string filename, vector<float> *vertices, vector<float> *normals,
             }
         }
     }
-
+    //Close the file
     wfile.close();
 }
 

@@ -6,6 +6,7 @@
         "string_view": "cpp",
         "valarray": "cpp",
         "*.ipp": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "vector": "cpp"
     }
 }
