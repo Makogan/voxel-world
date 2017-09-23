@@ -44,7 +44,10 @@ Camera cam;//Global camera, main camera used for rendering and perspective proje
 GLFWwindow* create_context()
 {
     GLFWwindow* window = createWindow();
-    
+	if(window==NULL)
+	{
+		cerr << "Error when creating GLFW window" << endl;
+	}
     callBackInit(window);
 
     // glew initilization, this is so that the program is crossplatform,
@@ -75,10 +78,11 @@ GLFWwindow* create_context()
 	shaders[0].program=programs[0];
 	shaders[1].program=programs[0];
 	
-	//TODO: this should not be here, delete once it's nto needed
-    createGeometry(shapes[0]);//Create a geometry object 
+	//TODO: this should not be here, delete once it's not needed
+	createGeometry(shapes[0]);//Create a geometry object 
+	createTexture(textures[0], "Textures/example3.jpeg", GL_TEXTURE_2D);
 	
-	//Create a new camera object with defiend orientation, position, and dimensions
+	//Create a new camera object with defined orientation, position, and dimensions
     int width, height;
     glfwGetWindowSize(window, &width, &height);
     cam = *(new Camera(mat3(1), vec3(0,-20,0), width, height));
@@ -88,7 +92,8 @@ GLFWwindow* create_context()
     glDepthFunc(GL_LEQUAL);
     glPointSize(10.f);
 
-    return window;
+	return window;
+	return NULL;
 }
 //########################################################################################
 

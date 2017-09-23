@@ -34,7 +34,8 @@ vector<GLuint> programs;//Global shading programs list
 vector<Shader> shaders;//Global Shaders list 
 //TODO: Maybe delete Geometry list and change it for a different data structure or 
 //		Avoid it alltogether
-vector<Geometry> shapes(2);//Global Shapes list
+vector<Geometry> shapes(2);//Global Shapes list Temporary!
+vector<Texture> textures(2); //Temporary
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -45,6 +46,24 @@ vector<Geometry> shapes(2);//Global Shapes list
 //========================================================================================
 
 //TODO: look into making other functions that also load geometry info into the shaders
+//TODO: comment undocumented functions
+void loadTexture(GLuint program, Texture &t)
+{
+	glUseProgram(program);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, t.textureID);
+	GLint loc = glGetUniformLocation(program, "text");
+	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
+	{
+		cerr << "Error returned when trying to find texture uniform."
+			<< "\nuniform: text"
+			<< "Error num: " << loc
+			<< endl;
+		return;
+	}
+	
+	glUniform1i(loc,0);
+}
 
 /*
 *	Function to load geometry information into an OpenGL shader program
@@ -78,11 +97,25 @@ void loadGeometryArrays(GLuint program, Geometry &g)
 		glEnableVertexAttribArray(1);
 		//Set the buffer array
 		glBindBuffer(GL_ARRAY_BUFFER, g.normalsBuffer);
-			//As above specify how to read the information
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
+		//As above specify how to read the information
+		glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
 		//Fill the buffer array with the data 
 		glBufferData(GL_ARRAY_BUFFER, g.normals.size()*sizeof(vec3),
 			g.normals.data(), GL_DYNAMIC_DRAW);
+	}
+
+	//Check if there are texture coordinates to process for the geometry object
+	if(g.uvs.size()>0)
+	{
+		//Set attribute layout to 2 (layout 2 is uvs for us)
+		glEnableVertexAttribArray(2);
+		//Set the buffer array
+		glBindBuffer(GL_ARRAY_BUFFER, g.uvBuffer);
+		//As above specify how to read the information
+		glVertexAttribPointer(2, 2, GL_FLOAT, GL_TRUE, sizeof(vec2), (void*)0);
+		//Fill the buffer array with the data 
+		glBufferData(GL_ARRAY_BUFFER, g.uvs.size()*sizeof(vec2),
+			g.uvs.data(), GL_DYNAMIC_DRAW);
 	}
 
 	//Check if there are any indices specified in g
@@ -142,7 +175,7 @@ void loadColor(vec4 color, GLuint program)
 *	Load camera parameters into a shading program for perspective projection
 *	
 *	Params:
-*		c: the camera struct used to create teh projection matrix
+*		c: the camera struct used to create the projection matrix
 *		program: program in wich to load the projection matrix
 *	
 *	return: 0 on error or 1 on success
@@ -153,7 +186,7 @@ int loadViewProjMatrix(Camera &c, GLuint &program)
 	GLint loc = glGetUniformLocation(program, "view");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{
-		cerr << "Error returned when trying to find uniform location."
+		cerr << "Error returned when trying to find view matrix."
 			<< "\nuniform: view"
 			<< "Error num: " << loc
 			<< endl;
@@ -166,7 +199,7 @@ int loadViewProjMatrix(Camera &c, GLuint &program)
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{
 
-		cerr << "Error returned when trying to find uniform location."
+		cerr << "Error returned when trying to find projection matrix."
 			<< "\nuniform: proj"
 			<< "Error num: " << loc
 			<< endl;
@@ -180,7 +213,7 @@ int loadViewProjMatrix(Camera &c, GLuint &program)
 
 
 /*
-* Load camera position into teh current shader program
+* Load camera position into the current shader program
 *
 *	Params:
 *		c: the camera struct used to create teh projection matrix
@@ -314,6 +347,47 @@ string loadSourceFile(string &filepath)
 */
 //========================================================================================
 
+//TODO: comment this
+void createGeometry(Geometry &g, vector<vec3> vertices,  vector<vec3> normals, 
+	vector<vec2> uvs, vector<uint> indices)
+{
+	//set vertex info
+	glEnableVertexAttribArray(0);
+	glGenBuffers(1, &(g.vertexBuffer));
+	glBindBuffer(GL_ARRAY_BUFFER, g.vertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(vec3),
+		vertices.data(), GL_DYNAMIC_DRAW);
+
+	//set normals info
+	glEnableVertexAttribArray(1);
+	glGenBuffers(1, &g.normalsBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, g.normalsBuffer);
+	glBufferData(GL_ARRAY_BUFFER, normals.size()*sizeof(vec3),
+		normals.data(), GL_DYNAMIC_DRAW);
+
+	//set texture coordinates info
+	glEnableVertexAttribArray(2);
+	glGenBuffers(1, &g.uvBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, g.uvBuffer);
+	glBufferData(GL_ARRAY_BUFFER, uvs.size()*sizeof(vec2),
+		uvs.data(), GL_DYNAMIC_DRAW);
+
+	//set element info
+	glGenBuffers(1, &(g.elmentBuffer));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g.elmentBuffer);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices.size()*sizeof(uint),
+		indices.data(), GL_DYNAMIC_DRAW);
+
+	//Init VAO
+	glGenVertexArrays(1, &(g.vertexArray));
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+	g.vertices=vertices;
+	g.normals=normals;
+	g.uvs=uvs;
+	g.indices=indices;
+}
+
 /*
 *	Initialize the fields of a geometry object using arrays
 *
@@ -341,6 +415,10 @@ void createGeometry(Geometry &g, vector<vec3> vertices, vector<uint> indices)
 	glEnableVertexAttribArray(1);
 	glGenBuffers(1, &g.normalsBuffer);
 
+	//set normals info
+	glEnableVertexAttribArray(2);
+	glGenBuffers(1, &g.uvBuffer);
+
 	//Init VAO
 	glGenVertexArrays(1, &(g.vertexArray));
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -361,12 +439,16 @@ void createGeometry(Geometry &g)
 	glEnableVertexAttribArray(0);
 	glGenBuffers(1, &(g.vertexBuffer));
 
-	//set indices
-	glGenBuffers(1, &(g.elmentBuffer));
-
 	//set normals
 	glEnableVertexAttribArray(1);
 	glGenBuffers(1, &g.normalsBuffer);
+
+	//set uvs
+	glEnableVertexAttribArray(2);
+	glGenBuffers(1, &g.uvBuffer);
+
+	//set indices
+	glGenBuffers(1, &(g.elmentBuffer));
 
 	//init VAO
 	glGenVertexArrays(1, &(g.vertexArray));
@@ -408,29 +490,29 @@ void deleteGeometry(Geometry &g)
 *
 *	Return: a boolean value indicating whether an error ocurred (true means no error)
 */
-bool createTexture(Texture* texture, const char* filename, GLuint target = GL_TEXTURE_2D)
+bool createTexture(Texture &texture, const char* filename, GLuint target)
 {
 	int numComponents;
 	stbi_set_flip_vertically_on_load(true);
-	unsigned char *data = stbi_load(filename, &texture->width, &texture->height, &numComponents, 0);
+	void *data = stbi_load(filename, &texture.width, &texture.height, &numComponents, 0);
 	if (data != nullptr)
 	{
-		texture->target = target;
-		glGenTextures(1, &texture->textureID);
-		glBindTexture(texture->target, texture->textureID);
+		texture.target = target;
+		glGenTextures(1, &texture.textureID);
+		glBindTexture(texture.target, texture.textureID);
 		GLuint format = numComponents == 3 ? GL_RGB : GL_RGBA;
 		//cout << numComponents << endl;
-		glTexImage2D(texture->target, 0, format, texture->width, texture->height, 0, format, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(texture.target, 0, format, texture.width, texture.height, 0, format, GL_UNSIGNED_BYTE, data);
 
 		// Note: Only wrapping modes supported for GL_TEXTURE_RECTANGLE when defining
 		// GL_TEXTURE_WRAP are GL_CLAMP_TO_EDGE or GL_CLAMP_TO_BORDER
-		glTexParameteri(texture->target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(texture->target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(texture->target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(texture->target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(texture.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(texture.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(texture.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(texture.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 		// Clean up
-		glBindTexture(texture->target, 0);
+		glBindTexture(texture.target, 0);
 		stbi_image_free(data);
 
 		return true;
@@ -466,18 +548,24 @@ void DestroyTexture(Texture &texture)
 //main render loop
 void render_loop(GLFWwindow* window)
 {
+	shapes[0].vertices.clear();
+	load_obj("Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
+		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);
+
     while (!glfwWindowShouldClose(window))
 	{
-		if(loadViewProjMatrix(cam, programs[0])!=0)
+		if(!loadViewProjMatrix(cam, programs[0]))
+		{
+			cerr << "Error when loading projection matrix!" << endl;
 			return;
-
+		}
 		glClearColor(0, 0.f, 0.f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 		loadColor(vec4(1,1,1,1), programs[0]);
-		//setDrawingMode(1, programs[0]);
-		shapes[0].vertices.clear();
-		load_obj("Objs/corner1.obj", (vector<float>*) &shapes[0].vertices, (vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);
 		loadGeometryArrays(programs[0], shapes[0]);
+		loadTexture(programs[0], textures[0]);
+
 		render(programs[0], shapes[0], GL_TRIANGLES);
 
 		glfwPollEvents();

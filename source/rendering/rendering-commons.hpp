@@ -65,6 +65,7 @@ struct Geometry
 
     GLuint vertexBuffer;    //Vertex data ID of the VAO
     GLuint normalsBuffer;   //Normal data (vec3)
+    GLuint uvBuffer;        
     GLuint elmentBuffer;    //Element data ID of the VAO this specifies the 
                             //sequence in wich the vertices and normals will be read 
 
@@ -97,7 +98,8 @@ extern Camera cam; //Main camera for perspective projection
 
 extern vector<GLuint> programs; //Global list of shading programs
 extern vector<Shader> shaders;  //Global List of shaders
-extern vector<Geometry> shapes; ///GLobal list of geometry shapes
+extern vector<Geometry> shapes; ///GLobal list of geometry shapes temporary
+extern vector<Texture> textures; //Temporary
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -114,9 +116,14 @@ void compileShader(GLuint &shader, string &filepath, GLenum shaderType);
 void createShader(Shader &s, string file, GLenum type);
 void deleteShader(Shader &s);
 
-void createGeometry(Geometry &g, vector<vec3> vertices, vector<uint> indices);
 void createGeometry(Geometry &g);
+void createGeometry(Geometry &g, vector<vec3> vertices, vector<uint> indices);
+void createGeometry(Geometry &g, vector<vec3> vertices,  vector<vec3> normals, 
+	vector<vec2> uvs, vector<uint> indices);
 void deleteGeometry(Geometry &g);
+
+bool createTexture(Texture &texture, const char* filename, GLuint target = GL_TEXTURE_2D);
+void DestroyTexture(Texture &texture);
 
 string loadSourceFile(string &filepath);
 

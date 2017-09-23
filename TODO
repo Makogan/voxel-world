@@ -3,12 +3,14 @@ Version 0.0.1
 First stage
 Todo:
   ✔ Create Basic template Code and Data structures
-  ☐ Refactor and comment everything
   ☐ Design basic physics and world Data Structures
   ☐ Create Menu rendering (or use library, experiment)
   ☐ Document (look into automatic documentation)
   Documentation:
+    ✔ Refactor and comment everything
     ☐ Look into Doxygen
     ☐ If Doxygen is suitable, change comments to fit Doxygen
   Coding:
     ☐ Make a shading program that renders multiple meshes at a time (Jeremy Hart knows how to do this, check with him)
+  Debuging:
+    ☐ Figure out howblender maps the texture coordinates and get it to work (cube looks odd)
