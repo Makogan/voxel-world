@@ -32,8 +32,13 @@ Camera::Camera(mat3 frame, vec3 pos, float w, float h)
 	side = normalize(frame[0]);
 	forward = normalize(frame[1]);
 	up = normalize(frame[2]);
-
 	position = pos;
+
+	orig_side = normalize(frame[0]);
+	orig_forward = normalize(frame[1]);
+	orig_up = normalize(frame[2]);
+	orig_position = pos;
+
 	fov = 45;
 	width = w;
 	height = h;
@@ -50,6 +55,11 @@ Camera::Camera()
 	forward = vec3(0,1,0);
 	up = vec3(0,0,1);
 	position = vec3(0,0,0);
+
+	orig_side = vec3(1,0,0);
+	orig_forward = vec3(0,1,0);
+	orig_up = vec3(0,0,1);
+	orig_position = vec3(0,0,0);
 
 	width = 1980;
 	height = 1024;
@@ -72,6 +82,22 @@ vec3 Camera::getPosition()
 {
 	return position;
 }
+
+vec3 Camera::getForward()
+{
+	return forward;
+}
+
+vec3 Camera::getUp()
+{
+	return up;	
+}
+
+vec3 Camera::getSide()
+{
+	return side;
+}
+
 /*
 *	Get the view matrix of the camera
 */
@@ -118,7 +144,7 @@ void Camera::setPosition(vec3 p)
 */
 void Camera::turnH(float angle)
 {
-	mat4 rotation;
+	mat4 rotation(1);
 	rotation = rotate(rotation, angle, up);
 	vec4 newForward = vec4(forward, 1);
 
@@ -126,7 +152,7 @@ void Camera::turnH(float angle)
 
 	forward = vec3(newForward);
 	forward = normalize(forward);
-	side = cross(forward, up);
+	side = cross(up,forward);
 }
 
 void Camera::turnV(float angle)
@@ -162,17 +188,15 @@ void Camera::incline(float angle)
 
 void Camera::resetView()
 {
-	side = vec3(1,0,0);
-	forward = vec3(0,1,0);
-	up = vec3(0,0,1);
+	side = orig_side;
+	forward = orig_forward;
+	up = orig_up;
 }
 
 void Camera::resetCamera()
 {
-	side = vec3(1,0,0);
-	forward = vec3(0,1,0);
-	up = vec3(0,0,1);
-	position = vec3(0,0,0);
+	resetView();
+	position = orig_position;
 
 	width = 1980;
 	height = 1024;
@@ -181,4 +205,5 @@ void Camera::resetCamera()
 	zNear = 0.01;
 	zFar = 2000;
 }
+
 //########################################################################################

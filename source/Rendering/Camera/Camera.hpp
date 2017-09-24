@@ -32,11 +32,18 @@ using namespace glm;
 class Camera
 {
 	private:
-		//camera frame
+		//current camera frame
 		vec3 forward; 	//vector indicating forward direction of the camera
 		vec3 up;  		//vector indicating up direction of the camera
 		vec3 side; 		//vector indicating side direction of the camera
 		vec3 position; 	//vector indicating the position of the camera
+
+		//ooriginal camera frame
+		vec3 orig_forward; 	//vector indicating forward direction of the camera
+		vec3 orig_up;  		//vector indicating up direction of the camera
+		vec3 orig_side; 		//vector indicating side direction of the camera
+		vec3 orig_position; 	//vector indicating the position of the camera
+
 		//camera parameters
 		//field of view, dimensions, near clipping angle, far clipping angle
 		float fov, width, height, zNear, zFar;
@@ -55,7 +62,11 @@ class Camera
 		void incline(float angle);
 		void resetView();
 		void resetCamera();
+
 		vec3 getPosition();
+		vec3 getForward();
+		vec3 getUp();
+		vec3 getSide();
 
 };
 //########################################################################################

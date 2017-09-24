@@ -517,6 +517,10 @@ bool createTexture(Texture &texture, const char* filename, GLuint target)
 
 		return true;
 	}
+	else
+	{
+		cerr << "Problem when loading texture" << endl;
+	}
 	return false; //error
 }
 
@@ -549,7 +553,7 @@ void DestroyTexture(Texture &texture)
 void render_loop(GLFWwindow* window)
 {
 	shapes[0].vertices.clear();
-	load_obj("Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
+	load_obj("Assets/Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
 		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);
 
     while (!glfwWindowShouldClose(window))

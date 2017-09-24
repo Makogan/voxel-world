@@ -80,12 +80,12 @@ GLFWwindow* create_context()
 	
 	//TODO: this should not be here, delete once it's not needed
 	createGeometry(shapes[0]);//Create a geometry object 
-	createTexture(textures[0], "Textures/example3.jpeg", GL_TEXTURE_2D);
+	createTexture(textures[0], "Assets/Textures/Cube-map.png", GL_TEXTURE_2D);
 	
 	//Create a new camera object with defined orientation, position, and dimensions
     int width, height;
     glfwGetWindowSize(window, &width, &height);
-    cam = *(new Camera(mat3(1), vec3(0,-20,0), width, height));
+    cam = *(new Camera(mat3(-1), vec3(0,20,0), width, height));
 
 	//Set default OpenGL values for rendering
     glEnable(GL_DEPTH_TEST);
@@ -286,22 +286,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     	cout << glfwGetVersionString() << endl;
 
     else if(key == GLFW_KEY_W)
-    	cam.move(vec3(0,CAM_SPEED,0));
+    	cam.move(normalize(cam.getForward()));
 
     else if(key == GLFW_KEY_S)
-    	cam.move(vec3(0,-CAM_SPEED,0));
+    	cam.move(-normalize(cam.getForward()));
 
     else if(key == GLFW_KEY_A)
-    	cam.move(vec3(-CAM_SPEED,0,0));
+    	cam.move(normalize(cam.getSide()));
 
     else if(key == GLFW_KEY_D)
-    	cam.move(vec3(CAM_SPEED,0,0));
+		cam.move(-normalize(cam.getSide()));
 
     else if(key == GLFW_KEY_Q)
-    	cam.move(vec3(0,0,-CAM_SPEED));
+		cam.move(normalize(cam.getUp()));
 
     else if(key == GLFW_KEY_E)
-    	cam.move(vec3(0,0, CAM_SPEED));
+		cam.move(-normalize(cam.getUp()));
 
     else if(key == GLFW_KEY_KP_6)
     	cam.turnH(radians(-1.f));
@@ -310,10 +310,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     	cam.turnH(radians(1.f));
 
     else if(key == GLFW_KEY_KP_8)
-    	cam.turnV(radians(1.f));
+    	cam.turnV(radians(-1.f));
 
     else if(key == GLFW_KEY_KP_2)
-    	cam.turnV(radians(-1.f));
+    	cam.turnV(radians(1.f));
 
     else if(key == GLFW_KEY_KP_ADD)
     	cam.incline(radians(1.f));

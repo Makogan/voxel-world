@@ -2,29 +2,35 @@ cmake_minimum_required(VERSION 3.9)
 
 project(VWorld)
 
-set(CMAKE_BINARY_DIR ${CMAKE_SOURCE_DIR}/build)
+set(CMAKE_BINARY_DIR .)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 
 set(PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source)
 
+add_executable(voxel-world ${PROJECT_SOURCE_DIR}/main.cpp)
+
 include_directories("${PROJECT_SOURCE_DIR}")
 include_directories("${PROJECT_SOURCE_DIR}/middleware")
 include_directories("${PROJECT_SOURCE_DIR}/middleware/stb")
-include_directories("${PROJECT_SOURCE_DIR}/rendering")
-include_directories("${PROJECT_SOURCE_DIR}/rendering/Camera")
+include_directories("${PROJECT_SOURCE_DIR}/Rendering")
+include_directories("${PROJECT_SOURCE_DIR}/Rendering/Camera")
 include_directories("${PROJECT_SOURCE_DIR}/Helpers")
 
-include_directories("/usr/lib/nvidia-375")
-include_directories("/usr/local/lib")
-include_directories("/usr/include/GL")
-include_directories("/usr/include/freetype2")
-include_directories("/usr/local/lib")
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glfw3 REQUIRED)
+find_package(Freetype REQUIRED)
+include_directories(${FREETYPE_INCLUDE_DIRS})
 
-SET(CMAKE_CXX_FLAGS "-std=c++1y -lglfw -lGL -lOpenGL -lGLEW -pthread -lfreetype")
+target_link_libraries(voxel-world glfw GL GLEW freetype)
 
-add_executable(voxel-world ${PROJECT_SOURCE_DIR}/main.cpp)
-target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/rendering/context-creation.cpp)
-target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/rendering/rendering.cpp)
-target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/rendering/Camera/Camera.cpp)
+SET(CMAKE_CXX_FLAGS "-std=c++1y")
+
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/context-creation.cpp)
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/rendering.cpp)
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/Camera/Camera.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/wavefront-loader.cpp)
+
+file(COPY ${PROJECT_SOURCE_DIR}/Rendering/Shaders DESTINATION ${CMAKE_BINARY_DIR})
+file(COPY ${PROJECT_SOURCE_DIR}/Assets DESTINATION ${CMAKE_BINARY_DIR})
