@@ -17,7 +17,7 @@
 #pragma once
 
 #include "wavefront-loader.hpp"
-#include "rendering-commons.hpp"
+#include "OpenGL-Wrappers.hpp"
 #include "cout-definitions.hpp"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -23,7 +23,7 @@
 
 #include <vector>
 
-#include "rendering-commons.hpp"
+#include "OpenGL-Wrappers.hpp"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

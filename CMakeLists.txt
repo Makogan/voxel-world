@@ -26,8 +26,9 @@ target_link_libraries(voxel-world glfw GL GLEW freetype)
 
 SET(CMAKE_CXX_FLAGS "-std=c++1y")
 
-target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/context-creation.cpp)
-target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/rendering.cpp)
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/Window-Management.cpp)
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/Rendering.cpp)
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/OpenGL-Wrappers.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/Camera/Camera.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/wavefront-loader.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/cout-definitions.cpp)
