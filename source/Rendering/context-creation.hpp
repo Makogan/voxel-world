@@ -52,9 +52,6 @@ void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos);
 //Initialize the callback functions for window with the above functions
 void callBackInit(GLFWwindow* window);
 
-//Check for OpenGL errors
-int openGLerror();
-
 double calculateFPS(double prevTime, double currentTime);
 
 //Create a GLFW window

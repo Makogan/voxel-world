@@ -1,11 +1,10 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.5)
 
 project(VWorld)
 
 set(CMAKE_BINARY_DIR .)
 set(EXECUTABLE_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
-
 set(PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source)
 
 add_executable(voxel-world ${PROJECT_SOURCE_DIR}/main.cpp)
@@ -31,6 +30,8 @@ target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/context-creati
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/rendering.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/Camera/Camera.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/wavefront-loader.cpp)
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/cout-definitions.cpp)
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Cube.cpp)
 
 file(COPY ${PROJECT_SOURCE_DIR}/Rendering/Shaders DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY ${PROJECT_SOURCE_DIR}/Assets DESTINATION ${CMAKE_BINARY_DIR})

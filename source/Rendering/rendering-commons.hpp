@@ -38,6 +38,7 @@
 #include FT_FREETYPE_H
 
 #include "Camera.hpp"
+#include "cout-definitions.hpp"
 
 using namespace std;
 using namespace glm;
@@ -109,7 +110,11 @@ extern vector<Texture> textures; //Temporary
 */
 //========================================================================================
 
+//Check for OpenGL errors
+int openGLerror();
+
 void loadGeometryArrays(GLuint program, Geometry &g);
+void loadTexture(GLuint program, Texture &t);
 void render(GLuint program, Geometry &g, GLenum drawType);
 
 void compileShader(GLuint &shader, string &filepath, GLenum shaderType);

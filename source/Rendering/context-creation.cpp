@@ -85,15 +85,9 @@ GLFWwindow* create_context()
 	//Create a new camera object with defined orientation, position, and dimensions
     int width, height;
     glfwGetWindowSize(window, &width, &height);
-    cam = *(new Camera(mat3(-1), vec3(0,20,0), width, height));
-
-	//Set default OpenGL values for rendering
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LEQUAL);
-    glPointSize(10.f);
+    cam = Camera(mat3(-1), vec3(0,20,0), width, height);
 
 	return window;
-	return NULL;
 }
 //########################################################################################
 

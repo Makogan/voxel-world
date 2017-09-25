@@ -50,7 +50,7 @@ void load_obj(string filename, vector<float> *vertices, vector<float> *normals,
 
     //error check
     if (!wfile) {
-        cerr << "Unable to open file datafile.txt";
+        cerr << "Unable to open file " << filename <<endl;
         exit(1);   // call system to stop
     }
 

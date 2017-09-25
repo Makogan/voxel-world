@@ -5,7 +5,7 @@
 *
 *	Version: 0.0.1
 *
-*	Header to expose rendering functions to other compilation units.
+*	Header for the definition of a generic cube object
 */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -14,27 +14,34 @@
 *	Includes and macros
 */
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 #pragma once
 
-#include "wavefront-loader.hpp"
 #include "rendering-commons.hpp"
-#include "cout-definitions.hpp"
+#include "wavefront-loader.hpp"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
 /*
-*	List of function headers:
+*	Class declaration:
 */
 //========================================================================================
+//TODO: document this section
 
-//Load shading information 
-int loadViewProjMatrix(Camera &c, GLuint &program);
-void loadColor(vec4 color, GLuint program);
-int loadCamera(vec3 cameraPos, GLuint program);
+class Cube
+{
+    public:
+        Geometry *mesh;
+        Texture *texture;
 
-//Major wrap/control functions
-void render_loop(GLFWwindow*);
-void end_rendering(GLFWwindow* window);
+        vec3 position;
+    
+    public:
+        Cube(string wavefront_file, string t, vec3 p);
+        Cube();
+        ~Cube();
 
+        void render_cube();
+};
 //########################################################################################

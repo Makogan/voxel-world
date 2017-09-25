@@ -22,6 +22,7 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
 
+#include "Cube.hpp" //TODO: this needs a major refactoring
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -552,9 +553,15 @@ void DestroyTexture(Texture &texture)
 //main render loop
 void render_loop(GLFWwindow* window)
 {
-	shapes[0].vertices.clear();
-	load_obj("Assets/Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
-		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);
+	//Set default OpenGL values for rendering
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LEQUAL);
+	glPointSize(10.f);
+
+	Cube test = Cube(); 
+	
+	/*load_obj("Assets/Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
+		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);*/
 
     while (!glfwWindowShouldClose(window))
 	{
@@ -563,17 +570,21 @@ void render_loop(GLFWwindow* window)
 			cerr << "Error when loading projection matrix!" << endl;
 			return;
 		}
-		glClearColor(0, 0.f, 0.f, 1.0f);
+		glClearColor(0, 0.7f, 1.f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		loadColor(vec4(1,1,1,1), programs[0]);
-		loadGeometryArrays(programs[0], shapes[0]);
+		//shapes[0].vertices = test.mesh->vertices;
+		test.render_cube();
+		/*loadColor(vec4(1,1,1,1), programs[0]);
+		loadGeometryArrays(programs[0], *test.mesh);
 		loadTexture(programs[0], textures[0]);
 
-		render(programs[0], shapes[0], GL_TRIANGLES);
+		render(programs[0], *test.mesh, GL_TRIANGLES);*/
 
 		glfwPollEvents();
 		glfwSwapBuffers(window);
+
+		openGLerror();
 	}
 }
 
@@ -586,7 +597,7 @@ void end_rendering(GLFWwindow* window)
     for(GLuint p: programs)
         glDeleteProgram(p);
     for(Geometry g: shapes)
-        deleteGeometry(g);
+		deleteGeometry(g);
 
     glfwDestroyWindow(window);
     glfwTerminate();
