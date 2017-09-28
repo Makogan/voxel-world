@@ -30,8 +30,10 @@
 
 //Load shading information 
 int loadViewProjMatrix(Camera &c, GLuint &program);
-void loadColor(vec4 color, GLuint program);
+int loadModelMatrix(GLuint program, mat4 model);
 int loadCamera(vec3 cameraPos, GLuint program);
+
+void loadColor(vec4 color, GLuint program);
 
 //Major wrap/control functions
 void render_loop(GLFWwindow*);

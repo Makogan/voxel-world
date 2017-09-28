@@ -33,6 +33,7 @@ target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/Camera/Camera.
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/wavefront-loader.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/cout-definitions.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Cube.cpp)
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Chunk.cpp)
 
 file(COPY ${PROJECT_SOURCE_DIR}/Rendering/Shaders DESTINATION ${CMAKE_BINARY_DIR})
 file(COPY ${PROJECT_SOURCE_DIR}/Assets DESTINATION ${CMAKE_BINARY_DIR})

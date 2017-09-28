@@ -18,6 +18,7 @@
 #include "Rendering.hpp"
 
 #include "Cube.hpp" //TODO: this needs a major refactoring
+#include "Chunk.hpp" //TODO: this needs a major refactoring
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -57,7 +58,7 @@ void loadGeometryArrays(GLuint program, Geometry &g)
 {
 	glUseProgram(program);//Make program the current shading program
 
-	glBindVertexArray(g.vertexArray);//bind g's vertex array to be OpenGL's vertex arr
+	glBindVertexArray(g.vertexArray);//bind g's vertex array to be OpenGL's vertex array
 
 	glBindBuffer(GL_ARRAY_BUFFER, g.vertexBuffer);//set OpenGL's vertex buffer (vertex data)
 	//Set the buffer data with, type, size of buffer in bytes, array pointer, drawing mode
@@ -192,6 +193,23 @@ int loadViewProjMatrix(Camera &c, GLuint &program)
 	return 1;
 }
 
+int loadModelMatrix(GLuint program, mat4 model)
+{
+	glUseProgram(program);
+	GLint loc = glGetUniformLocation(program, "model");
+	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
+	{
+		cerr << "Error returned when trying to find model matrix."
+			<< "\nuniform: model"
+			<< "Error num: " << loc
+			<< endl;
+		return 0;
+	}
+	//Load model matrix
+	glUniformMatrix4fv(loc, 1, GL_FALSE, value_ptr(model));
+
+	return 1;
+}
 
 /*
 * Load camera position into the current shader program
@@ -236,8 +254,8 @@ void render_loop(GLFWwindow* window)
     glDepthFunc(GL_LEQUAL);
 	glPointSize(10.f);
 
-	Cube test = Cube(); 
-	
+	//Cube test = Cube(); 
+	Chunk test = Chunk();
 	/*load_obj("Assets/Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
 		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);*/
 
@@ -252,7 +270,7 @@ void render_loop(GLFWwindow* window)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//shapes[0].vertices = test.mesh->vertices;
-		test.render_cube();
+		test.render_chunk();
 		/*loadColor(vec4(1,1,1,1), programs[0]);
 		loadGeometryArrays(programs[0], *test.mesh);
 		loadTexture(programs[0], textures[0]);

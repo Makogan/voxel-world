@@ -3,7 +3,8 @@ Version 0.0.1
 First stage
 Todo:
   ✔ Create Basic template Code and Data structures
-  ☐ Design basic physics and world Data Structures
+  ☐ Design basic physics 
+  ☐ Design absic world Data Structures
   ☐ Create Menu rendering (or use library, experiment)
   ☐ Document (look into automatic documentation)
   Documentation:
@@ -12,5 +13,8 @@ Todo:
     ☐ If Doxygen is suitable, change comments to fit Doxygen
   Coding:
     ☐ Make a shading program that renders multiple meshes at a time (Jeremy Hart knows how to do this, check with him)
+    ☐ Once there is a voxel world, test and modify rendering for optimization
   Debuging:
     ☐ Figure out howblender maps the texture coordinates and get it to work (cube looks odd)
+  Refactoring:
+    ☐ Change loadCamera() and loadVuewProjMatrix() headers to be consistend with the "Load" API

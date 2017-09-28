@@ -14,12 +14,9 @@
 *	Includes and macros
 */
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#include <glm/gtc/matrix_transform.hpp>
 
-#include "Cube.hpp"
-#include "Rendering.hpp"
+#include "Chunk.hpp"
 #include "cout-definitions.hpp"
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -28,38 +25,29 @@
 */
 //========================================================================================
 //TODO: comment this section
-Cube::Cube(string wavefront_file, string t, vec3 p)
+Chunk::Chunk()
 {
-    texture = new Texture();
-    mesh = new Geometry();
-    position = p;
-
-   createTexture(*texture, (t.c_str()), GL_TEXTURE_2D);
-   createGeometry(*mesh);
-
-   load_obj(wavefront_file, (vector<float>*) &mesh->vertices, 
-     (vector<float>*) &mesh->normals, (vector<float>*) &mesh->uvs);
+    for(int i=0; i<16*16*16; i++)
+    {
+        chunk_cubes[i] = new Cube("Assets/Objs/cube.obj", "Assets/Textures/Cube-map.png",
+            2.f*vec3((i/(16*16), (i/16) % 16, i % 16)));
+        cout << "(" << i/(16*16) << ", " << (i/16) %16 << ", " << i%16 << ")" << endl;
+    }
 }
 
-Cube::Cube() : Cube("Assets/Objs/cube.obj", "Assets/Textures/Cube-map.png", vec3(0))
+Chunk::~Chunk()
 {
-    
+    for(int i=0; i<16*16*16; i++)
+    {
+       delete(chunk_cubes[i]);
+    }
 }
 
-Cube::~Cube()
+void Chunk::render_chunk()
 {
-    delete(texture);
-    delete(mesh);
-}
-
-//TODO: correct this
-//Warning this is innefficient, all cubes should be rendered in 1 call
-void Cube::render_cube()
-{
-    loadModelMatrix(programs[0], glm::translate(mat4(1), position));
-    loadGeometryArrays(programs[0], *mesh);
-    loadTexture(programs[0], *texture);
-
-    render(programs[0], *mesh, GL_TRIANGLES);
+    for(int i=0; i<16*16*16; i++)
+    {
+        chunk_cubes[i]->render_cube();
+    }
 }
 //########################################################################################
