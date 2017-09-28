@@ -35,8 +35,4 @@ int loadCamera(vec3 cameraPos, GLuint program);
 
 void loadColor(vec4 color, GLuint program);
 
-//Major wrap/control functions
-void render_loop(GLFWwindow*);
-void end_rendering(GLFWwindow* window);
-
 //########################################################################################

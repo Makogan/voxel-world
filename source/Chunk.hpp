@@ -19,6 +19,7 @@
 
 #include "Cube.hpp"
 
+#define CUBE_SIDE 16
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -31,7 +32,7 @@
 class Chunk
 {
     private:
-        Cube *chunk_cubes[16*16*16];
+        Cube *chunk_cubes[CUBE_SIDE*CUBE_SIDE*CUBE_SIDE];
 
     public:
         Chunk();

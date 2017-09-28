@@ -17,6 +17,8 @@
 
 #pragma once
 
+#include <string>
+
 #include "OpenGL-Wrappers.hpp"
 #include "wavefront-loader.hpp"
 
@@ -31,14 +33,20 @@
 
 class Cube
 {
+    private:
+        static Geometry *mesh;
+        static Texture *texture;
+
+        static string Default_Mesh;
+        static string Default_Texture;
+
     public:
-        Geometry *mesh;
-        Texture *texture;
+        static void make_template(string wavefront_file, string t);
+        static void cleanup();
 
         vec3 position;
     
-    public:
-        Cube(string wavefront_file, string t, vec3 p);
+        Cube(vec3 p);
         Cube();
         ~Cube();
 

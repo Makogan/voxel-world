@@ -27,21 +27,16 @@
 //TODO: comment this section
 Chunk::Chunk()
 {
-    int side = 16;
-    for(int i=0; i<side*side*side; i++)
+    for(int i=0; i<CUBE_SIDE*CUBE_SIDE*CUBE_SIDE; i++)
     {
-        chunk_cubes[i] = new Cube("Assets/Objs/cube.obj", "Assets/Textures/Cube-map.png",
-            2.f*vec3(i/(side*side), (i/side) % side, i % side));
-       // vec3 temp = chunk_cubes[i]->position;
-     /*   cout << temp << endl;
-        cout << "(" << i/(side*side) << ", " << (i/side) %side << ", " << i%side << ")" << endl;
-        cout << "wtf" << endl;*/
+        chunk_cubes[i] = new Cube(2.f*vec3(i/(CUBE_SIDE*CUBE_SIDE), 
+            (i/CUBE_SIDE) % CUBE_SIDE, i % CUBE_SIDE));
     }
 }
 
 Chunk::~Chunk()
 {
-    for(int i=0; i<16*16*16; i++)
+    for(int i=0; i<CUBE_SIDE*CUBE_SIDE*CUBE_SIDE; i++)
     {
        delete(chunk_cubes[i]);
     }
@@ -49,7 +44,7 @@ Chunk::~Chunk()
 
 void Chunk::render_chunk()
 {
-    for(int i=0; i<16*16*16; i++)
+    for(int i=0; i<CUBE_SIDE*CUBE_SIDE*CUBE_SIDE; i++)
     {
         chunk_cubes[i]->render_cube();
     }

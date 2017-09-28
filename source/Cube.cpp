@@ -24,32 +24,69 @@
 
 //========================================================================================
 /*
+*	Class static fields:
+*/
+//========================================================================================
+//TODO:Document this
+string Cube::Default_Mesh = "Assets/Objs/cube.obj";
+string Cube::Default_Texture = "Assets/Textures/Cube-map.png";
+
+Texture* Cube::texture = NULL;
+Geometry* Cube::mesh = NULL;
+//########################################################################################
+
+//========================================================================================
+/*
 *	Class implementation:
 */
 //========================================================================================
 //TODO: comment this section
-Cube::Cube(string wavefront_file, string t, vec3 p)
+
+void Cube::make_template(string wavefront_file, string t)
 {
     texture = new Texture();
     mesh = new Geometry();
-    position = p;
 
-   createTexture(*texture, (t.c_str()), GL_TEXTURE_2D);
-   createGeometry(*mesh);
-
-   load_obj(wavefront_file, (vector<float>*) &mesh->vertices, 
-     (vector<float>*) &mesh->normals, (vector<float>*) &mesh->uvs);
+    createTexture(*texture, (t.c_str()), GL_TEXTURE_2D);
+    createGeometry(*mesh);
+ 
+    load_obj(wavefront_file, (vector<float>*) &mesh->vertices, 
+      (vector<float>*) &mesh->normals, (vector<float>*) &mesh->uvs);
 }
 
-Cube::Cube() : Cube("Assets/Objs/cube.obj", "Assets/Textures/Cube-map.png", vec3(0))
+void Cube::cleanup()
+{
+    delete(texture);
+    delete(mesh);
+}
+
+Cube::Cube(vec3 p)
+{
+    if(texture == NULL)
+    {
+        texture = new Texture();
+        createTexture(*texture, (Default_Texture.c_str()), GL_TEXTURE_2D);
+    }
+    if(mesh == NULL)
+    {
+        mesh = new Geometry();
+        createGeometry(*mesh);
+    
+        load_obj(Default_Mesh, (vector<float>*) &mesh->vertices, 
+            (vector<float>*) &mesh->normals, (vector<float>*) &mesh->uvs);
+    }
+
+    position = p;
+}
+
+Cube::Cube() : Cube(vec3(0))
 {
     
 }
 
 Cube::~Cube()
 {
-    delete(texture);
-    delete(mesh);
+
 }
 
 //TODO: correct this
