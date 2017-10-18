@@ -15,6 +15,7 @@ Todo:
     ☐ Make a shading program that renders multiple meshes at a time (Jeremy Hart knows how to do this, check with him)
     ☐ Once there is a voxel world, test and modify rendering for optimization
   Debuging:
-    ☐ Figure out howblender maps the texture coordinates and get it to work (cube looks odd)
+    ✔ Figure out how blender maps the texture coordinates and get it to work (cube looks odd)
   Refactoring:
     ☐ Change loadCamera() and loadVuewProjMatrix() headers to be consistend with the "Load" API
+    ☐ Optimize "Mega Chunks" and chunk rendering

@@ -36,7 +36,22 @@ class Chunk
 
     public:
         Chunk();
+        Chunk(vec3 offset);
         ~Chunk();
         void render_chunk();
+};
+
+class Mega_Chunk
+{
+    private:
+        int load_distance = 4;
+        Chunk ****loaded_chunks;
+
+    public:
+        Mega_Chunk();
+
+        //TODO: these are just for testing delete all of them once testing is over
+        void chunk_block();
+        void render_mega_chunk();
 };
 //########################################################################################

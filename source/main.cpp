@@ -78,7 +78,9 @@ void render_loop(GLFWwindow* window)
 	glPointSize(10.f);
 
 	//Cube test = Cube(); 
-	Chunk test = Chunk();
+	//Chunk test = Chunk();
+	Mega_Chunk mega_test = Mega_Chunk();
+	mega_test.chunk_block();
 	/*load_obj("Assets/Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
 		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);*/
 
@@ -92,8 +94,8 @@ void render_loop(GLFWwindow* window)
 		glClearColor(0, 0.7f, 1.f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		test.render_chunk();
-
+		//test.render_chunk();
+		mega_test.render_mega_chunk();
 		glfwPollEvents();
 		glfwSwapBuffers(window);
 

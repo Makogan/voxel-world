@@ -15,3 +15,7 @@ Makefile
 *CMake*
 
 !CMakeLists.txt
+
+# Ignore executable
+
+*voxel-world*
