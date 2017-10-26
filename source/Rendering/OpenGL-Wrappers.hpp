@@ -86,6 +86,33 @@ struct Texture
 	int width;         
 	int height;
 };
+
+struct Mesh
+{
+    vector<vec3> *vertices;  //Vertex data
+    vector<vec3> *normals;   //Normal data
+	vector<uint> *indices;   //Element data (sequence in which data will be read)
+    vector<vec2> *uvs;       //Texture data for this geometry 
+                            //(the associated coordinates on the mesh)
+};
+
+class Renderer
+{
+    private:
+        vector<GLuint> shading_programs;
+        vector<Shader> vertex_shaders;
+        vector<Shader> fragment_shaders;
+        vector<Shader> tessellation_shaders;
+
+    public:
+        Renderer();
+        ~Renderer();
+
+        void add_shader(string source, GLuint type);
+        void make_program(vector<uint> *shaders);
+
+
+};
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
