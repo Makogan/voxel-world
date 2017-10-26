@@ -102,17 +102,23 @@ class Renderer
         vector<GLuint> shading_programs;
         vector<Shader> vertex_shaders;
         vector<Shader> fragment_shaders;
-        vector<Shader> tessellation_shaders;
-
+        vector<Shader> tesselation_shaders;
+        Camera *cam;
+        GLuint current_program;
+    
     public:
         Renderer();
         ~Renderer();
 
-        void add_shader(string source, GLuint type);
+        void add_Shader(string Shader, GLuint type);
         void make_program(vector<uint> *shaders);
-
+        void set_Camera();
+        void multi_render(Mesh *mesh, vector<Texture> *textures);
+        void change_active_program(GLuint newProgram);
 
 };
+
+extern Renderer Rendering_Handler;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

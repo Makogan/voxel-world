@@ -44,7 +44,7 @@ class Chunk
 class Mega_Chunk
 {
     private:
-        int load_distance = 4;
+        int load_distance = 1;
         Chunk ****loaded_chunks;
 
     public:
