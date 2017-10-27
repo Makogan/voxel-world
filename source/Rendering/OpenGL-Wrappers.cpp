@@ -390,12 +390,6 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 	for(uint i=0; i<buffer_types->size(); i++)
 	{
 		glBindBuffer((*buffer_types)[i], (*VBOs)[i]);
-
-		/*if((*buffer_types)[i]==GL_SHADER_STORAGE_BUFFER)
-		{
-			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, SSBOs_seen, (*VBOs)[i]);
-			SSBOs_seen++;
-		}*/
 	}
 
 	glDrawElementsInstanced(GL_TRIANGLES, index_num, GL_UNSIGNED_INT, (void*)0, instances);

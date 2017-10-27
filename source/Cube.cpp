@@ -29,7 +29,7 @@
 //========================================================================================
 //TODO:Document this
 string Cube::Default_Mesh = "Assets/Objs/cube.obj";
-string Cube::Default_Texture = "Assets/Textures/Cube-map.png";
+string Cube::Default_Texture = "Assets/Textures/Face_Orientation.png";
 
 Texture* Cube::texture = NULL;
 Geometry* Cube::mesh = NULL;

@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 vector<vec3> face = {vec3(-0.5,0.5,-0.5), vec3(-0.5,0.5,0.5), vec3(0.5,0.5,0.5), vec3(0.5,0.5,-0.5)};
 vector<vec3> normals = {vec3(0,1,0),vec3(0,1,0),vec3(0,1,0),vec3(0,1,0)};
 vector<uint> indices = {0,1,2,2,3,0};
-vector<vec2> uvs = {vec2(0), vec2(0,1), vec2(1/6.f,1), vec2(1/6.f,0)};
+vector<vec2> uvs = {vec2(0,1), vec2(0,0), vec2(1/6.f,0), vec2(1/6.f,1)};
 
 //main render loop
 void render_loop(GLFWwindow* window)
@@ -135,36 +135,16 @@ void render_loop(GLFWwindow* window)
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(uint),
 		indices.data(), GL_DYNAMIC_DRAW);
 		
-	texture = new Texture();
-    createTexture(*texture, (Default_Texture.c_str()), GL_TEXTURE_2D);
+	Texture *texture = new Texture();
+	createTexture(*texture, "Assets/Textures/Face_Orientation.png", GL_TEXTURE_2D);
+	
+	loadTexture(Rendering_Handler->current_program, *(texture));
 
     while (!glfwWindowShouldClose(window))
 	{
 		Rendering_Handler->update(window);
-
-		glBindVertexArray(testVAO);
-		glUseProgram(Rendering_Handler->current_program);
-
-		glEnableVertexAttribArray(0);
-		glEnableVertexAttribArray(1);
-		glEnableVertexAttribArray(2);
-		glEnableVertexAttribArray(3);
-		glEnableVertexAttribArray(4);
-
-		glBindBuffer(GL_ARRAY_BUFFER, testVBOs[0]);
-		glBindBuffer(GL_ARRAY_BUFFER, testVBOs[1]);	
-		glBindBuffer(GL_ARRAY_BUFFER, testVBOs[2]);	
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, testVBOs[3]);
-		//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, testVBOs[3]);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, testVBOs[4]);
-		//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, testVBOs[4]);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testVBOs[5]);
 		
-		glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0, face_types.size());
-		
-		//glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
-		
-		//Rendering_Handler->multi_render(testVAO, &testVBOs, &types, 5, indices.size(), 1);
+		Rendering_Handler->multi_render(testVAO, &testVBOs, &types, 5, indices.size(), face_types.size());
 		//test.render_cube();
 		openGLerror();
 	}
