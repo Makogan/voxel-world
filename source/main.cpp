@@ -97,10 +97,11 @@ void render_loop(GLFWwindow* window)
 		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);*/
 
 	GLuint testVAO;
-	vector<GLuint> testVBOs(4);
-	vector<GLuint> types = {GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ELEMENT_ARRAY_BUFFER};
+	vector<GLuint> testVBOs(6);
+	vector<GLuint> types = {GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
+		GL_SHADER_STORAGE_BUFFER, GL_SHADER_STORAGE_BUFFER,  GL_ELEMENT_ARRAY_BUFFER};
 	glGenVertexArrays(1, &testVAO);
-	glGenBuffers(4,testVBOs.data());
+	glGenBuffers(6,testVBOs.data());
 
 	glBindVertexArray(testVAO);
 
@@ -120,38 +121,50 @@ void render_loop(GLFWwindow* window)
        	uvs.data(), GL_DYNAMIC_DRAW);
 
     //TODO: figure out if other buffers are faster
-    /*vector<int> face_types = {Top, Bottom, Left, Right, Back, Front};
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, experiment);
+    vector<int> face_types = {Top, Bottom, Left, Right, Back, Front};
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, testVBOs[3]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, face_types.size()*sizeof(Face), face_types.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, experiment);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, testVBOs[3]);
 
     vector<vec3> move = {vec3(0), vec3(1), vec3(0,0,1), vec3(1,0,0), vec3(0,1,0), vec3(4)};
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, experiment2);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, testVBOs[4]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, move.size()*sizeof(vec3), move.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, experiment2);
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0); // unbind*/
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, testVBOs[4]);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testVBOs[3]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testVBOs[5]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(uint),
-        indices.data(), GL_DYNAMIC_DRAW);
+		indices.data(), GL_DYNAMIC_DRAW);
+		
+	texture = new Texture();
+    createTexture(*texture, (Default_Texture.c_str()), GL_TEXTURE_2D);
 
     while (!glfwWindowShouldClose(window))
 	{
 		Rendering_Handler->update(window);
-		/*glBindVertexArray(testVAO);
+
+		glBindVertexArray(testVAO);
 		glUseProgram(Rendering_Handler->current_program);
 
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glEnableVertexAttribArray(3);
+		glEnableVertexAttribArray(4);
 
 		glBindBuffer(GL_ARRAY_BUFFER, testVBOs[0]);
 		glBindBuffer(GL_ARRAY_BUFFER, testVBOs[1]);	
 		glBindBuffer(GL_ARRAY_BUFFER, testVBOs[2]);	
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testVBOs[3]);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, testVBOs[3]);
+		//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, testVBOs[3]);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, testVBOs[4]);
+		//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, testVBOs[4]);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testVBOs[5]);
 		
-		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);*/
-		Rendering_Handler->multi_render(testVAO, &testVBOs, &types, 2, indices.size(), 1);
+		glDrawElementsInstanced(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0, face_types.size());
+		
+		//glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, (void*)0);
+		
+		//Rendering_Handler->multi_render(testVAO, &testVBOs, &types, 5, indices.size(), 1);
 		//test.render_cube();
 		openGLerror();
 	}
