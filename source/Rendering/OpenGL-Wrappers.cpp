@@ -64,7 +64,7 @@ void createShader(Shader &s, string file, GLenum type)
 	s.fileName = file;
 	compileShader(s.shaderID, file, type);
 	s.type = GL_VERTEX_SHADER;
-	s.program = 0;
+	//s.program = 0;
 }
 
 /*
@@ -77,7 +77,7 @@ void deleteShader(Shader &s)
 {
 	glUseProgram(0);
 	glDeleteShader(s.shaderID);
-	s.program = 0;
+	//s.program = 0;
 }
 
 /*
@@ -290,7 +290,7 @@ void deleteGeometry(Geometry &g)
 //========================================================================================
 
 /*
-*	Initialize the fields of a textureobject using arrays
+*	Initialize the fields of a texture object using arrays
 *
 *	Params:
 *		texture: a pointer to a texture struct into which the info will be loaded
@@ -344,5 +344,163 @@ void DestroyTexture(Texture &texture)
 	glBindTexture(texture.target, 0);
 	glDeleteTextures(1, &texture.textureID);
 }
+
+//########################################################################################
+
+//========================================================================================
+/*
+*	Renderer Class implementation:
+*/
+//========================================================================================
+
+Renderer::Renderer()
+{
+	vertex_shaders.push_back(Shader());
+	createShader(vertex_shaders[0],"./Shaders/CubeFaceVertexShader.glsl", GL_VERTEX_SHADER);
+
+	fragment_shaders.push_back(Shader());
+	createShader(fragment_shaders[0], "./Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
+
+	shading_programs.push_back(glCreateProgram());
+
+	glAttachShader(shading_programs[0], vertex_shaders[0].shaderID);
+	glAttachShader(shading_programs[0], fragment_shaders[0].shaderID);
+
+	glLinkProgram(shading_programs[0]);
+	current_program = shading_programs[0];
+	glUseProgram(0);
+}
+
+void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs, 
+	vector<GLuint> *buffer_types, GLuint layout_num, 
+	GLuint index_num, GLuint instances)
+{
+	if(VBOs->size() != buffer_types->size())
+	{
+		cerr << "Mismatching VBO's and buffer types" << endl;
+		return;
+	}
+
+	glBindVertexArray(VAO);
+	glUseProgram(current_program);
+
+	for(int i=0; i<layout_num;i++)
+		glEnableVertexAttribArray(i);
+
+	for(uint i=0; i<buffer_types->size(); i++)
+	{
+		glBindBuffer((*buffer_types)[i], (*VBOs)[i]);
+
+		/*if((*buffer_types)[i]==GL_SHADER_STORAGE_BUFFER)
+		{
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, SSBOs_seen, (*VBOs)[i]);
+			SSBOs_seen++;
+		}*/
+	}
+
+	glDrawElementsInstanced(GL_TRIANGLES, index_num, GL_UNSIGNED_INT, (void*)0, instances);
+	
+}
+
+void Renderer::update(GLFWwindow* window)
+{
+	glfwPollEvents();
+	glfwSwapBuffers(window);
+
+	glClearColor(0, 0.7f, 1.f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	glUseProgram(current_program);
+	GLint loc = glGetUniformLocation(current_program, "view");
+	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
+	{
+		cerr << "Error returned when trying to find view matrix."
+			<< "\nuniform: view"
+			<< "Error num: " << loc
+			<< endl;
+		return;
+	}
+	//Pass the calculated view matrix onto the shader
+	glUniformMatrix4fv(loc, 1, GL_FALSE, value_ptr(cam->getViewMatrix()));
+
+	loc = glGetUniformLocation(current_program, "proj");
+	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
+	{
+
+		cerr << "Error returned when trying to find projection matrix."
+			<< "\nuniform: proj"
+			<< "Error num: " << loc
+			<< endl;
+		return;
+	}
+	//Pass the calculated projection/perspective matrix onto the shader
+	glUniformMatrix4fv(loc, 1, GL_FALSE, value_ptr(cam->getPerspectiveMatrix()));
+	glUseProgram(0);
+}
+
+void Renderer::set_camera(Camera *new_cam)
+{
+	if(new_cam==NULL)
+	{
+		cerr << "NULL camera given to renderer" << endl;
+		return;
+	}
+
+	cam=new_cam;
+}
+
+void Renderer::add_Shader(string shader, GLuint type)
+{
+	switch(type)
+	{
+		case (GL_VERTEX_SHADER):
+			vertex_shaders.push_back(Shader());
+			break;
+		
+		case (GL_FRAGMENT_SHADER):
+			vertex_shaders.push_back(Shader());
+			break;
+		
+		case (GL_TESS_EVALUATION_SHADER):
+			vertex_shaders.push_back(Shader());
+			break;
+
+		default:
+			cerr << "No shader type found" << endl;
+			break;
+	}
+}
+
+//TODO: check only base file name somehow
+Shader* Renderer::find_shader(string shader_name)
+{
+	for(uint i=0; i<vertex_shaders.size(); i++)
+		if(shader_name==vertex_shaders[i].fileName)
+			return &vertex_shaders[i];
+	
+	for(uint i=0; i<fragment_shaders.size(); i++)
+		if(shader_name==fragment_shaders[i].fileName)
+			return &fragment_shaders[i];
+
+	for(uint i=0; i<tessellation_shaders.size(); i++)
+		if(shader_name==tessellation_shaders[i].fileName)
+			return &tessellation_shaders[i];
+	
+	return NULL;
+}
+
+Renderer::~Renderer()
+{
+	for(Shader s: vertex_shaders)
+		deleteShader(s);
+	for(Shader s: fragment_shaders)
+		deleteShader(s);
+	for(Shader s: tessellation_shaders)
+		deleteShader(s);
+	for(GLuint p: shading_programs)
+		glDeleteProgram(p);
+}
+
+Renderer *Rendering_Handler;
 
 //########################################################################################

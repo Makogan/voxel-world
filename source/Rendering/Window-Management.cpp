@@ -26,8 +26,6 @@
 */
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Camera cam;//Global camera, main camera used for rendering and perspective projection
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -56,36 +54,6 @@ GLFWwindow* create_context()
     glewInit(); glGetError();
     // An error will always be thrown when initializing glew.
     // It can be safely discarded so we call glGetError() to delete it and move on.
-	
-	//add 2 new shaders to the global list of shaders
-	shaders.push_back(Shader());
-	shaders.push_back(Shader());
-
-	//Crete a vertex and a fragment shader. bare minimum for rendering
-	createShader(shaders[0], "./Shaders/VertexShader.glsl", GL_VERTEX_SHADER);
-	createShader(shaders[1], "./Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
-
-	//Add a new program to the global shading programs list
-	programs.push_back(glCreateProgram());
-	//Attach both shaders to the program
-	glAttachShader(programs[0], shaders[0].shaderID);
-	glAttachShader(programs[0], shaders[1].shaderID);
-	//Link the program to the current context
-	glLinkProgram(programs[0]);
-	//Set the program as the current activated shading program
-	glUseProgram(programs[0]);
-	//Update both shader structures to keep track of the program they have been attached to
-	shaders[0].program=programs[0];
-	shaders[1].program=programs[0];
-	
-	//TODO: this should not be here, delete once it's not needed
-	createGeometry(shapes[0]);//Create a geometry object 
-	createTexture(textures[0], "Assets/Textures/Cube-map.png", GL_TEXTURE_2D);
-	
-	//Create a new camera object with defined orientation, position, and dimensions
-    int width, height;
-    glfwGetWindowSize(window, &width, &height);
-    cam = Camera(mat3(-1), vec3(0,20,0), width, height);
 
 	return window;
 }
@@ -280,45 +248,45 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     	cout << glfwGetVersionString() << endl;
 
     else if(key == GLFW_KEY_W)
-    	cam.move(normalize(cam.getForward()));
+    	Rendering_Handler->cam->move(normalize(Rendering_Handler->cam->getForward()));
 
     else if(key == GLFW_KEY_S)
-    	cam.move(-normalize(cam.getForward()));
+    	Rendering_Handler->cam->move(-normalize(Rendering_Handler->cam->getForward()));
 
     else if(key == GLFW_KEY_A)
-    	cam.move(normalize(cam.getSide()));
+    	Rendering_Handler->cam->move(normalize(Rendering_Handler->cam->getSide()));
 
     else if(key == GLFW_KEY_D)
-		cam.move(-normalize(cam.getSide()));
+		Rendering_Handler->cam->move(-normalize(Rendering_Handler->cam->getSide()));
 
     else if(key == GLFW_KEY_Q)
-		cam.move(normalize(cam.getUp()));
+		Rendering_Handler->cam->move(normalize(Rendering_Handler->cam->getUp()));
 
     else if(key == GLFW_KEY_E)
-		cam.move(-normalize(cam.getUp()));
+		Rendering_Handler->cam->move(-normalize(Rendering_Handler->cam->getUp()));
 
     else if(key == GLFW_KEY_KP_6)
-    	cam.turnH(radians(-1.f));
+    	Rendering_Handler->cam->turnH(radians(-1.f));
 
     else if(key == GLFW_KEY_KP_4)
-    	cam.turnH(radians(1.f));
+    	Rendering_Handler->cam->turnH(radians(1.f));
 
     else if(key == GLFW_KEY_KP_8)
-    	cam.turnV(radians(-1.f));
+    	Rendering_Handler->cam->turnV(radians(-1.f));
 
     else if(key == GLFW_KEY_KP_2)
-    	cam.turnV(radians(1.f));
+    	Rendering_Handler->cam->turnV(radians(1.f));
 
     else if(key == GLFW_KEY_KP_ADD)
-    	cam.incline(radians(1.f));
+    	Rendering_Handler->cam->incline(radians(1.f));
 
     else if(key == GLFW_KEY_KP_SUBTRACT)
-    	cam.incline(radians(-1.f));
+    	Rendering_Handler->cam->incline(radians(-1.f));
 
     else if(key == GLFW_KEY_KP_MULTIPLY)
-    	cam.resetView();
+    	Rendering_Handler->cam->resetView();
 
     else if(key == GLFW_KEY_KP_DIVIDE)
-    	cam.resetCamera();
+    	Rendering_Handler->cam->resetCamera();
 }
 //########################################################################################

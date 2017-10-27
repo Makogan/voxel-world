@@ -42,6 +42,8 @@
 
 using namespace std;
 using namespace glm;
+
+enum Data_Type {Undefined=0, Uint, Int,  Float};
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -57,7 +59,7 @@ struct Shader
 	string fileName;    //name of file
 	GLuint shaderID;    //generated OpenGL shader ID
 	GLuint type;        //shader type
-	GLuint program;     //Associated OpenGL shading program
+	//GLuint program;     //Associated OpenGL shading program
 };
 
 struct Geometry
@@ -75,6 +77,17 @@ struct Geometry
 	vector<uint> indices;   //Element data (sequence in which data will be read)
     vector<vec2> uvs;       //Texture data for this geometry 
                             //(the associated coordinates on the mesh)
+};
+
+struct GPU_Geometry
+{
+    GLuint vertexArray;     //Vertex array associated with this information
+    
+    GLuint vertexBuffer;    //Vertex data ID of the VAO
+    GLuint normalsBuffer;   //Normal data (vec3)
+    GLuint uvBuffer;        
+    GLuint elmentBuffer;    //Element data ID of the VAO this specifies the 
+                            //sequence in wich the vertices and normals will be read 
 };
 
 struct Texture
@@ -102,23 +115,30 @@ class Renderer
         vector<GLuint> shading_programs;
         vector<Shader> vertex_shaders;
         vector<Shader> fragment_shaders;
-        vector<Shader> tesselation_shaders;
-        Camera *cam;
-        GLuint current_program;
+        vector<Shader> tessellation_shaders;
     
     public:
+        Camera *cam;
+        GLuint current_program;
         Renderer();
         ~Renderer();
 
-        void add_Shader(string Shader, GLuint type);
+        void temporary();
+
+        void update(GLFWwindow* window);
+        void add_Shader(string shader, GLuint type);
+        Shader* find_shader(string shader_name);
         void make_program(vector<uint> *shaders);
-        void set_Camera();
-        void multi_render(Mesh *mesh, vector<Texture> *textures);
+        void set_camera(Camera *new_cam);
+        void addVBO(); //TODO: figure this one out
+        void multi_render(GLuint VAO, vector<GLuint> *VBOs, 
+            vector<GLuint> *buffer_types, GLuint layout_num, 
+            GLuint index_num, GLuint instances);
         void change_active_program(GLuint newProgram);
 
 };
 
-extern Renderer Rendering_Handler;
+extern Renderer *Rendering_Handler;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

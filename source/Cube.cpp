@@ -93,10 +93,10 @@ Cube::~Cube()
 //Warning this is innefficient, all cubes should be rendered in 1 call
 void Cube::render_cube()
 {
-    loadModelMatrix(programs[0], glm::translate(mat4(1), position));
+    /*loadModelMatrix(programs[0], glm::translate(mat4(1), position));
     loadGeometryArrays(programs[0], *mesh);
     loadTexture(programs[0], *texture);
 
-    render(programs[0], *mesh, GL_TRIANGLES);
+    render(programs[0], *mesh, GL_TRIANGLES);*/
 }
 //########################################################################################
