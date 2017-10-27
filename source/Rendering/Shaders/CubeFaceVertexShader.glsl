@@ -80,7 +80,7 @@ void main()
             break;
     }
 
-    gl_Position = proj*view*model*rotation*vec4(position, 1.0);
+    gl_Position = proj*view*model*rotation*vec4(position+translation[gl_InstanceID], 1.0);
     normal = vec3(model*vec4(norm,1.0));
     vertexPos = vec3(model*vec4(position, 1.0)); //calculate the transformed pos
     texture_coord = texture_coordinate + vec2(face_types[gl_InstanceID]*(1/6.f),0);
