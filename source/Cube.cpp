@@ -20,6 +20,7 @@
 #include "Rendering.hpp"
 #include "cout-definitions.hpp"
 
+#define MESH Cube::meshes[cube_type]
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -28,11 +29,10 @@
 */
 //========================================================================================
 //TODO:Document this
-string Cube::Default_Mesh = "Assets/Objs/cube.obj";
 string Cube::Default_Texture = "Assets/Textures/Face_Orientation.png";
 
-Texture* Cube::texture = NULL;
-Geometry* Cube::mesh = NULL;
+vector<Mesh*> Cube::meshes = vector<Mesh*>(10);
+vector<Texture*> Cube::textures = vector<Texture*>(10);
 //########################################################################################
 
 //========================================================================================
@@ -42,61 +42,40 @@ Geometry* Cube::mesh = NULL;
 //========================================================================================
 //TODO: comment this section
 
-void Cube::make_template(string wavefront_file, string t)
-{
-    texture = new Texture();
-    mesh = new Geometry();
-
-    createTexture(*texture, (t.c_str()), GL_TEXTURE_2D);
-    createGeometry(*mesh);
- 
-    load_obj(wavefront_file, (vector<float>*) &mesh->vertices, 
-      (vector<float>*) &mesh->normals, (vector<float>*) &mesh->uvs);
-}
-
 void Cube::cleanup()
 {
-    delete(texture);
-    delete(mesh);
+    for(Texture * t: Cube::textures)
+        delete(t);
+    for(Mesh * m: Cube::meshes)
+        delete(m);
 }
 
-Cube::Cube(vec3 p)
+Cube::Cube(vec3 p, uint type)
 {
-    if(texture == NULL)
+    if(textures[cube_type] == NULL)
     {
-        texture = new Texture();
-        createTexture(*texture, (Default_Texture.c_str()), GL_TEXTURE_2D);
+        textures[cube_type] = new Texture();
+        createTexture(*(textures[cube_type]), (Default_Texture.c_str()), GL_TEXTURE_2D);
     }
-    if(mesh == NULL)
+    if(meshes[cube_type] == NULL)
     {
-        mesh = new Geometry();
-        createGeometry(*mesh);
-    
-        load_obj(Default_Mesh, (vector<float>*) &mesh->vertices, 
-            (vector<float>*) &mesh->normals, (vector<float>*) &mesh->uvs);
+        meshes[cube_type] = new Mesh();
+
+        MESH->vertices = new vector<vec3>({vec3(-0.5,0.5,-0.5), vec3(-0.5,0.5,0.5), vec3(0.5,0.5,0.5), vec3(0.5,0.5,-0.5)});
+        MESH->normals = new vector<vec3>({vec3(0,1,0),vec3(0,1,0),vec3(0,1,0),vec3(0,1,0)});
+        MESH->uvs = new vector<vec2>({vec2(0,1), vec2(0,0), vec2(1/6.f,0), vec2(1/6.f,1)});
+        MESH->indices = new vector<uint>({0,1,2,2,3,0});
     }
 
     position = p;
 }
 
-Cube::Cube() : Cube(vec3(0))
-{
-    
-}
+Cube::Cube(vec3 p) : Cube(p,0){}
+
+Cube::Cube() : Cube(vec3(0)){}
 
 Cube::~Cube()
 {
 
-}
-
-//TODO: correct this
-//Warning this is innefficient, all cubes should be rendered in 1 call
-void Cube::render_cube()
-{
-    /*loadModelMatrix(programs[0], glm::translate(mat4(1), position));
-    loadGeometryArrays(programs[0], *mesh);
-    loadTexture(programs[0], *texture);
-
-    render(programs[0], *mesh, GL_TRIANGLES);*/
 }
 //########################################################################################

@@ -18,7 +18,7 @@
 #include "Rendering.hpp"
 
 #include "Cube.hpp" //TODO: this needs a major refactoring
-#include "Chunk.hpp" //TODO: this needs a major refactoring
+#include "World.hpp" //TODO: this needs a major refactoring
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================

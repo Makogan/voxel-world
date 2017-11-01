@@ -36,13 +36,6 @@
 */
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-vector<GLuint> programs;//Global shading programs list
-vector<Shader> shaders;//Global Shaders list 
-//TODO: Maybe delete Geometry list and change it for a different data structure or 
-//		Avoid it alltogether
-vector<Geometry> shapes(2);//Global Shapes list Temporary!
-vector<Texture> textures(2); //Temporary
-
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -377,7 +370,7 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 {
 	if(VBOs->size() != buffer_types->size())
 	{
-		cerr << "Mismatching VBO's and buffer types" << endl;
+		cerr << "Mismatching VBO's and buffer_types sizes" << endl;
 		return;
 	}
 

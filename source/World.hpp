@@ -19,7 +19,7 @@
 
 #include "Cube.hpp"
 
-#define CUBE_SIDE 16
+#define CHUNK_DIMENSIONS 16
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -32,7 +32,8 @@
 class Chunk
 {
     private:
-        Cube *chunk_cubes[CUBE_SIDE*CUBE_SIDE*CUBE_SIDE];
+        Cube *chunk_cubes[CHUNK_DIMENSIONS*CHUNK_DIMENSIONS*CHUNK_DIMENSIONS];
+        void update_render_info();
 
     public:
         Chunk();
@@ -41,17 +42,18 @@ class Chunk
         void render_chunk();
 };
 
-class Mega_Chunk
+class World
 {
     private:
         int load_distance = 1;
         Chunk ****loaded_chunks;
 
     public:
-        Mega_Chunk();
+        World();
 
-        //TODO: these are just for testing delete all of them once testing is over
-        void chunk_block();
-        void render_mega_chunk();
+        //temp
+        void render_world();
+
+        
 };
 //########################################################################################

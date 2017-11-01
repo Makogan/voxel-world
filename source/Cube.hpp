@@ -32,25 +32,26 @@ enum Face {Front=0, Left, Right, Back, Top, Bottom};
 //========================================================================================
 //TODO: document this section
 
+
+
 class Cube
 {
     private:
-        static Geometry *mesh;
-        static Texture *texture;
-
-        static string Default_Mesh;
         static string Default_Texture;
 
     public:
-        static void make_template(string wavefront_file, string t);
+        static vector<Mesh*> meshes;
+        static vector<Texture*> textures;
+        
         static void cleanup();
 
         vec3 position;
-    
+        uint cube_type = 0;
+        
+        
+        Cube(vec3 p, uint type);
         Cube(vec3 p);
         Cube();
         ~Cube();
-
-        void render_cube();
 };
 //########################################################################################

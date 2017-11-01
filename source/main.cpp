@@ -24,7 +24,7 @@
 #include "Window-Management.hpp"
 #include "Rendering.hpp"
 #include "Cube.hpp"
-#include "Chunk.hpp"
+#include "World.hpp"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -76,10 +76,6 @@ int main(int argc, char **argv)
 * The following functions are not final at all, if modifications can be done, do them
 */
 
-vector<vec3> face = {vec3(-0.5,0.5,-0.5), vec3(-0.5,0.5,0.5), vec3(0.5,0.5,0.5), vec3(0.5,0.5,-0.5)};
-vector<vec3> normals = {vec3(0,1,0),vec3(0,1,0),vec3(0,1,0),vec3(0,1,0)};
-vector<uint> indices = {0,1,2,2,3,0};
-vector<vec2> uvs = {vec2(0,1), vec2(0,0), vec2(1/6.f,0), vec2(1/6.f,1)};
 
 //main render loop
 void render_loop(GLFWwindow* window)
@@ -89,63 +85,23 @@ void render_loop(GLFWwindow* window)
     glDepthFunc(GL_LEQUAL);
 	glPointSize(10.f);
 
-	Cube test = Cube(); 
+	//Cube test = Cube(); 
 	//Chunk test = Chunk();
 	//Mega_Chunk mega_test = Mega_Chunk();
 	//mega_test.chunk_block();
 	/*load_obj("Assets/Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
 		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);*/
 
-	GLuint testVAO;
-	vector<GLuint> testVBOs(6);
-	vector<GLuint> types = {GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
-		GL_SHADER_STORAGE_BUFFER, GL_SHADER_STORAGE_BUFFER,  GL_ELEMENT_ARRAY_BUFFER};
-	glGenVertexArrays(1, &testVAO);
-	glGenBuffers(6,testVBOs.data());
-
-	glBindVertexArray(testVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, testVBOs[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, face.size()*sizeof(vec3), 
-        face.data(), GL_DYNAMIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, testVBOs[1]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, normals.size()*sizeof(vec3),
-       normals.data(), GL_DYNAMIC_DRAW);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, testVBOs[2]);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, uvs.size()*sizeof(vec2),
-       	uvs.data(), GL_DYNAMIC_DRAW);
-
-    //TODO: figure out if other buffers are faster
-    vector<int> face_types = {Top, Bottom, Left, Right, Back, Front};
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, testVBOs[3]);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, face_types.size()*sizeof(Face), face_types.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, testVBOs[3]);
-
-    vector<vec3> move = {vec3(0), vec3(1), vec3(0,0,1), vec3(1,0,0), vec3(0,1,0), vec3(4)};
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, testVBOs[4]);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, move.size()*sizeof(vec3), move.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, testVBOs[4]);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, testVBOs[5]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size()*sizeof(uint),
-		indices.data(), GL_DYNAMIC_DRAW);
-		
-	Texture *texture = new Texture();
-	createTexture(*texture, "Assets/Textures/Face_Orientation.png", GL_TEXTURE_2D);
-	
-	loadTexture(Rendering_Handler->current_program, *(texture));
+	Chunk c = Chunk();
 
     while (!glfwWindowShouldClose(window))
 	{
 		Rendering_Handler->update(window);
 		
-		Rendering_Handler->multi_render(testVAO, &testVBOs, &types, 5, indices.size(), face_types.size());
+		//Rendering_Handler->multi_render(testVAO, &testVBOs, &types, 5, indices.size(), face_types.size());
 		//test.render_cube();
+		c.render_chunk();
+
 		openGLerror();
 	}
 }
@@ -153,13 +109,7 @@ void render_loop(GLFWwindow* window)
 //cleanup
 void end_rendering(GLFWwindow* window)
 {
-    	//Cleanup
-	for(Shader s: shaders)
-        deleteShader(s);
-    for(GLuint p: programs)
-        glDeleteProgram(p);
-    for(Geometry g: shapes)
-		deleteGeometry(g);
+
 
 	//Cube::cleanup();
 
