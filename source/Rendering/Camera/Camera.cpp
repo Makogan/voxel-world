@@ -152,7 +152,7 @@ void Camera::turnH(float angle)
 
 	forward = vec3(newForward);
 	forward = normalize(forward);
-	side = cross(up,forward);
+	side = cross(forward,up);
 }
 
 void Camera::turnV(float angle)

@@ -18,20 +18,14 @@ layout(location = 1) in vec3 norm; //a 3D vertex representing the normal to teh 
 layout(location = 2) in vec2 texture_coordinate;
 
 layout(std430, binding = 3) buffer face_buffer
- {
-     int face_types[];
- };
-
-layout(std430, binding = 4) buffer translation_buffer
 {
-    vec3 translation[];
+    vec4 face_info[];
 };
 
 out vec3 normal; 
 out vec3 vertexPos; //projected vertex
 out vec2 texture_coord;
 
-uniform mat4 model = mat4(1); //Position and orientation of the current object
 uniform mat4 view = mat4(1); //Camera orientation and position
 uniform mat4 proj = mat4(1); //the projection parameters (FOV, viewport dimensions)
 //uniform int face_types[2048];
@@ -52,9 +46,8 @@ mat4 rotationMatrix(vec3 axis, float angle)
 
 void main()
 {
-    //int face_type = face_types[gl_InstanceID];
     mat4 rotation = mat4(1);
-    switch(face_types[gl_InstanceID])
+    switch(int(face_info[gl_InstanceID][3]))
     {
         case 0:
             rotation = mat4(1);
@@ -80,8 +73,8 @@ void main()
             break;
     }
 
-    gl_Position = proj*view*model*rotation*vec4(position+translation[gl_InstanceID], 1.0);
-    normal = vec3(model*vec4(norm,1.0));
-    vertexPos = vec3(model*vec4(position, 1.0)); //calculate the transformed pos
-    texture_coord = texture_coordinate + vec2(face_types[gl_InstanceID]*(1/6.f),0);
+    texture_coord = texture_coordinate + vec2((face_info[gl_InstanceID][3])*(1/6.f),0);
+    gl_Position = proj*view*(rotation*vec4(position, 1.0) + vec4(vec3(face_info[gl_InstanceID]),0));
+    //normal = vec3(model*vec4(norm,1.0));
+    //vertexPos = vec3(vec4(position+translation[gl_InstanceID], 1.0)); //calculate the transformed pos
 }

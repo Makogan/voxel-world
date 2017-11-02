@@ -310,8 +310,8 @@ bool createTexture(Texture &texture, const char* filename, GLuint target)
 		// GL_TEXTURE_WRAP are GL_CLAMP_TO_EDGE or GL_CLAMP_TO_BORDER
 		glTexParameteri(texture.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(texture.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(texture.target, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(texture.target, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(texture.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(texture.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		// Clean up
 		glBindTexture(texture.target, 0);
@@ -383,6 +383,11 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 	for(uint i=0; i<buffer_types->size(); i++)
 	{
 		glBindBuffer((*buffer_types)[i], (*VBOs)[i]);
+
+		if((*buffer_types)[i]==GL_SHADER_STORAGE_BUFFER)
+		{
+			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i, (*VBOs)[i]);
+		}
 	}
 
 	glDrawElementsInstanced(GL_TRIANGLES, index_num, GL_UNSIGNED_INT, (void*)0, instances);

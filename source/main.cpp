@@ -55,7 +55,7 @@ int main(int argc, char **argv)
 
 	int width, height;
     glfwGetWindowSize(window, &width, &height);
-	Rendering_Handler->set_camera(new Camera(mat3(-1), vec3(0,20,0), width, height));
+	Rendering_Handler->set_camera(new Camera(mat3(1), vec3(0,-20,0), width, height));
 	
 	//Render loop
 	render_loop(window);
@@ -92,7 +92,10 @@ void render_loop(GLFWwindow* window)
 	/*load_obj("Assets/Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
 		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);*/
 
-	Chunk c = Chunk();
+	/*Chunk c = Chunk(vec3(10));
+	Chunk c2 = Chunk(vec3(-10));*/
+	World c = World();
+	double prevTime = 0, currentTime=0;
 
     while (!glfwWindowShouldClose(window))
 	{
@@ -100,7 +103,11 @@ void render_loop(GLFWwindow* window)
 		
 		//Rendering_Handler->multi_render(testVAO, &testVBOs, &types, 5, indices.size(), face_types.size());
 		//test.render_cube();
-		c.render_chunk();
+		currentTime = glfwGetTime();
+		c.render_world();
+		//c2.render_chunk();
+		//cout << (currentTime-prevTime) << endl;
+		prevTime = currentTime;
 
 		openGLerror();
 	}

@@ -47,6 +47,7 @@ class Cube
 
         vec3 position;
         uint cube_type = 0;
+        bool transparent = false;
         
         
         Cube(vec3 p, uint type);

@@ -254,16 +254,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     	Rendering_Handler->cam->move(-normalize(Rendering_Handler->cam->getForward()));
 
     else if(key == GLFW_KEY_A)
-    	Rendering_Handler->cam->move(normalize(Rendering_Handler->cam->getSide()));
+    	Rendering_Handler->cam->move(-normalize(Rendering_Handler->cam->getSide()));
 
     else if(key == GLFW_KEY_D)
-		Rendering_Handler->cam->move(-normalize(Rendering_Handler->cam->getSide()));
+		Rendering_Handler->cam->move(normalize(Rendering_Handler->cam->getSide()));
 
     else if(key == GLFW_KEY_Q)
 		Rendering_Handler->cam->move(normalize(Rendering_Handler->cam->getUp()));
 
     else if(key == GLFW_KEY_E)
-		Rendering_Handler->cam->move(-normalize(Rendering_Handler->cam->getUp()));
+		Rendering_Handler->cam->move(normalize(-Rendering_Handler->cam->getUp()));
 
     else if(key == GLFW_KEY_KP_6)
     	Rendering_Handler->cam->turnH(radians(-1.f));
