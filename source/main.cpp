@@ -105,6 +105,8 @@ void render_loop(GLFWwindow* window)
 		//test.render_cube();
 		currentTime = glfwGetTime();
 		c.render_world();
+
+		//cout << (*c(0,0,0))(0,0,0) << endl;
 		//c2.render_chunk();
 		//cout << (currentTime-prevTime) << endl;
 		prevTime = currentTime;

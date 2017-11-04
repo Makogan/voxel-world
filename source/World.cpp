@@ -42,31 +42,25 @@ Texture *texture = NULL;
 
 Chunk::Chunk() : Chunk(vec3(0)){}
 
-Chunk::Chunk(vec3 offset)
-{    
+Chunk::Chunk(vec3 offset) : Chunk(offset, NULL){}
+
+Chunk::Chunk(vec3 offset, World* w) : Chunk(offset, w, 0,0,0){}
+
+Chunk::Chunk(vec3 offset, World* w, int x, int j, int k)
+{
+    i_pos=x, j_pos=j, k_pos=k;
+    world = w;
     for(int i=0; i<CHUNK_DIMENSIONS*CHUNK_DIMENSIONS*CHUNK_DIMENSIONS; i++)
     {
         chunk_cubes[i] = 
             new Cube(vec3(i/(CHUNK_DIMENSIONS*CHUNK_DIMENSIONS) + offset[0], 
             (i/CHUNK_DIMENSIONS) % CHUNK_DIMENSIONS + offset[1], 
-            -i%CHUNK_DIMENSIONS - offset[2]));
+            i%CHUNK_DIMENSIONS + offset[2]));
     }
 
     cube_rendering_VBOs = vector<GLuint>(5);
     glGenVertexArrays(1, &world_cubes_VAO);
     glGenBuffers(5,cube_rendering_VBOs.data());
-
-    update_visible_faces();
-    update_render_info();
-
-    if(texture == NULL)
-    {
-        texture = new Texture();
-        createTexture(*texture, "Assets/Textures/Face_Orientation.png", GL_TEXTURE_2D);
-            
-        loadTexture(Rendering_Handler->current_program, *(texture));
-    }
-    
 }
 
 Chunk::~Chunk()
@@ -77,16 +71,53 @@ Chunk::~Chunk()
     }
 }
 
-Cube* Chunk::operator()(uint x, uint y, uint z)
+inline void calculate_coordinates(int x, int &chunk_x, 
+    int &cube_x, bool &out_of_bounds)
 {
-    if(x<0 || x>15)
-        return NULL;
-    if(y<0 || y>15)
-        return NULL;
-    if(z<0 || z>15)
-        return NULL;
-    
-    return chunk_cubes[x*CHUNK_DIMENSIONS*CHUNK_DIMENSIONS+y*CHUNK_DIMENSIONS+z];
+    if(x<0 || x>=CHUNK_DIMENSIONS)
+    {
+        out_of_bounds=true;
+        if(x>=0)
+        {
+            chunk_x+=x/CHUNK_DIMENSIONS;
+            cube_x=x%CHUNK_DIMENSIONS;
+        }
+        else
+        {
+            chunk_x+=-x/CHUNK_DIMENSIONS -1; 
+            cube_x=x%CHUNK_DIMENSIONS + CHUNK_DIMENSIONS;
+        }
+    }
+}
+
+Cube* Chunk::operator()(int x, int y, int z)
+{
+
+    int chunk_x=this->i_pos, chunk_y=this->j_pos,chunk_z=this->k_pos;
+    int cube_x=x,cube_y=y,cube_z=z;
+    bool out_of_bounds=false;
+
+    calculate_coordinates(x, chunk_x, cube_x, out_of_bounds);
+    calculate_coordinates(y, chunk_y, cube_y, out_of_bounds);
+    calculate_coordinates(z, chunk_z, cube_z, out_of_bounds);
+
+    if(out_of_bounds)
+    {
+        cout << cube_x << " " << cube_y <<  " " << cube_z << endl;
+        Chunk* c = (*world)(chunk_x,chunk_y,chunk_z);
+        if(c==NULL)
+            return NULL;
+        return (*c)(cube_x,cube_y,cube_z);
+    }
+    else
+        return chunk_cubes[cube_x*CHUNK_DIMENSIONS*CHUNK_DIMENSIONS
+            +cube_y*CHUNK_DIMENSIONS+cube_z];   
+}
+
+void Chunk::update()
+{
+    update_visible_faces();
+    update_render_info();
 }
 
 void Chunk::render_chunk()
@@ -99,13 +130,14 @@ faces_info.push_back(vec4(c->position,f));
 
 void Chunk::update_visible_faces()
 {
-    for(uint i=0; i<CHUNK_DIMENSIONS; i++)
+    for(int i=0; i<CHUNK_DIMENSIONS; i++)
     {
-        for(uint j=0; j<CHUNK_DIMENSIONS; j++)
+        for(int j=0; j<CHUNK_DIMENSIONS; j++)
         {
-            for(uint k=0; k<CHUNK_DIMENSIONS; k++)
+            for(int k=0; k<CHUNK_DIMENSIONS; k++)
             {
                 Cube* current = (*this)(i,j,k);
+
                 Cube* neighbour = (*this)(i-1,j,k);
                 CHECK_NEIGHBOUR(current, neighbour, Left)
                 neighbour = (*this)(i+1,j,k);
@@ -174,26 +206,63 @@ World::World()
         }
     }
 
-    for(uint i=0; i<load_distance; i++)
+    for(int i=0; i<load_distance; i++)
     {
-        for(uint j=0; j<load_distance; j++)
+        for(int j=0; j<load_distance; j++)
         {
-            for(uint k=0; k<load_distance; k++)
+            for(int k=0; k<load_distance; k++)
             {
-                loaded_chunks[i][j][k] = new Chunk(vec3(i*CHUNK_DIMENSIONS,j*CHUNK_DIMENSIONS,k*CHUNK_DIMENSIONS));
+                loaded_chunks[i][j][k] = 
+                new Chunk
+                (
+                    vec3(i*CHUNK_DIMENSIONS,j*CHUNK_DIMENSIONS,k*CHUNK_DIMENSIONS), 
+                    this,
+                    i,j,k
+                );
                 //c->render_chunk();
             }
         }
     }
+
+    for(int i=0; i<load_distance; i++)
+    {
+        for(int j=0; j<load_distance; j++)
+        {
+            for(int k=0; k<load_distance; k++)
+            {
+               loaded_chunks[i][j][k]->update();
+            }
+        }
+    }
+    //TODO: this shouldn't be here
+    if(texture == NULL)
+    {
+        texture = new Texture();
+        createTexture(*texture, "Assets/Textures/Face_Orientation.png", GL_TEXTURE_2D);
+            
+        loadTexture(Rendering_Handler->current_program, *(texture));
+    }
+}
+
+Chunk* World::operator()(int x, int y, int z)
+{
+    if(x<0 || x>=load_distance)
+        return NULL;
+    if(y<0 || y>=load_distance)
+        return NULL;
+    if(z<0 || z>=load_distance)
+        return NULL;
+
+    return loaded_chunks[x][y][z];
 }
 
 void World::render_world()
 {
-   for(uint i=0; i<load_distance; i++)
+   for(int i=0; i<load_distance; i++)
    {
-       for(uint j=0; j<load_distance; j++)
+       for(int j=0; j<load_distance; j++)
        {
-           for(uint k=0; k<load_distance; k++)
+           for(int k=0; k<load_distance; k++)
            {
                Chunk* c = loaded_chunks[i][j][k];
                c->render_chunk();

@@ -62,10 +62,10 @@ void main()
             rotation = rotationMatrix(vec3(0,0,1), PI);
             break;
         case 4:
-            rotation = rotationMatrix(vec3(1,0,0), PI/2.f);
+            rotation = rotationMatrix(vec3(1,0,0), -PI/2.f);
             break;
         case 5:
-            rotation = rotationMatrix(vec3(1,0,0), -PI/2.f);
+            rotation = rotationMatrix(vec3(1,0,0), PI/2.f);
             break;
         
         default:

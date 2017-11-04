@@ -19,6 +19,8 @@
 
 #include "Cube.hpp"
 
+class World;
+
 #define CHUNK_DIMENSIONS 16
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -32,6 +34,8 @@
 class Chunk
 {
     private:
+        int i_pos,j_pos,k_pos;
+        World* world;
         Cube *chunk_cubes[CHUNK_DIMENSIONS*CHUNK_DIMENSIONS*CHUNK_DIMENSIONS];
         vector<vec4> faces_info;
 
@@ -41,12 +45,15 @@ class Chunk
         void update_render_info();
 
     public:
-        Cube* operator()(uint x, uint y, uint z);
+        Cube* operator()(int x, int y, int z);
 
         Chunk();
         Chunk(vec3 offset);
+        Chunk(vec3, World* w);
+        Chunk(vec3, World* w, int i, int j, int k);
         ~Chunk();
 
+        void update();
         void render_chunk();
 };
 
@@ -59,9 +66,7 @@ class World
     public:
         World();
 
-        //temp
-        void render_world();
-
-        
+        Chunk* operator()(int x, int y, int z);
+        void render_world();        
 };
 //########################################################################################
