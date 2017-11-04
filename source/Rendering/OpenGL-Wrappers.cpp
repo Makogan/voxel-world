@@ -3,7 +3,7 @@
 *	Author:	Camilo Talero
 *
 *
-*	Version: 0.0.1
+*	Version: 0.0.2
 *
 *   Wrapper structures to abstract OpenGL function calls
 */
@@ -145,135 +145,18 @@ string loadSourceFile(string &filepath)
 
 //========================================================================================
 /*
-*	Geometry Functions:
+*	Mesh Structure definition:
 */
 //========================================================================================
 
-//TODO: comment this
-void createGeometry(Geometry &g, vector<vec3> vertices,  vector<vec3> normals, 
-	vector<vec2> uvs, vector<uint> indices)
+Mesh::~Mesh()
 {
-	//set vertex info
-	glEnableVertexAttribArray(0);
-	glGenBuffers(1, &(g.vertexBuffer));
-	glBindBuffer(GL_ARRAY_BUFFER, g.vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(vec3),
-		vertices.data(), GL_DYNAMIC_DRAW);
-
-	//set normals info
-	glEnableVertexAttribArray(1);
-	glGenBuffers(1, &g.normalsBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, g.normalsBuffer);
-	glBufferData(GL_ARRAY_BUFFER, normals.size()*sizeof(vec3),
-		normals.data(), GL_DYNAMIC_DRAW);
-
-	//set texture coordinates info
-	glEnableVertexAttribArray(2);
-	glGenBuffers(1, &g.uvBuffer);
-	glBindBuffer(GL_ARRAY_BUFFER, g.uvBuffer);
-	glBufferData(GL_ARRAY_BUFFER, uvs.size()*sizeof(vec2),
-		uvs.data(), GL_DYNAMIC_DRAW);
-
-	//set element info
-	glGenBuffers(1, &(g.elmentBuffer));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g.elmentBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices.size()*sizeof(uint),
-		indices.data(), GL_DYNAMIC_DRAW);
-
-	//Init VAO
-	glGenVertexArrays(1, &(g.vertexArray));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	g.vertices=vertices;
-	g.normals=normals;
-	g.uvs=uvs;
-	g.indices=indices;
+	delete(vertices);
+	delete(normals);
+	delete(indices);
+	delete(uvs);
 }
 
-/*
-*	Initialize the fields of a geometry object using arrays
-*
-*	Params:
-*		g: the geometry struct into which the info will be loaded
-*		vertices: the vertex info of the geometry
-*		indices: the index information (non-sequencial association of vertices) 
-*/
-void createGeometry(Geometry &g, vector<vec3> vertices, vector<uint> indices)
-{
-	//set vertex info
-	glEnableVertexAttribArray(0);
-	glGenBuffers(1, &(g.vertexBuffer));
-	glBindBuffer(GL_ARRAY_BUFFER, g.vertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size()*sizeof(vec3),
-		vertices.data(), GL_DYNAMIC_DRAW);
-
-	//set element info
-	glGenBuffers(1, &(g.elmentBuffer));
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, g.elmentBuffer);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertices.size()*sizeof(uint),
-		indices.data(), GL_DYNAMIC_DRAW);
-
-	//set normals info
-	glEnableVertexAttribArray(1);
-	glGenBuffers(1, &g.normalsBuffer);
-
-	//set normals info
-	glEnableVertexAttribArray(2);
-	glGenBuffers(1, &g.uvBuffer);
-
-	//Init VAO
-	glGenVertexArrays(1, &(g.vertexArray));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	g.vertices=vertices;
-	g.indices=indices;
-}
-
-/*
-*	Initialize the fields of a default geometry struct
-*
-*	Params:
-*		g: the geometry struct into which the info will be loaded
-*/
-void createGeometry(Geometry &g)
-{
-	//set vertices
-	glEnableVertexAttribArray(0);
-	glGenBuffers(1, &(g.vertexBuffer));
-
-	//set normals
-	glEnableVertexAttribArray(1);
-	glGenBuffers(1, &g.normalsBuffer);
-
-	//set uvs
-	glEnableVertexAttribArray(2);
-	glGenBuffers(1, &g.uvBuffer);
-
-	//set indices
-	glGenBuffers(1, &(g.elmentBuffer));
-
-	//init VAO
-	glGenVertexArrays(1, &(g.vertexArray));
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-}
-
-/*
-* Delete a geometry struct
-*	
-*	Params: 
-*		g: the geometry struct to delete
-*/
-void deleteGeometry(Geometry &g)
-{
-	glBindVertexArray(0);
-	glDeleteVertexArrays(1, &(g.vertexArray));
-
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &(g.vertexBuffer));
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glDeleteBuffers(1, &(g.elmentBuffer));
-}
 //########################################################################################
 
 //========================================================================================
@@ -338,6 +221,23 @@ void DestroyTexture(Texture &texture)
 	glDeleteTextures(1, &texture.textureID);
 }
 
+void loadTexture(GLuint program, Texture &t)
+{
+	glUseProgram(program);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, t.textureID);
+	GLint loc = glGetUniformLocation(program, "text");
+	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
+	{
+		cerr << "Error returned when trying to find texture uniform."
+			<< "\nuniform: text"
+			<< "Error num: " << loc
+			<< endl;
+		return;
+	}
+	
+	glUniform1i(loc,0);
+}
 //########################################################################################
 
 //========================================================================================
@@ -346,14 +246,20 @@ void DestroyTexture(Texture &texture)
 */
 //========================================================================================
 
+/*
+*	Default constructor for the Renderer Class
+*/
 Renderer::Renderer()
 {
+	//Create cube rendering shader
 	vertex_shaders.push_back(Shader());
 	createShader(vertex_shaders[0],"./Shaders/CubeFaceVertexShader.glsl", GL_VERTEX_SHADER);
 
+	//create fragment shader
 	fragment_shaders.push_back(Shader());
 	createShader(fragment_shaders[0], "./Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
 
+	//Initialize and create the first rendering program
 	shading_programs.push_back(glCreateProgram());
 
 	glAttachShader(shading_programs[0], vertex_shaders[0].shaderID);
@@ -364,22 +270,31 @@ Renderer::Renderer()
 	glUseProgram(0);
 }
 
+/*
+*	Function to render multiple instances of the same mesh
+* 	index_num is the number of indices in the mesh (for drawing elements)
+*	layout_num is the number of layouts to enable (always 0 to layou_num-1)
+*/
 void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs, 
 	vector<GLuint> *buffer_types, GLuint layout_num, 
 	GLuint index_num, GLuint instances)
 {
+	//error check
 	if(VBOs->size() != buffer_types->size())
 	{
 		cerr << "Mismatching VBO's and buffer_types sizes" << endl;
 		return;
 	}
 
+	//Bind Vertex array object and rendering rpogram
 	glBindVertexArray(VAO);
 	glUseProgram(current_program);
 
+	//enable shader layouts
 	for(int i=0; i<layout_num;i++)
 		glEnableVertexAttribArray(i);
 
+	//Bind VBO's storing rendering data
 	for(uint i=0; i<buffer_types->size(); i++)
 	{
 		glBindBuffer((*buffer_types)[i], (*VBOs)[i]);
@@ -390,18 +305,25 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 		}
 	}
 
+	//Draw call
 	glDrawElementsInstanced(GL_TRIANGLES, index_num, GL_UNSIGNED_INT, (void*)0, instances);
 	
 }
 
+/* 
+* 	Update general rendering values
+*/
+//TODO: Camera update may need to be changed to all programs
 void Renderer::update(GLFWwindow* window)
 {
+	//GLFW updtae functions
 	glfwPollEvents();
 	glfwSwapBuffers(window);
 
 	glClearColor(0, 0.7f, 1.f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	//Update general uniform values in teh rendering program
 	glUseProgram(current_program);
 	GLint loc = glGetUniformLocation(current_program, "view");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
@@ -430,6 +352,9 @@ void Renderer::update(GLFWwindow* window)
 	glUseProgram(0);
 }
 
+/*
+*	Initialize the main rendering camera
+*/
 void Renderer::set_camera(Camera *new_cam)
 {
 	if(new_cam==NULL)
@@ -441,6 +366,9 @@ void Renderer::set_camera(Camera *new_cam)
 	cam=new_cam;
 }
 
+/*
+*	Add a new shader to the set of all shaders
+*/
 void Renderer::add_Shader(string shader, GLuint type)
 {
 	switch(type)
@@ -481,6 +409,9 @@ Shader* Renderer::find_shader(string shader_name)
 	return NULL;
 }
 
+/*
+*	Class destructor
+*/
 Renderer::~Renderer()
 {
 	for(Shader s: vertex_shaders)

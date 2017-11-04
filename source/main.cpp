@@ -3,7 +3,7 @@
 *	Author:	Camilo Talero
 *
 *
-*	Version: 0.0.1
+*	Version: 0.0.2
 *
 *	References:
 *	https://open.gl
@@ -22,7 +22,6 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #include "Window-Management.hpp"
-#include "Rendering.hpp"
 #include "Cube.hpp"
 #include "World.hpp"
 
@@ -71,7 +70,7 @@ int main(int argc, char **argv)
 */
 //========================================================================================
 
-//TODO: verify that the following are up to date and well refactored. move to main?
+//TODO: verify that the following are up to date and well refactored.
 /*
 * The following functions are not final at all, if modifications can be done, do them
 */
@@ -85,31 +84,21 @@ void render_loop(GLFWwindow* window)
     glDepthFunc(GL_LEQUAL);
 	glPointSize(10.f);
 
-	//Cube test = Cube(); 
-	//Chunk test = Chunk();
-	//Mega_Chunk mega_test = Mega_Chunk();
-	//mega_test.chunk_block();
-	/*load_obj("Assets/Objs/cube.obj", (vector<float>*) &shapes[0].vertices, 
-		(vector<float>*) &shapes[0].normals, (vector<float>*) &shapes[0].uvs);*/
-
-	/*Chunk c = Chunk(vec3(10));
-	Chunk c2 = Chunk(vec3(-10));*/
 	World c = World();
 	double prevTime = 0, currentTime=0;
+	//TODO: this is temprorary, implement this correctly
+	loadTexture(Rendering_Handler->current_program, *(Cube::textures[0]));
 
     while (!glfwWindowShouldClose(window))
 	{
+		glfwPollEvents();
 		Rendering_Handler->update(window);
-		
-		//Rendering_Handler->multi_render(testVAO, &testVBOs, &types, 5, indices.size(), face_types.size());
-		//test.render_cube();
-		currentTime = glfwGetTime();
+
+		//currentTime = glfwGetTime();
 		c.render_world();
 
-		//cout << (*c(0,0,0))(0,0,0) << endl;
-		//c2.render_chunk();
 		//cout << (currentTime-prevTime) << endl;
-		prevTime = currentTime;
+		//prevTime = currentTime;
 
 		openGLerror();
 	}
@@ -120,7 +109,7 @@ void end_rendering(GLFWwindow* window)
 {
 
 
-	//Cube::cleanup();
+	Cube::cleanup();
 
     glfwDestroyWindow(window);
     glfwTerminate();

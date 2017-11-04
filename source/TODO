@@ -1,0 +1,39 @@
+
+Version 0.0.1
+First stage
+Todo:
+  General:
+    ☐ Research noise functions @high , 
+    ☐ Look into Doxygen for automatic documentation @low 
+  Coding:
+    ☐ Create more cube types @high , 
+    ☐ Create world generation @critical 
+    ☐ Implement Physics @low 
+    ☐ Implement Menu and GUI @low 
+  Debuging:
+  Documentation:
+    ☐ Improve documentation and comments @medium,  
+    ☐ If Doxygen is suitable, modify documentation to fit Doxygen @low 
+  Refactoring:
+    ☐ Embrace C++ and make all relevant functions into class member functions @high 
+      (Instead of stand alone functions, OOP is good, why not fully embrace it?)
+    ☐ Minimize overhead to the maximum @medium, 
+      (Revise current version and edit all structures and functions to minimize overhead)
+
+Archive:
+  ver 0.0.1 @done(03-11-2017)
+  ✔ Create Basic template Code and Data structures                                        @ver:0.0.1 
+  ✔ Design basic world Data Structures                                                    @ver:0.0.1 
+  ✔ Make a shading program that renders multiple meshes at a time                         @ver:0.0.1 
+  ✔ Once there is a voxel world, test and modify rendering for optimization               @ver:0.0.1     
+  ✔ Figure out how blender maps the texture coordinates and get it to work                @ver:0.0.1 
+  ✔ Refactor and comment everything                                                       @ver:0.0.1 
+  ✔ Optimize "Mega Chunks" and chunk rendering                                            @ver:0.0.1 
+  ✔ Add missing comments and revise all "TODO's"                                          @ver:0.0.1 
+  ✘ Design basic physics (moved to future version)                                        @ver:0.0.1 
+  ✘ Create Menu rendering (or use library, experiment) (moved to future version)          @ver:0.0.1 
+  ✘ Document (look into automatic documentation) (moved to future version)                @ver:0.0.1 
+  ✘ Look into Doxygen (moved to future version)                                           @ver:0.0.1 
+  ✘ If Doxygen is suitable, change comments to fit Doxygen (moved to future version)      @ver:0.0.1 
+  ✘ Change loadCamera() and loadViewProjMatrix() headers                                  @ver:0.0.1 
+    to be consistend with the "Load" API (cancelled)"

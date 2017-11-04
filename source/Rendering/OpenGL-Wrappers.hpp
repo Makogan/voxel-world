@@ -3,7 +3,7 @@
 *	Author:	Camilo Talero
 *
 *
-*	Version: 0.0.1
+*	Version: 0.0.2
 *
 *	Header to define variables, structure definitoins, include libraries... 
 *   Shared among all rendering functions.
@@ -62,34 +62,6 @@ struct Shader
 	//GLuint program;     //Associated OpenGL shading program
 };
 
-struct Geometry
-{
-	GLuint vertexArray;     //Vertex array associated with this information
-
-    GLuint vertexBuffer;    //Vertex data ID of the VAO
-    GLuint normalsBuffer;   //Normal data (vec3)
-    GLuint uvBuffer;        
-    GLuint elmentBuffer;    //Element data ID of the VAO this specifies the 
-                            //sequence in wich the vertices and normals will be read 
-
-    vector<vec3> vertices;  //Vertex data
-    vector<vec3> normals;   //Normal data
-	vector<uint> indices;   //Element data (sequence in which data will be read)
-    vector<vec2> uvs;       //Texture data for this geometry 
-                            //(the associated coordinates on the mesh)
-};
-
-struct GPU_Geometry
-{
-    GLuint vertexArray;     //Vertex array associated with this information
-    
-    GLuint vertexBuffer;    //Vertex data ID of the VAO
-    GLuint normalsBuffer;   //Normal data (vec3)
-    GLuint uvBuffer;        
-    GLuint elmentBuffer;    //Element data ID of the VAO this specifies the 
-                            //sequence in wich the vertices and normals will be read 
-};
-
 struct Texture
 {
 	GLuint textureID;   //OpenGL generated ID for the texture
@@ -107,8 +79,13 @@ struct Mesh
 	vector<uint> *indices;   //Element data (sequence in which data will be read)
     vector<vec2> *uvs;       //Texture data for this geometry 
                             //(the associated coordinates on the mesh)
+
+    ~Mesh();
 };
 
+/*
+* General rendering manager class
+*/
 class Renderer
 {
     private:
@@ -146,14 +123,7 @@ extern Renderer *Rendering_Handler;
 *	Global Values
 */
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-//TODO: delete or modify the geometry list as other representations are probably better
 
-extern Camera cam; //Main camera for perspective projection
-
-extern vector<GLuint> programs; //Global list of shading programs
-extern vector<Shader> shaders;  //Global List of shaders
-extern vector<Geometry> shapes; ///GLobal list of geometry shapes temporary
-extern vector<Texture> textures; //Temporary
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -166,21 +136,14 @@ extern vector<Texture> textures; //Temporary
 //Check for OpenGL errors
 int openGLerror();
 
-void loadGeometryArrays(GLuint program, Geometry &g);
 void loadTexture(GLuint program, Texture &t);
-void render(GLuint program, Geometry &g, GLenum drawType);
 
 void compileShader(GLuint &shader, string &filepath, GLenum shaderType);
 void createShader(Shader &s, string file, GLenum type);
 void deleteShader(Shader &s);
 
-void createGeometry(Geometry &g);
-void createGeometry(Geometry &g, vector<vec3> vertices, vector<uint> indices);
-void createGeometry(Geometry &g, vector<vec3> vertices,  vector<vec3> normals, 
-	vector<vec2> uvs, vector<uint> indices);
-void deleteGeometry(Geometry &g);
-
 bool createTexture(Texture &texture, const char* filename, GLuint target = GL_TEXTURE_2D);
+void loadTexture(GLuint program, Texture &t);
 void DestroyTexture(Texture &texture);
 
 string loadSourceFile(string &filepath);

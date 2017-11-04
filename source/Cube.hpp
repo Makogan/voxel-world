@@ -3,7 +3,7 @@
 *	Author:	Camilo Talero
 *
 *
-*	Version: 0.0.1
+*	Version: 0.0.2
 *
 *	Header for the definition of a generic cube object
 */
@@ -22,6 +22,7 @@
 #include "OpenGL-Wrappers.hpp"
 #include "wavefront-loader.hpp"
 
+//Enumerator definition for face identification and rendering
 enum Face {Front=0, Left, Right, Back, Top, Bottom};
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -30,10 +31,10 @@ enum Face {Front=0, Left, Right, Back, Top, Bottom};
 *	Class declaration:
 */
 //========================================================================================
-//TODO: document this section
 
-
-
+/*
+*   Cube class definition
+*/
 class Cube
 {
     private:

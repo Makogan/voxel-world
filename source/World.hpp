@@ -3,7 +3,7 @@
 *	Author:	Camilo Talero
 *
 *
-*	Version: 0.0.1
+*	Version: 0.0.2
 *
 *	Header for the definition of a generic chunk object
 */
@@ -60,11 +60,12 @@ class Chunk
 class World
 {
     private:
-        int load_distance = 4;
+        int load_distance = 10;
         Chunk ****loaded_chunks;
 
     public:
         World();
+        ~World();
 
         Chunk* operator()(int x, int y, int z);
         void render_world();        
