@@ -25,6 +25,48 @@ uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 
 uniform sampler2D text;
 
+const int size = 256;
+const int mask = size-1;
+
+uniform int perm[ size ];
+uniform float vec_field_x[ size ], vec_field_y[ size ];
+
+double fade(double d)
+{
+  d = abs(d);
+  if(d>1)
+    return 0;
+  return 1.f-d*d*d*(d*(d*6-15)+10);
+}
+
+double test(double x, double y)
+{
+  return sqrt(x*x+y*y);
+}
+
+double surflet(double x, double y, double grad_x, double grad_y)
+{
+    return fade(test(x,y)) * ( grad_x * x + grad_y * y );
+}
+
+double perlin_noise(double x, double y)
+{
+    int xi = (int(x));
+    int yi = (int(y));
+    
+    double result = 0;
+    for(int grid_y=yi; grid_y <= yi+1; ++grid_y)
+    {
+        for(int grid_x=xi; grid_x <= xi+1; ++grid_x)
+        {
+            int hash = perm[(perm[grid_x & mask] + grid_y) & mask];
+            result += surflet(x-grid_x, y-grid_y, vec_field_x[hash], vec_field_y[hash]);
+        }
+    }
+    
+    return (result);
+}
+
 void main()
 {
   vec3 l = vec3(light-vertexPos);
@@ -37,5 +79,24 @@ void main()
 
   //outColor = vec4(c*(vec3(0.1)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
-  outColor = vec4(c,1); // mix(color,outColor,0.5);
+  //outColor = vec4(c,1); // mix(color,outColor,0.5);
+
+  double x = floor(gl_FragCoord.x/4)/10.f;
+  double y = floor(gl_FragCoord.y/4)/10.f;
+
+  double total=0;
+  double frequency=1;
+  double amplitude=1;
+  double maxValue=0;
+  double persistence = 0.9;
+  for(uint i=0; i<5; i++)
+  {
+    total += perlin_noise(x*frequency, y*frequency)*amplitude;
+
+    maxValue+=amplitude;
+    amplitude *= persistence;
+    frequency *= 2;
+  }
+  double p=total/maxValue;
+  outColor = (vec4(p,p,p,1));
 }

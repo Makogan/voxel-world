@@ -1,9 +1,11 @@
 
-Version 0.0.1
+Version 0.0.2
 First stage
 Todo:
   General:
-    ☐ Research noise functions @high , 
+    ✔ Research noise functions @high , @done(17-11-09 23:37)
+    ☐ Research how to improve noise
+      (Need continents and oceans, also river and lake generation would be nice)
     ☐ Look into Doxygen for automatic documentation @low 
   Coding:
     ☐ Create more cube types @high , 
