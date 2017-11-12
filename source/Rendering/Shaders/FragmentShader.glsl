@@ -85,11 +85,11 @@ void main()
   double y = floor(gl_FragCoord.y/4)/10.f;
 
   double total=0;
-  double frequency=1;
-  double amplitude=1;
+  double frequency=0.1;
+  double amplitude=0.5;
   double maxValue=0;
-  double persistence = 0.9;
-  for(uint i=0; i<5; i++)
+  double persistence = 0.5;
+  for(uint i=0; i<8; i++)
   {
     total += perlin_noise(x*frequency, y*frequency)*amplitude;
 
@@ -97,6 +97,7 @@ void main()
     amplitude *= persistence;
     frequency *= 2;
   }
+
   double p=total/maxValue;
   outColor = (vec4(p,p,p,1));
 }
