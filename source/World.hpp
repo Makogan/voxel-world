@@ -58,7 +58,8 @@ class Chunk
 class World
 {
     private:
-        int load_distance = 10;
+        int h_radius = 10;
+        int v_radius = 20;
         ivec3 origin = ivec3(0);
         Chunk ****loaded_chunks;
 

@@ -29,7 +29,9 @@
 vector<GLuint> cube_VBO_types = {GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
     GL_SHADER_STORAGE_BUFFER, GL_ELEMENT_ARRAY_BUFFER};
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+//TODO: delete when done
+double noise_2D(double x, double y);
+void vec_field_init();
 //========================================================================================
 /*
 *	Chunk Class implementation:
@@ -50,10 +52,16 @@ Chunk::Chunk(vec3 offset, World* w)
     //offset represents the position of the chunk in the world
     for(int i=0; i<CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS; i++)
     {
+        double height = 20.d*noise_2D((double)(i/(CHUNK_DIMS*CHUNK_DIMS)) + offset[0], 
+            (double)((i/CHUNK_DIMS)%CHUNK_DIMS + offset[1]));
+        
         chunk_cubes[i] = 
             new Cube(vec3(i/(CHUNK_DIMS*CHUNK_DIMS) + offset[0], 
             (i/CHUNK_DIMS) % CHUNK_DIMS + offset[1], 
             i%CHUNK_DIMS + offset[2]));
+
+        if(double(i%CHUNK_DIMS) + offset[2]>height)
+            chunk_cubes[i]->transparent = true;
     }
 
     //Create and initialize OpenGL rendering structures
@@ -176,8 +184,9 @@ void Chunk::update_visible_faces()
             {
                 //fetch current cube
                 Cube* current = (*this)(i,j,k);
-                if(current==NULL)
-                cout << "wtf" << endl;
+                if(current->transparent)
+                    continue;
+                
                 int c_x=(int)(current->position.x);
                 int c_y=(int)(current->position.y); 
                 int c_z=(int)(current->position.z);
@@ -229,23 +238,25 @@ void Chunk::update_render_info()
 */
 World::World()
 {    
+    //TODO: this should not be here
+    vec_field_init();
     //Allocate memory for the loaded chunks
-    loaded_chunks = (Chunk****)malloc(load_distance*sizeof(Chunk***));
-    for(int i=0; i<load_distance; i++)
+    loaded_chunks = (Chunk****)malloc(h_radius*sizeof(Chunk***));
+    for(int i=0; i<h_radius; i++)
     {
-        loaded_chunks[i] = (Chunk***)malloc(load_distance*sizeof(Chunk**));
-        for(int j=0; j<load_distance; j++)
+        loaded_chunks[i] = (Chunk***)malloc(h_radius*sizeof(Chunk**));
+        for(int j=0; j<h_radius; j++)
         {
-            loaded_chunks[i][j] = (Chunk**)malloc(load_distance*sizeof(Chunk*));
+            loaded_chunks[i][j] = (Chunk**)malloc(v_radius*sizeof(Chunk*));
         }
     }
 
     //Initialize loaded chunks
-    for(int i=0; i<load_distance; i++)
+    for(int i=0; i<h_radius; i++)
     {
-        for(int j=0; j<load_distance; j++)
+        for(int j=0; j<h_radius; j++)
         {
-            for(int k=0; k<load_distance; k++)
+            for(int k=0; k<v_radius; k++)
             {
                 loaded_chunks[i][j][k] = 
                     new Chunk(vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS), this);
@@ -254,11 +265,11 @@ World::World()
     }
 
     //First chunk update, to assert all values
-    for(int i=0; i<load_distance; i++)
+    for(int i=0; i<h_radius; i++)
     {
-        for(int j=0; j<load_distance; j++)
+        for(int j=0; j<h_radius; j++)
         {
-            for(int k=0; k<load_distance; k++)
+            for(int k=0; k<v_radius; k++)
             {
                loaded_chunks[i][j][k]->update();
             }
@@ -272,11 +283,11 @@ World::World()
 World::~World()
 {
     //Delete chunks
-    for(int i=0; i<load_distance; i++)
+    for(int i=0; i<h_radius; i++)
     {
-        for(int j=0; j<load_distance; j++)
+        for(int j=0; j<h_radius; j++)
         {
-            for(int k=0; k<load_distance; k++)
+            for(int k=0; k<v_radius; k++)
             {
                 delete(loaded_chunks[i][j][k]);
             }
@@ -284,9 +295,9 @@ World::~World()
     }
 
     //Free allocated memory
-    for(int i=0; i<load_distance; i++)
+    for(int i=0; i<h_radius; i++)
     {
-        for(int j=0; j<load_distance; j++)
+        for(int j=0; j<v_radius; j++)
         {
             free(loaded_chunks[i][j]);
         }
@@ -305,11 +316,11 @@ Cube* World::operator()(int x, int y, int z)
     int chunk_x = x/CHUNK_DIMS, chunk_y=y/CHUNK_DIMS, chunk_z=z/CHUNK_DIMS;
     x=x%CHUNK_DIMS, y=y%CHUNK_DIMS, z=z%CHUNK_DIMS;
     //Check out of bound conditions and return  NULL when needed
-    if(chunk_x<0 || chunk_x>=load_distance)
+    if(chunk_x<0 || chunk_x>=h_radius)
         return NULL;
-    if(chunk_y<0 || chunk_y>=load_distance)
+    if(chunk_y<0 || chunk_y>=h_radius)
         return NULL;
-    if(chunk_z<0 || chunk_z>=load_distance)
+    if(chunk_z<0 || chunk_z>=v_radius)
         return NULL;
     
     if(x<0 || y<0 || z<0)
@@ -323,11 +334,11 @@ Cube* World::operator()(int x, int y, int z)
 */
 void World::render_world()
 {
-   for(int i=0; i<load_distance; i++)
+   for(int i=0; i<h_radius; i++)
    {
-       for(int j=0; j<load_distance; j++)
+       for(int j=0; j<h_radius; j++)
        {
-           for(int k=0; k<load_distance; k++)
+           for(int k=0; k<v_radius; k++)
            {
                Chunk* c = loaded_chunks[i][j][k];
                c->render_chunk();
@@ -336,3 +347,87 @@ void World::render_world()
    }
 }
 //########################################################################################
+
+//TODO: move this to it's own file
+int const size = 256;
+int const mask = size-1;
+
+int perm[ size ];
+float vec_field_x[ size ], vec_field_y[ size ];
+
+void vec_field_init()
+{
+    for ( int index = 0; index < size; ++index ) 
+    {
+        int other = rand() % ( index + 1 );
+        if ( index > other )
+            perm[ index ] = perm[ other ];
+        perm[ other ] = index;
+        vec_field_x[ index ] = cosf( 2.0f * M_PI * index / size );
+        vec_field_y[ index ] = sinf( 2.0f * M_PI * index / size );
+    }
+}
+
+double fade(double d)
+{
+  d = abs(d);
+  if(d>1)
+    return 0;
+  return 1.f-d*d*d*(d*(d*6-15)+10);
+}
+
+double test(double x, double y)
+{
+  return sqrt(x*x+y*y);
+}
+
+double surflet(double x, double y, double grad_x, double grad_y)
+{
+    return fade(test(x,y)) * ( grad_x * x + grad_y * y );
+}
+
+double perlin_noise(double x, double y)
+{
+    int xi = (int(x));
+    int yi = (int(y));
+    
+    double result = 0;
+    for(int grid_y=yi; grid_y <= yi+1; ++grid_y)
+    {
+        for(int grid_x=xi; grid_x <= xi+1; ++grid_x)
+        {
+            int hash = perm[(perm[grid_x & mask] + grid_y) & mask];
+            result += surflet(x-grid_x, y-grid_y, vec_field_x[hash], vec_field_y[hash]);
+        }
+    }
+    
+    return (result);
+}
+
+double noise_2D(double x, double y)
+{
+    double total=0;
+    double frequency=0.05;
+    double amplitude=10.d;
+    double maxValue=0.d;
+    double persistence = 0.5;
+    //cout << x*frequency << " " << y*frequency << endl;
+    for(uint i=0; i<5; i++)
+    {
+        total += perlin_noise(x*frequency, y*frequency)*amplitude;
+
+        maxValue+=amplitude;
+        amplitude *= persistence;
+        frequency *= 2;
+    }
+    //cout << total << endl;
+    double p=total/maxValue;
+    /*if(abs(p)<0.01)
+    p+=perlin_noise(x*1,y*1);
+    if(p>=0)
+    p=1;
+    else
+    p=-1;*/
+    //cout <<  p << endl;
+    return p;
+}

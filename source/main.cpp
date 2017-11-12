@@ -75,24 +75,6 @@ int main(int argc, char **argv)
 * The following functions are not final at all, if modifications can be done, do them
 */
 
-#include <stdlib.h>     /* srand, rand */
-int const size = 256;
-int const mask = size-1;
-
-int perm[ size ];
-float vec_field_x[ size ], vec_field_y[ size ];
-void vec_field_init()
-{
-    for ( int index = 0; index < size; ++index ) 
-    {
-        int other = rand() % ( index + 1 );
-        if ( index > other )
-            perm[ index ] = perm[ other ];
-        perm[ other ] = index;
-        vec_field_x[ index ] = cosf( 2.0f * M_PI * index / size );
-        vec_field_y[ index ] = sinf( 2.0f * M_PI * index / size );
-    }
-}
 
 //main render loop
 void render_loop(GLFWwindow* window)
@@ -106,18 +88,6 @@ void render_loop(GLFWwindow* window)
 	double prevTime = 0, currentTime=0;
 	//TODO: this is temprorary, implement this correctly
 	loadTexture(Rendering_Handler->current_program, *(Cube::textures[0]));
-	
-	vec_field_init();
-
-	glUseProgram(Rendering_Handler->current_program);
-	GLint loc = glGetUniformLocation(Rendering_Handler->current_program, "perm");
-	glUniform1iv(loc, size, (GLint*)&perm);
-
-	loc = glGetUniformLocation(Rendering_Handler->current_program, "vec_field_x");
-	glUniform1fv(loc, size, (GLfloat*)&vec_field_x);
-
-	loc = glGetUniformLocation(Rendering_Handler->current_program, "vec_field_y");
-	glUniform1fv(loc, size, (GLfloat*)&vec_field_y);
 
     while (!glfwWindowShouldClose(window))
 	{

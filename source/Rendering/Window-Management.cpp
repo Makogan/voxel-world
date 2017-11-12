@@ -212,7 +212,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 }
 
-#define CAM_SPEED 0.5f
+#define CAM_SPEED 0.3f
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
