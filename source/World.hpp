@@ -21,7 +21,7 @@
 
 class World;
 
-#define CHUNK_DIMENSIONS 16
+#define CHUNK_DIMS 16
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -34,9 +34,8 @@ class World;
 class Chunk
 {
     private:
-        int i_pos,j_pos,k_pos;
         World* world;
-        Cube *chunk_cubes[CHUNK_DIMENSIONS*CHUNK_DIMENSIONS*CHUNK_DIMENSIONS];
+        Cube *chunk_cubes[CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS];
         vector<vec4> faces_info;
 
         GLuint world_cubes_VAO;
@@ -50,7 +49,6 @@ class Chunk
         Chunk();
         Chunk(vec3 offset);
         Chunk(vec3, World* w);
-        Chunk(vec3, World* w, int i, int j, int k);
         ~Chunk();
 
         void update();
@@ -61,13 +59,14 @@ class World
 {
     private:
         int load_distance = 10;
+        ivec3 origin = ivec3(0);
         Chunk ****loaded_chunks;
 
     public:
         World();
         ~World();
 
-        Chunk* operator()(int x, int y, int z);
+        Cube* operator()(int x, int y, int z);
         void render_world();        
 };
 //########################################################################################

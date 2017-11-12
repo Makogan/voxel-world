@@ -43,21 +43,17 @@ Chunk::Chunk() : Chunk(vec3(0)){}
 
 Chunk::Chunk(vec3 offset) : Chunk(offset, NULL){}
 
-Chunk::Chunk(vec3 offset, World* w) : Chunk(offset, w, 0,0,0){}
-
-Chunk::Chunk(vec3 offset, World* w, int x, int j, int k)
+Chunk::Chunk(vec3 offset, World* w) 
 {
-    //Set postion in the world array and world container
-    i_pos=x, j_pos=j, k_pos=k;
     world = w;
     //Initialize all cubes in the chunk, with correct positions
     //offset represents the position of the chunk in the world
-    for(int i=0; i<CHUNK_DIMENSIONS*CHUNK_DIMENSIONS*CHUNK_DIMENSIONS; i++)
+    for(int i=0; i<CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS; i++)
     {
         chunk_cubes[i] = 
-            new Cube(vec3(i/(CHUNK_DIMENSIONS*CHUNK_DIMENSIONS) + offset[0], 
-            (i/CHUNK_DIMENSIONS) % CHUNK_DIMENSIONS + offset[1], 
-            i%CHUNK_DIMENSIONS + offset[2]));
+            new Cube(vec3(i/(CHUNK_DIMS*CHUNK_DIMS) + offset[0], 
+            (i/CHUNK_DIMS) % CHUNK_DIMS + offset[1], 
+            i%CHUNK_DIMS + offset[2]));
     }
 
     //Create and initialize OpenGL rendering structures
@@ -88,7 +84,7 @@ Chunk::Chunk(vec3 offset, World* w, int x, int j, int k)
 */
 Chunk::~Chunk()
 {
-    for(int i=0; i<CHUNK_DIMENSIONS*CHUNK_DIMENSIONS*CHUNK_DIMENSIONS; i++)
+    for(int i=0; i<CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS; i++)
     {
        delete(chunk_cubes[i]);
     }
@@ -103,19 +99,19 @@ Chunk::~Chunk()
 inline void calculate_coordinates(int x, int &chunk_x, 
     int &cube_x, bool &out_of_bounds)
 {
-    if(x<0 || x>=CHUNK_DIMENSIONS)
+    if(x<0 || x>=CHUNK_DIMS)
     {
         //Set flag to indicat the cube is not in the current chunk
         out_of_bounds=true;
         if(x>=0)
         {
-            chunk_x+=x/CHUNK_DIMENSIONS; //Index of the neighbouring chunk
-            cube_x=x%CHUNK_DIMENSIONS; //Index of the neighbouring cube
+            chunk_x+=x/CHUNK_DIMS; //Index of the neighbouring chunk
+            cube_x=x%CHUNK_DIMS; //Index of the neighbouring cube
         }
         else
         {
-            chunk_x+=-x/CHUNK_DIMENSIONS -1; //Index of the neighbouring chunk
-            cube_x=x%CHUNK_DIMENSIONS + CHUNK_DIMENSIONS; //Index of the neighbouring cube
+            chunk_x+=-x/CHUNK_DIMS -1; //Index of the neighbouring chunk
+            cube_x=x%CHUNK_DIMS + CHUNK_DIMS; //Index of the neighbouring cube
         }
     }
 }
@@ -125,32 +121,23 @@ inline void calculate_coordinates(int x, int &chunk_x,
 */
 Cube* Chunk::operator()(int x, int y, int z)
 {
-    //Initialize default values
-    int chunk_x=this->i_pos, chunk_y=this->j_pos,chunk_z=this->k_pos;
-    int cube_x=x,cube_y=y,cube_z=z;
-    bool out_of_bounds=false;
-
-    //Find the correct chunk coordinate sin the world and cube
-    //Cooordinates inside of the correct chunk
-    calculate_coordinates(x, chunk_x, cube_x, out_of_bounds);
-    calculate_coordinates(y, chunk_y, cube_y, out_of_bounds);
-    calculate_coordinates(z, chunk_z, cube_z, out_of_bounds);
-
-    //Find a cube that is not in the current chunk
-    if(out_of_bounds)
+    if(x<0 || x>=CHUNK_DIMS)
     {
-        if(world == NULL)
-            return NULL;
-        //Fetch correct chunk
-        Chunk* c = (*world)(chunk_x,chunk_y,chunk_z);
-        if(c==NULL)
-            return NULL;
-        //Fetch correct cube
-        return (*c)(cube_x,cube_y,cube_z);
+        cerr << "Cube out of bounds request" << endl;
+        exit(0);
     }
-    else
-        return chunk_cubes[cube_x*CHUNK_DIMENSIONS*CHUNK_DIMENSIONS
-            +cube_y*CHUNK_DIMENSIONS+cube_z];   
+    if(y<0 || y>=CHUNK_DIMS)
+    {
+        cerr << "Cube out of bounds request" << endl;
+        exit(0);
+    }
+    if(z<0 || z>=CHUNK_DIMS)
+    {
+        cerr << "Cube out of bounds request" << endl;
+        exit(0);
+    }
+
+    return chunk_cubes[x*CHUNK_DIMS*CHUNK_DIMS+y*CHUNK_DIMS+z];   
 }
 
 /*
@@ -181,28 +168,34 @@ faces_info.push_back(vec4(c->position,f));
 */
 void Chunk::update_visible_faces()
 {
-    for(int i=0; i<CHUNK_DIMENSIONS; i++)
+    for(int i=0; i<CHUNK_DIMS; i++)
     {
-        for(int j=0; j<CHUNK_DIMENSIONS; j++)
+        for(int j=0; j<CHUNK_DIMS; j++)
         {
-            for(int k=0; k<CHUNK_DIMENSIONS; k++)
+            for(int k=0; k<CHUNK_DIMS; k++)
             {
                 //fetch current cube
                 Cube* current = (*this)(i,j,k);
-
+                if(current==NULL)
+                cout << "wtf" << endl;
+                int c_x=(int)(current->position.x);
+                int c_y=(int)(current->position.y); 
+                int c_z=(int)(current->position.z);
+                //int c_x=0,c_y=0,c_z=0;
+                //cout << c_x <<  " " << c_y << " " << c_z << endl;
                 //fetch all 6 neighbours and update accordingly
-                Cube* neighbour = (*this)(i-1,j,k);
-                CHECK_NEIGHBOUR(current, neighbour, Left)
-                neighbour = (*this)(i+1,j,k);
-                CHECK_NEIGHBOUR(current, neighbour, Right)
-                neighbour = (*this)(i,j+1,k);
-                CHECK_NEIGHBOUR(current, neighbour, Front)
-                neighbour = (*this)(i,j-1,k);
-                CHECK_NEIGHBOUR(current, neighbour, Back)
-                neighbour = (*this)(i,j,k+1);
-                CHECK_NEIGHBOUR(current, neighbour, Top)
-                neighbour = (*this)(i,j,k-1);
-                CHECK_NEIGHBOUR(current, neighbour, Bottom)
+                Cube* neighbour = (*world)(c_x-1,c_y,c_z);
+                CHECK_NEIGHBOUR(current, neighbour, Left);
+                neighbour = (*world)(c_x+1,c_y,c_z);
+                CHECK_NEIGHBOUR(current, neighbour, Right);
+                neighbour = (*world)(c_x,c_y+1,c_z);
+                CHECK_NEIGHBOUR(current, neighbour, Front);
+                neighbour = (*world)(c_x,c_y-1,c_z);
+                CHECK_NEIGHBOUR(current, neighbour, Back);
+                neighbour = (*world)(c_x,c_y,c_z+1);
+                CHECK_NEIGHBOUR(current, neighbour, Top);
+                neighbour = (*world)(c_x,c_y,c_z-1);
+                CHECK_NEIGHBOUR(current, neighbour, Bottom);
             }
         }
     }
@@ -255,12 +248,7 @@ World::World()
             for(int k=0; k<load_distance; k++)
             {
                 loaded_chunks[i][j][k] = 
-                new Chunk
-                (
-                    vec3(i*CHUNK_DIMENSIONS,j*CHUNK_DIMENSIONS,k*CHUNK_DIMENSIONS), 
-                    this,
-                    i,j,k
-                );
+                    new Chunk(vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS), this);
             }
         }
     }
@@ -311,18 +299,23 @@ World::~World()
 *   Overloaded () operator, used to get chunk pointers in the loaded chunks
 *   of the world
 */
-Chunk* World::operator()(int x, int y, int z)
+Cube* World::operator()(int x, int y, int z)
 {
-    //Check out of bounds conditions and return  NULL when needed
-    if(x<0 || x>=load_distance)
+    x-=origin.x, y-=origin.y,z-=origin.z;
+    int chunk_x = x/CHUNK_DIMS, chunk_y=y/CHUNK_DIMS, chunk_z=z/CHUNK_DIMS;
+    x=x%CHUNK_DIMS, y=y%CHUNK_DIMS, z=z%CHUNK_DIMS;
+    //Check out of bound conditions and return  NULL when needed
+    if(chunk_x<0 || chunk_x>=load_distance)
         return NULL;
-    if(y<0 || y>=load_distance)
+    if(chunk_y<0 || chunk_y>=load_distance)
         return NULL;
-    if(z<0 || z>=load_distance)
+    if(chunk_z<0 || chunk_z>=load_distance)
+        return NULL;
+    
+    if(x<0 || y<0 || z<0)
         return NULL;
 
-    //return the requested cube if it's within bounds
-    return loaded_chunks[x][y][z];
+    return (*loaded_chunks[chunk_x][chunk_y][chunk_z])(x,y,z);
 }
 
 /*

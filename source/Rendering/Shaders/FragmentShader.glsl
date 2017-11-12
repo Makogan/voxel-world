@@ -20,7 +20,7 @@ out vec4 outColor;//Final color of the pixel
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
-uniform vec3 light = vec3(0,0,50);//A unique light position
+uniform vec3 light = vec3(0,0,5000);//A unique light position
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 
 uniform sampler2D text;
@@ -79,9 +79,9 @@ void main()
 
   //outColor = vec4(c*(vec3(0.1)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
-  //outColor = vec4(c,1); // mix(color,outColor,0.5);
+  outColor = vec4(c,1); // mix(color,outColor,0.5);
 
-  double x = floor(gl_FragCoord.x/4)/10.f;
+  /*double x = floor(gl_FragCoord.x/4)/10.f;
   double y = floor(gl_FragCoord.y/4)/10.f;
 
   double total=0;
@@ -100,10 +100,10 @@ void main()
 
   double p=total/maxValue;
   if(abs(p)<0.01)
-    p+=perlin_noise(x*1.5,y*1.5);
+    p+=perlin_noise(x*1,y*1);
   if(p>=0)
     p=1;
   else
     p=-1;
-  outColor = (vec4(p,p,p,1));
+  outColor = (vec4(p,p,p,1));*/
 }

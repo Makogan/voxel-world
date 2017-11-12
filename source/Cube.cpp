@@ -70,9 +70,15 @@ Cube::Cube(vec3 p, uint type)
     {
         meshes[cube_type] = new Mesh();
 
-        MESH->vertices = new vector<vec3>({vec3(-0.5,0.5,-0.5), vec3(-0.5,0.5,0.5), vec3(0.5,0.5,0.5), vec3(0.5,0.5,-0.5)});
-        MESH->normals = new vector<vec3>({vec3(0,1,0),vec3(0,1,0),vec3(0,1,0),vec3(0,1,0)});
-        MESH->uvs = new vector<vec2>({vec2(0,0), vec2(0,1), vec2(1/6.f,1), vec2(1/6.f,0)});
+        MESH->vertices = new vector<vec3>(
+            {vec3(-0.5,0.5,-0.5), vec3(-0.5,0.5,0.5), 
+            vec3(0.5,0.5,0.5), vec3(0.5,0.5,-0.5)});
+        MESH->normals = new vector<vec3>(
+            {vec3(0,1,0),vec3(0,1,0),
+            vec3(0,1,0),vec3(0,1,0)});
+        MESH->uvs = new vector<vec2>(
+            {vec2(0,0), vec2(0,1), 
+            vec2(1/6.f,1), vec2(1/6.f,0)});
         MESH->indices = new vector<uint>({0,1,2,2,3,0});
     }
     //set world offset

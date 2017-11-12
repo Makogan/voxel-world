@@ -4,12 +4,15 @@ First stage
 Todo:
   General:
     ✔ Research noise functions @high , @done(17-11-09 23:37)
-    ☐ Research how to improve noise
+    ✔ Research how to improve noise @done(17-11-11 21:58)
       (Need continents and oceans, also river and lake generation would be nice)
+    ☐ Research river and biome generation @high 
     ☐ Look into Doxygen for automatic documentation @low 
   Coding:
-    ☐ Create more cube types @high , 
+    ☐ Implement pre-visualization of world generation @low 
+    ☐ Create more cube types @high 
     ☐ Create world generation @critical 
+      (merge noise generation with chunks)
     ☐ Implement Physics @low 
     ☐ Implement Menu and GUI @low 
   Debuging:
@@ -17,6 +20,10 @@ Todo:
     ☐ Improve documentation and comments @medium,  
     ☐ If Doxygen is suitable, modify documentation to fit Doxygen @low 
   Refactoring:
+    ☐ Cube faces are currently using 4 normals, revise decision @low 
+      (If smoothing or similar techniques are used, this is justified, else change to 1)
+    ✔ Attempt to make cube fetching chunk agnostic @low @done(17-11-11 23:34)
+      (Ideally chunks and cubes should be fetched without information of the world array)
     ☐ Embrace C++ and make all relevant functions into class member functions @high 
       (Instead of stand alone functions, OOP is good, why not fully embrace it?)
     ☐ Minimize overhead to the maximum @medium, 
