@@ -297,13 +297,63 @@ World::~World()
     //Free allocated memory
     for(int i=0; i<h_radius; i++)
     {
-        for(int j=0; j<v_radius; j++)
+        for(int j=0; j<h_radius; j++)
         {
             free(loaded_chunks[i][j]);
         }
-        free(loaded_chunks[i]);
+       free(loaded_chunks[i]);
     }
-    free(loaded_chunks);
+   free(loaded_chunks);
+}
+
+void World::re_frame(ivec3 offset)
+{
+    if(abs(offset.x)>=h_radius)    
+    {
+        cerr << offset.x << endl;
+        cerr << "Attempting to align frame beyond bounds" << endl;
+        exit(0);
+    }
+
+    origin.x += offset.x*CHUNK_DIMS;
+
+    if(offset.x < 0)
+    {
+        Chunk*** holder = loaded_chunks[h_radius-1];
+        for(int i=h_radius-1; i>=abs(offset.x); i--)
+        {
+            loaded_chunks[i] = loaded_chunks[i+offset.x];
+        }
+        loaded_chunks[0] = holder;
+
+        for(int i=0; i<abs(offset.x); i++)
+        {           
+            for(int j=0; j<h_radius; j++)
+            {
+                for(int k=0; k<v_radius; k++)
+                {
+                    delete(loaded_chunks[i][j][k]);
+                    loaded_chunks[i][j][k]=
+                        new Chunk(
+                            vec3((i)*CHUNK_DIMS+origin.x,
+                                 (j)*CHUNK_DIMS+origin.y,
+                                 (k)*CHUNK_DIMS+origin.z), 
+                                 this);
+                }
+            }
+        }
+    }
+
+    for(int i=0; i<h_radius; i++)
+    {
+        for(int j=0; j<h_radius; j++)
+        {
+            for(int k=0; k<v_radius; k++)
+            {
+               loaded_chunks[i][j][k]->update();
+            }
+        }
+    }
 }
 
 /*
@@ -312,9 +362,10 @@ World::~World()
 */
 Cube* World::operator()(int x, int y, int z)
 {
-    x-=origin.x, y-=origin.y,z-=origin.z;
+    x-=origin.x, y-=origin.y, z-=origin.z;
     int chunk_x = x/CHUNK_DIMS, chunk_y=y/CHUNK_DIMS, chunk_z=z/CHUNK_DIMS;
     x=x%CHUNK_DIMS, y=y%CHUNK_DIMS, z=z%CHUNK_DIMS;
+
     //Check out of bound conditions and return  NULL when needed
     if(chunk_x<0 || chunk_x>=h_radius)
         return NULL;
@@ -388,6 +439,8 @@ double surflet(double x, double y, double grad_x, double grad_y)
 
 double perlin_noise(double x, double y)
 {
+    x = abs(x);
+    y = abs(y);
     int xi = (int(x));
     int yi = (int(y));
     
@@ -411,7 +464,7 @@ double noise_2D(double x, double y)
     double amplitude=10.d;
     double maxValue=0.d;
     double persistence = 0.5;
-    //cout << x*frequency << " " << y*frequency << endl;
+
     for(uint i=0; i<5; i++)
     {
         total += perlin_noise(x*frequency, y*frequency)*amplitude;

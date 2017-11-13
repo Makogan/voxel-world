@@ -58,16 +58,17 @@ class Chunk
 class World
 {
     private:
-        int h_radius = 10;
-        int v_radius = 20;
-        ivec3 origin = ivec3(0);
+        int h_radius = 20;
+        int v_radius = 6;
         Chunk ****loaded_chunks;
 
     public:
+        ivec3 origin = ivec3(0);
         World();
         ~World();
 
         Cube* operator()(int x, int y, int z);
+        void re_frame(ivec3 offset);
         void render_world();        
 };
 //########################################################################################

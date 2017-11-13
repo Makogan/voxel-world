@@ -9,6 +9,8 @@ Todo:
     ☐ Research river and biome generation @high 
     ☐ Look into Doxygen for automatic documentation @low 
   Coding:
+    ☐ Multithread @medium, 
+      (1 thread for the player, 1 for rendering, 1 for world events, 1 for entitites)
     ☐ Implement pre-visualization of world generation @low 
     ☐ Create more cube types @high 
     ☐ Create world generation @critical 
@@ -16,17 +18,21 @@ Todo:
     ☐ Implement Physics @low 
     ☐ Implement Menu and GUI @low 
   Debuging:
+    ☐ Fiz problem with world generation involving negative x,y coordinates
+      (Currently fixed through absolute value, but this creates mirroring)
   Documentation:
-    ☐ Improve documentation and comments @medium,  
+    ☐ Improve documentation and comments @medium  
     ☐ If Doxygen is suitable, modify documentation to fit Doxygen @low 
   Refactoring:
+    ☐ Try to move all rendering info (VBO's, SSBO's) to the renderign handler
+      (or at least as much as possible, this should make multithreading easier)
     ☐ Cube faces are currently using 4 normals, revise decision @low 
       (If smoothing or similar techniques are used, this is justified, else change to 1)
     ✔ Attempt to make cube fetching chunk agnostic @low @done(17-11-11 23:34)
       (Ideally chunks and cubes should be fetched without information of the world array)
     ☐ Embrace C++ and make all relevant functions into class member functions @high 
       (Instead of stand alone functions, OOP is good, why not fully embrace it?)
-    ☐ Minimize overhead to the maximum @medium, 
+    ☐ Minimize overhead to the maximum @medium
       (Revise current version and edit all structures and functions to minimize overhead)
 
 Archive:

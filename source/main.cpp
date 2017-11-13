@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 * The following functions are not final at all, if modifications can be done, do them
 */
 
-
+bool temp = false;
 //main render loop
 void render_loop(GLFWwindow* window)
 {
@@ -95,6 +95,16 @@ void render_loop(GLFWwindow* window)
 		Rendering_Handler->update(window);
 
 		//currentTime = glfwGetTime();
+		if(temp)
+		{
+			temp = false;
+			/*ivec3 aligned_pos = 
+				((ivec3(Rendering_Handler->cam->getPosition())-c.origin)/CHUNK_DIMS);
+			float ffs = (Rendering_Handler->cam->getPosition().x);*/
+			//cout << "A pos: " << aligned_pos.x << " pos: " << ffs << endl;
+			ivec3 t = ivec3(-1,0,0);
+			c.re_frame(t);
+		}
 		c.render_world();
 
 		//cout << (currentTime-prevTime) << endl;
