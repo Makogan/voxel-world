@@ -18,7 +18,7 @@ Todo:
     ☐ Implement Physics @low 
     ☐ Implement Menu and GUI @low 
   Debuging:
-    ☐ Fiz problem with world generation involving negative x,y coordinates
+    ☐ Fiz problem with world generation involving negative x,y coordinates @medium 
       (Currently fixed through absolute value, but this creates mirroring)
   Documentation:
     ☐ Improve documentation and comments @medium  

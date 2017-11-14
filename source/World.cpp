@@ -66,10 +66,10 @@ Chunk::Chunk(vec3 offset, World* w)
 
     //Create and initialize OpenGL rendering structures
     cube_rendering_VBOs = vector<GLuint>(5);
-    glGenVertexArrays(1, &world_cubes_VAO);
+    glGenVertexArrays(1, &cubes_VAO);
     glGenBuffers(5,cube_rendering_VBOs.data());
 
-    glBindVertexArray(world_cubes_VAO);
+    glBindVertexArray(cubes_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, cube_rendering_VBOs[0]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
@@ -97,31 +97,8 @@ Chunk::~Chunk()
        delete(chunk_cubes[i]);
     }
 
-    /*glDeleteBuffers(5, cube_rendering_VBOs.data());
-    glDeleteVertexArrays(1, &world_cubes_VAO);*/
-}
-
-/*
-* Inline function, calculate the relevant coordinates for cube fetching in 1D
-*/
-inline void calculate_coordinates(int x, int &chunk_x, 
-    int &cube_x, bool &out_of_bounds)
-{
-    if(x<0 || x>=CHUNK_DIMS)
-    {
-        //Set flag to indicat the cube is not in the current chunk
-        out_of_bounds=true;
-        if(x>=0)
-        {
-            chunk_x+=x/CHUNK_DIMS; //Index of the neighbouring chunk
-            cube_x=x%CHUNK_DIMS; //Index of the neighbouring cube
-        }
-        else
-        {
-            chunk_x+=-x/CHUNK_DIMS -1; //Index of the neighbouring chunk
-            cube_x=x%CHUNK_DIMS + CHUNK_DIMS; //Index of the neighbouring cube
-        }
-    }
+    glDeleteBuffers(5, cube_rendering_VBOs.data());
+    glDeleteVertexArrays(1, &cubes_VAO);
 }
 
 /*
@@ -163,7 +140,7 @@ void Chunk::update()
 //TODO: Maybe delete this and have the handler fetch the information directly
 void Chunk::render_chunk()
 {
-    Rendering_Handler->multi_render(world_cubes_VAO, &cube_rendering_VBOs, 
+    Rendering_Handler->multi_render(cubes_VAO, &cube_rendering_VBOs, 
         &cube_VBO_types, 4, MESH->indices->size(),faces_info.size());
 }
 
@@ -190,8 +167,7 @@ void Chunk::update_visible_faces()
                 int c_x=(int)(current->position.x);
                 int c_y=(int)(current->position.y); 
                 int c_z=(int)(current->position.z);
-                //int c_x=0,c_y=0,c_z=0;
-                //cout << c_x <<  " " << c_y << " " << c_z << endl;
+
                 //fetch all 6 neighbours and update accordingly
                 Cube* neighbour = (*world)(c_x-1,c_y,c_z);
                 CHECK_NEIGHBOUR(current, neighbour, Left);
@@ -215,7 +191,7 @@ void Chunk::update_visible_faces()
 */
 void Chunk::update_render_info()
 {
-    glBindVertexArray(world_cubes_VAO);
+    glBindVertexArray(cubes_VAO);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, cube_rendering_VBOs[3]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, faces_info.size()*sizeof(vec4), faces_info.data(), GL_DYNAMIC_COPY);
@@ -306,40 +282,54 @@ World::~World()
    free(loaded_chunks);
 }
 
+inline void shift(Chunk**** *array, int size, int offset)
+{
+    int step = offset/abs(offset);
+    int start, end;
+    step < 0? start=size-1 : start=0;
+    step < 0? end=0 : end=start-1;
+    for(int i=0; i < size; i++)
+        cout << (*array)[i] << " ";
+    cout<< endl;
+    for(int i=0; i<abs(offset); i++)
+    {
+        Chunk*** holder = (*array)[start];
+        for(int i=0;  i<=size-1; i++)
+        {
+            (*array)[((start+step*i)%size + size)%size] = 
+                (*array)[((start+step*i + step)%size + size)%size];
+        }
+        (*array)[end] = holder;
+    }
+    for(int i=0; i < size; i++)
+        cout << (*array)[i] << " " ;
+        cout<< endl;
+}
+
 void World::re_frame(ivec3 offset)
 {
-    if(abs(offset.x)>=h_radius)    
-    {
-        cerr << offset.x << endl;
-        cerr << "Attempting to align frame beyond bounds" << endl;
-        exit(0);
-    }
-
     origin.x += offset.x*CHUNK_DIMS;
 
-    if(offset.x < 0)
-    {
-        Chunk*** holder = loaded_chunks[h_radius-1];
-        for(int i=h_radius-1; i>=abs(offset.x); i--)
-        {
-            loaded_chunks[i] = loaded_chunks[i+offset.x];
-        }
-        loaded_chunks[0] = holder;
+    shift(&loaded_chunks, h_radius, offset.x);
 
-        for(int i=0; i<abs(offset.x); i++)
-        {           
-            for(int j=0; j<h_radius; j++)
+    int step = offset.x/abs(offset.x);
+    int start;
+    step < 0? start=0 : start=h_radius-1;
+
+    for(int i=0; i<abs(offset.x); i++)
+    {           
+        int x_index = i*step + start;
+        for(int j=0; j<h_radius; j++)
+        {
+            for(int k=0; k<v_radius; k++)
             {
-                for(int k=0; k<v_radius; k++)
-                {
-                    delete(loaded_chunks[i][j][k]);
-                    loaded_chunks[i][j][k]=
-                        new Chunk(
-                            vec3((i)*CHUNK_DIMS+origin.x,
-                                 (j)*CHUNK_DIMS+origin.y,
-                                 (k)*CHUNK_DIMS+origin.z), 
-                                 this);
-                }
+                delete(loaded_chunks[x_index][j][k]);
+                loaded_chunks[x_index][j][k]=
+                    new Chunk(
+                        vec3((x_index)*CHUNK_DIMS+origin.x,
+                                (j)*CHUNK_DIMS+origin.y,
+                                (k)*CHUNK_DIMS+origin.z), 
+                                this);
             }
         }
     }
@@ -363,7 +353,7 @@ void World::re_frame(ivec3 offset)
 Cube* World::operator()(int x, int y, int z)
 {
     x-=origin.x, y-=origin.y, z-=origin.z;
-    int chunk_x = x/CHUNK_DIMS, chunk_y=y/CHUNK_DIMS, chunk_z=z/CHUNK_DIMS;
+    int chunk_x = (x/CHUNK_DIMS), chunk_y=y/CHUNK_DIMS, chunk_z=z/CHUNK_DIMS;
     x=x%CHUNK_DIMS, y=y%CHUNK_DIMS, z=z%CHUNK_DIMS;
 
     //Check out of bound conditions and return  NULL when needed

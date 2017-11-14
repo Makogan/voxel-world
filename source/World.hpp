@@ -38,7 +38,7 @@ class Chunk
         Cube *chunk_cubes[CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS];
         vector<vec4> faces_info;
 
-        GLuint world_cubes_VAO;
+        GLuint cubes_VAO;
         vector<GLuint> cube_rendering_VBOs;
         void update_visible_faces();
         void update_render_info();
@@ -58,7 +58,7 @@ class Chunk
 class World
 {
     private:
-        int h_radius = 20;
+        int h_radius = 5;
         int v_radius = 6;
         Chunk ****loaded_chunks;
 
