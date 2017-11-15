@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 
 	int width, height;
     glfwGetWindowSize(window, &width, &height);
-	Rendering_Handler->set_camera(new Camera(mat3(1), vec3(0,-20,0), width, height));
+	Rendering_Handler->set_camera(new Camera(mat3(1), vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,10), width, height));
 	
 	//Render loop
 	render_loop(window);
@@ -94,21 +94,13 @@ void render_loop(GLFWwindow* window)
 		glfwPollEvents();
 		Rendering_Handler->update(window);
 
-		//currentTime = glfwGetTime();
-		if(temp)
+		//if(temp)
 		{
-			temp = false;
-			/*ivec3 aligned_pos = 
-				((ivec3(Rendering_Handler->cam->getPosition())-c.origin)/CHUNK_DIMS);
-			float ffs = (Rendering_Handler->cam->getPosition().x);*/
-			//cout << "A pos: " << aligned_pos.x << " pos: " << ffs << endl;
-			ivec3 t = ivec3(-1,0,0);
-			c.re_frame(t);
+			//temp=false;
+			c.center_frame(ivec3(Rendering_Handler->cam->getPosition()));
 		}
-		c.render_world();
 
-		//cout << (currentTime-prevTime) << endl;
-		//prevTime = currentTime;
+		c.render_world();
 
 		openGLerror();
 	}

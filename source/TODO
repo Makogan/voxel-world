@@ -13,13 +13,15 @@ Todo:
       (1 thread for the player, 1 for rendering, 1 for world events, 1 for entitites)
     ☐ Implement pre-visualization of world generation @low 
     ☐ Create more cube types @high 
-    ☐ Create world generation @critical 
+    ✔ Create world generation @critical @done(17-11-14 22:17)
       (merge noise generation with chunks)
+      ☐ Improve world generation @medium 
     ☐ Implement Physics @low 
     ☐ Implement Menu and GUI @low 
   Debuging:
-    ☐ Fiz problem with world generation involving negative x,y coordinates @medium 
+    ☐ Fix problem with world generation involving negative x,y coordinates @medium 
       (Currently fixed through absolute value, but this creates mirroring)
+    ☐ Shifitng the world by more than 1 creates gaps @medium 
   Documentation:
     ☐ Improve documentation and comments @medium  
     ☐ If Doxygen is suitable, modify documentation to fit Doxygen @low 

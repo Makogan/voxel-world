@@ -26,10 +26,27 @@ class World;
 
 //========================================================================================
 /*
-*	Class declaration:
+*	Class declarations:
 */
 //========================================================================================
 //TODO: document this section
+template <typename T> class cirArray
+{
+    private:
+        vector<T> array;
+        int start;
+
+    public:
+        cirArray();
+        cirArray(uint size);
+
+        int shift(int);
+
+        T& operator[](int);
+        void operator=(T);
+
+        uint size();
+};
 
 class Chunk
 {
@@ -44,23 +61,39 @@ class Chunk
         void update_render_info();
 
     public:
-        Cube* operator()(int x, int y, int z);
+        Cube* operator()(int, int, int);
 
         Chunk();
-        Chunk(vec3 offset);
-        Chunk(vec3, World* w);
+        Chunk(vec3);
+        Chunk(vec3, World*);
         ~Chunk();
 
         void update();
         void render_chunk();
 };
 
+class Chunk_Holder
+{
+    private:
+        cirArray<cirArray<cirArray<Chunk*>*>*> chunkBox;
+        World* world;
+
+    public:
+        Chunk_Holder();
+        Chunk_Holder(int, int, int, World*);
+        ~Chunk_Holder();
+
+        Chunk* operator()(int, int, int);
+        void shift(ivec3);
+};
+
 class World
 {
     private:
-        int h_radius = 5;
-        int v_radius = 6;
-        Chunk ****loaded_chunks;
+        int h_radius = 10;
+        int v_radius = 4;
+        //Chunk ****loaded_chunks;
+        Chunk_Holder *loaded_chunks;
 
     public:
         ivec3 origin = ivec3(0);
@@ -68,7 +101,7 @@ class World
         ~World();
 
         Cube* operator()(int x, int y, int z);
-        void re_frame(ivec3 offset);
+        void center_frame(ivec3 offset);
         void render_world();        
 };
 //########################################################################################
