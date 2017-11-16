@@ -269,22 +269,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		Rendering_Handler->cam->move(normalize(-Rendering_Handler->cam->getUp()));
 
     else if(key == GLFW_KEY_KP_6)
-    	Rendering_Handler->cam->turnH(radians(-1.f));
+    	Rendering_Handler->cam->turnH(radians(-4.f));
 
     else if(key == GLFW_KEY_KP_4)
-    	Rendering_Handler->cam->turnH(radians(1.f));
+    	Rendering_Handler->cam->turnH(radians(4.f));
 
     else if(key == GLFW_KEY_KP_8)
-    	Rendering_Handler->cam->turnV(radians(-1.f));
+    	Rendering_Handler->cam->turnV(radians(-4.f));
 
     else if(key == GLFW_KEY_KP_2)
-    	Rendering_Handler->cam->turnV(radians(1.f));
+    	Rendering_Handler->cam->turnV(radians(4.f));
 
     else if(key == GLFW_KEY_KP_ADD)
-    	Rendering_Handler->cam->incline(radians(1.f));
+    	Rendering_Handler->cam->incline(radians(4.f));
 
     else if(key == GLFW_KEY_KP_SUBTRACT)
-    	Rendering_Handler->cam->incline(radians(-1.f));
+    	Rendering_Handler->cam->incline(radians(-4.f));
 
     else if(key == GLFW_KEY_KP_MULTIPLY)
     	Rendering_Handler->cam->resetView();

@@ -52,7 +52,7 @@ class Chunk
 {
     private:
         World* world;
-        Cube *chunk_cubes[CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS];
+        Cube *chunk_cubes[CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS] = {};
         vector<vec4> faces_info;
 
         GLuint cubes_VAO;
@@ -68,6 +68,7 @@ class Chunk
         Chunk(vec3, World*);
         ~Chunk();
 
+        void create_cubes(vec3);
         void update();
         void render_chunk();
 };
@@ -75,7 +76,7 @@ class Chunk
 class Chunk_Holder
 {
     private:
-        cirArray<cirArray<cirArray<Chunk*>*>*> chunkBox;
+        cirArray<cirArray<cirArray<Chunk*>>> chunkBox;
         World* world;
 
     public:

@@ -92,4 +92,8 @@ Cube::Cube() : Cube(vec3(0)){}
 
 Cube::~Cube(){}
 
+void Cube::operator()(vec3 offset)
+{
+    position = offset;
+}
 //########################################################################################
