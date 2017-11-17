@@ -52,12 +52,12 @@ template <typename T> T& cirArray<T>::operator[](int i)
     return array[(start + i+n)%n];
 }
 
-template <typename T> int cirArray<T>::shift(int i)
+template <typename T> void cirArray<T>::shift(int i)
 {
     int n = array.size();
     start = (start+i+n)%n;
 
-    if(i<0) return 0; else return array.size()-1;
+    //if(i<0) return 0; else return array.size()-1;
 }
 
 template <typename T> uint cirArray<T>::size()
@@ -161,7 +161,7 @@ void Chunk::create_cubes(vec3 offset)
                 (i/CHUNK_DIMS) % CHUNK_DIMS + offset[1], 
                 i%CHUNK_DIMS + offset[2]));
         else
-            (*chunk_cubes[i])(vec3(i/(CHUNK_DIMS*CHUNK_DIMS) + offset[0], 
+            chunk_cubes[i]->update(vec3(i/(CHUNK_DIMS*CHUNK_DIMS) + offset[0], 
                 (i/CHUNK_DIMS) % CHUNK_DIMS + offset[1], 
                 i%CHUNK_DIMS + offset[2]));
 
@@ -191,7 +191,9 @@ void Chunk::render_chunk()
 }
 
 //Help macro, correctly updates the visible faces info
-#define CHECK_NEIGHBOUR(c,n,f) if(n==NULL || n->transparent)\
+#define CHECK_NEIGHBOUR(c,n,f) if(n==NULL)\
+faces_info.push_back(vec4(c->position,f+6));\
+else if(n->transparent)\
 faces_info.push_back(vec4(c->position,f));
 
 /*
@@ -299,17 +301,17 @@ Chunk* Chunk_Holder::operator()(int x, int y, int z)
 
 void Chunk_Holder::shift(ivec3 offset)
 {
-    int start = chunkBox.shift(offset.x);
+    chunkBox.shift(offset.x);
+
+    int start = (offset.x<0)? 0 : world->h_radius-1;
     int sign = offset.x==0? 0: -offset.x/abs(offset.x); 
-    int correction = offset.x<0? 1 : 0;
-    int xn = chunkBox.size();
-    //cout << start << endl;
-    for(int i=0; i<abs(offset.x); i++)
+    int n = world->h_radius;
+    /*for(int i=0; i<world->h_radius; i++)
     {
-        int x = (start+i*sign + xn)%xn;
-        for(int j=0; j<(chunkBox[x]).size(); j++)
+        int x = (start+i*sign + n)%n;
+        for(int j=0; j<world->h_radius; j++)
         {
-            for(int k=0; k<chunkBox[x][j].size(); k++)
+            for(int k=0; k<world->v_radius; k++)
             {
                 delete(chunkBox[x][j][k]);
                 chunkBox[x][j][k] = 
@@ -317,28 +319,69 @@ void Chunk_Holder::shift(ivec3 offset)
                         vec3(x*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) 
                         + vec3(world->origin), 
                         world);
-                chunkBox[x][j][k]->update();
-            }
-        }
-    }
-
-    /*for(int i=0; i<chunkBox.size(); i++)
-    {
-        for(int j=0; j<(chunkBox[i]).size(); j++)
-        {
-            for(int k=0; k<(chunkBox[i][j]).size(); k++)
-            {
-                chunkBox[i][j][k]->update();
             }
         }
     }*/
 
+    for(int i=0; i<world->h_radius; i++)
+        chunkBox[i].shift(offset.y);
 
-    /*int start, step;
-    offset.x<0? start = 0 : start = chunkBox.size()-1;
-    offset.x==0? step=0 : step = offset.x/abs(offset.x);*/
+    start = (offset.y<0)? 0 : world->h_radius-1;
+    sign = offset.y==0? 0: -offset.y/abs(offset.y); 
+    n = world->h_radius;
+   /* for(int i=0; i<world->h_radius; i++)
+    {
+        for(int j=0; j<world->h_radius; j++)
+        {
+            int y = (start+j*sign + n)%n;
+            for(int k=0; k<world->v_radius; k++)
+            {
+                delete(chunkBox[i][y][k]);
+                chunkBox[i][y][k] = 
+                    new Chunk(
+                        vec3(i*CHUNK_DIMS,y*CHUNK_DIMS,k*CHUNK_DIMS) 
+                        + vec3(world->origin), 
+                        world);
+            }
+        }
+    }*/
 
+    for(int i=0; i<world->h_radius; i++)
+        for(int j=0; j<world->h_radius; j++)
+            chunkBox[i][j].shift(offset.z);
 
+    start = (offset.z<0)? 0 : world->v_radius-1;
+    sign = offset.z==0? 0: -offset.z/abs(offset.z); 
+    n = world->v_radius;
+    for(int i=0; i<world->h_radius; i++)
+    {
+        for(int j=0; j<world->h_radius; j++)
+        {
+            for(int k=0; k<world->v_radius; k++)
+            {
+                //int z = (start+k*sign + n)%n;
+                /*delete(chunkBox[i][j][k]);
+                chunkBox[i][j][k] = 
+                    new Chunk(
+                        vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) 
+                        + vec3(world->origin), 
+                        world);*/
+                (chunkBox[i][j][k])->create_cubes(vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) 
+                + vec3(world->origin));
+            }
+        }
+    }
+
+    for(int i=0; i<world->h_radius; i++)
+    {
+        for(int j=0; j<world->h_radius; j++)
+        {
+            for(int k=0; k<world->v_radius; k++)
+            {
+                chunkBox[i][j][k]->update();
+            }
+        }
+    }
 }
 //########################################################################################
 
@@ -382,11 +425,22 @@ World::~World()
 
 void World::center_frame(ivec3 position)
 {
-    int distance = position.x - origin.x - (h_radius/2)*CHUNK_DIMS;
+
+    /*int distance = position.x - origin.x - (h_radius/2)*CHUNK_DIMS;
     if(abs(distance) >= 1*CHUNK_DIMS)
     {
         origin.x+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
         loaded_chunks->shift(ivec3(distance/CHUNK_DIMS,0,0));
+    }*/
+
+    ivec3 distance = 
+        position - origin - ivec3(h_radius/2, h_radius/2, v_radius/2)*CHUNK_DIMS;
+    //distance.z=0;
+    if(abs(distance.x) >= 2*CHUNK_DIMS || abs(distance.y) >= 2*CHUNK_DIMS 
+        || abs(distance.z) >= 2*CHUNK_DIMS)
+    {
+        origin+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
+        loaded_chunks->shift(distance/CHUNK_DIMS);
     }
 }
 

@@ -11,6 +11,7 @@
 
 #version 410
 
+in float visible;
 in vec3 normal;//Normal to the vertex
 in vec3 vertexPos;//True position of the vertex (i.e it's location in space)
 
@@ -78,8 +79,10 @@ void main()
   vec3 h = normalize(e+l);
 
   //outColor = vec4(c*(vec3(0.1)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
-
   outColor = vec4(c,1); // mix(color,outColor,0.5);
+  float temp = visible;
+  if(temp == 0.f)
+    outColor = vec4(0);
 
   /*double x = floor(gl_FragCoord.x/4)/10.f;
   double y = floor(gl_FragCoord.y/4)/10.f;

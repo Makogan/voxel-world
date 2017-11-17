@@ -9,6 +9,9 @@ Todo:
     ☐ Research river and biome generation @high 
     ☐ Look into Doxygen for automatic documentation @low 
   Coding:
+    ☐ Optimize chunk update @medium 
+      (Marked for revision, it's impossible to reduce asymptotic time, maybe not needed) 
+    ☐ Code world loading @critical 
     ☐ Multithread @medium, 
       (1 thread for the player, 1 for rendering, 1 for world events, 1 for entitites)
     ☐ Implement pre-visualization of world generation @low 
@@ -19,15 +22,16 @@ Todo:
     ☐ Implement Physics @low 
     ☐ Implement Menu and GUI @low 
   Debuging:
+    ☐ Gaps are created over time when moving around
     ☐ Fix problem with world generation involving negative x,y coordinates @medium 
       (Currently fixed through absolute value, but this creates mirroring)
-    ☐ Shifitng the world by more than 1 creates gaps @medium 
+    ✔ Shifitng the world by more than 1 creates gaps @medium @done(17-11-15 22:58)
   Documentation:
     ☐ Add missing documentation @medium 
     ☐ Improve documentation and comments @medium  
     ☐ If Doxygen is suitable, modify documentation to fit Doxygen @low 
   Refactoring:
-    ☐ Fix all modulus arithmetic
+    ✔ Fix all modulus arithmetic @done(17-11-15 23:00)
       (you can reduce ((x+i)%n+n)%n to simply (x+i+n)%n)
     ☐ Try to move all rendering info (VBO's, SSBO's) to the renderign handler @low 
       (or at least as much as possible, this should make multithreading easier)

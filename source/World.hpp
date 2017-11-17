@@ -40,7 +40,7 @@ template <typename T> class cirArray
         cirArray();
         cirArray(uint size);
 
-        int shift(int);
+        void shift(int);
 
         T& operator[](int);
         void operator=(T);
@@ -91,12 +91,13 @@ class Chunk_Holder
 class World
 {
     private:
-        int h_radius = 10;
-        int v_radius = 4;
         //Chunk ****loaded_chunks;
         Chunk_Holder *loaded_chunks;
 
     public:
+        int h_radius = 10;
+        int v_radius = 4;
+        
         ivec3 origin = ivec3(0);
         World();
         ~World();

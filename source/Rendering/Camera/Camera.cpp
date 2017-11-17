@@ -145,14 +145,14 @@ void Camera::setPosition(vec3 p)
 void Camera::turnH(float angle)
 {
 	mat4 rotation(1);
-	rotation = rotate(rotation, angle, up);
+	rotation = rotate(rotation, angle, vec3(0,0,1));
 	vec4 newForward = vec4(forward, 1);
 
 	newForward = rotation*newForward;
 
 	forward = vec3(newForward);
 	forward = normalize(forward);
-	side = cross(forward,up);
+	side = normalize(cross(forward,vec3(0,0,1)));
 }
 
 void Camera::turnV(float angle)
@@ -163,13 +163,13 @@ void Camera::turnV(float angle)
 		rotation = rotate(rotation, angle, side);
 
 		vec4 newForward = vec4(forward, 1);
-		vec4 newUp = vec4(up, 1);
+		//vec4 newUp = vec4(up, 1);
 
 		newForward = rotation*newForward;
-		newUp = rotation*newUp;
+		//newUp = rotation*newUp;
 
-		forward = vec3(newForward);
-		up = vec3(newUp);
+		forward = normalize(vec3(newForward));
+		//up = vec3(newUp);
 	}
 }
 

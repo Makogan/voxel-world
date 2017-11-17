@@ -54,7 +54,7 @@ int main(int argc, char **argv)
 
 	int width, height;
     glfwGetWindowSize(window, &width, &height);
-	Rendering_Handler->set_camera(new Camera(mat3(1), vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,10), width, height));
+	Rendering_Handler->set_camera(new Camera(mat3(1), vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,2*CHUNK_DIMS), width, height));
 	
 	//Render loop
 	render_loop(window);

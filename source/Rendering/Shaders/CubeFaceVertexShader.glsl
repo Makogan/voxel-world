@@ -22,6 +22,7 @@ layout(std430, binding = 3) buffer face_buffer
     vec4 face_info[];//first 3 values are position of face, final value is face type 
 };
 
+out float visible;
 out vec3 normal; 
 out vec3 vertexPos; //projected vertex
 out vec2 texture_coord;
@@ -71,12 +72,34 @@ void main()
         case 5:
             rotation = rotationMatrix(vec3(1,0,0), PI/2.f);
             break;
+
+        case 6:
+            rotation = mat4(1);
+            break;
+        case 7:
+            rotation = rotationMatrix(vec3(0,0,1), -PI/2.f);
+            break;
+        case 8:
+            rotation = rotationMatrix(vec3(0,0,1), PI/2.f);
+            break;
+        case 9:
+            rotation = rotationMatrix(vec3(0,0,1), PI);
+            break;
+        case 10:
+            rotation = rotationMatrix(vec3(1,0,0), -PI/2.f);
+            break;
+        case 11:
+            rotation = rotationMatrix(vec3(1,0,0), PI/2.f);
+            break;
         
         default:
             rotation = mat4(1);
             break;
     }
-
+    visible = 1.f;
+    if(int(face_info[gl_InstanceID][3])>=6)
+        visible = 0.f;
+       
     texture_coord = texture_coordinate + vec2((face_info[gl_InstanceID][3])*(1/6.f),0);
     gl_Position = proj*view*(rotation*vec4(position, 1.0) + vec4(vec3(face_info[gl_InstanceID]),0));
     normal = vec3(rotation*vec4(norm,1.0));
