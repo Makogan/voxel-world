@@ -302,72 +302,54 @@ Chunk* Chunk_Holder::operator()(int x, int y, int z)
 void Chunk_Holder::shift(ivec3 offset)
 {
     chunkBox.shift(offset.x);
-
-    int start = (offset.x<0)? 0 : world->h_radius-1;
-    int sign = offset.x==0? 0: -offset.x/abs(offset.x); 
-    int n = world->h_radius;
-    /*for(int i=0; i<world->h_radius; i++)
-    {
-        int x = (start+i*sign + n)%n;
-        for(int j=0; j<world->h_radius; j++)
-        {
-            for(int k=0; k<world->v_radius; k++)
-            {
-                delete(chunkBox[x][j][k]);
-                chunkBox[x][j][k] = 
-                    new Chunk(
-                        vec3(x*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) 
-                        + vec3(world->origin), 
-                        world);
-            }
-        }
-    }*/
-
     for(int i=0; i<world->h_radius; i++)
+    {
         chunkBox[i].shift(offset.y);
-
-    start = (offset.y<0)? 0 : world->h_radius-1;
-    sign = offset.y==0? 0: -offset.y/abs(offset.y); 
-    n = world->h_radius;
-   /* for(int i=0; i<world->h_radius; i++)
-    {
-        for(int j=0; j<world->h_radius; j++)
-        {
-            int y = (start+j*sign + n)%n;
-            for(int k=0; k<world->v_radius; k++)
-            {
-                delete(chunkBox[i][y][k]);
-                chunkBox[i][y][k] = 
-                    new Chunk(
-                        vec3(i*CHUNK_DIMS,y*CHUNK_DIMS,k*CHUNK_DIMS) 
-                        + vec3(world->origin), 
-                        world);
-            }
-        }
-    }*/
-
-    for(int i=0; i<world->h_radius; i++)
         for(int j=0; j<world->h_radius; j++)
             chunkBox[i][j].shift(offset.z);
+    }
 
-    start = (offset.z<0)? 0 : world->v_radius-1;
-    sign = offset.z==0? 0: -offset.z/abs(offset.z); 
-    n = world->v_radius;
-    for(int i=0; i<world->h_radius; i++)
+    int start_x = offset.x<0? 0 : world->h_radius-1;
+    int sign_x = offset.x == 0? 0: -offset.x/abs(offset.x);
+    for(int i=0; i<=abs(offset.x); i++)
     {
+        int x = (start_x + i*sign_x + world->h_radius)%world->h_radius;
         for(int j=0; j<world->h_radius; j++)
         {
             for(int k=0; k<world->v_radius; k++)
             {
-                //int z = (start+k*sign + n)%n;
-                /*delete(chunkBox[i][j][k]);
-                chunkBox[i][j][k] = 
-                    new Chunk(
-                        vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) 
-                        + vec3(world->origin), 
-                        world);*/
-                (chunkBox[i][j][k])->create_cubes(vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) 
-                + vec3(world->origin));
+                (chunkBox[x][j][k])->create_cubes(
+                    vec3(x*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) + vec3(world->origin));
+            }
+        }
+    }
+
+    int start_y = offset.y<0? 0 : world->h_radius-1;
+    int sign_y = offset.y ==0? 0: -offset.y/abs(offset.y);
+    for(int i=0; i<world->h_radius; i++)
+    {
+        for(int j=0; j<=abs(offset.y); j++)
+        {
+            int y = (start_y + j*sign_y + world->h_radius)%world->h_radius;
+            for(int k=0; k<world->v_radius; k++)
+            {
+                (chunkBox[i][y][k])->create_cubes(
+                    vec3(i*CHUNK_DIMS,y*CHUNK_DIMS,k*CHUNK_DIMS) + vec3(world->origin));
+            }
+        }
+    }
+
+    int start_z = offset.z<0? 0 : world->v_radius-1;
+    int sign_z = offset.z ==0? 0: -offset.z/abs(offset.z);
+    for(int i=0; i<world->h_radius; i++)
+    {
+        for(int j=0; j<world->h_radius; j++)
+        {
+            for(int k=0; k<=abs(offset.z); k++)
+            {
+                int z = (start_z + k*sign_z + world->v_radius)%world->v_radius;
+                (chunkBox[i][j][z])->create_cubes(
+                    vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,z*CHUNK_DIMS) + vec3(world->origin));
             }
         }
     }
@@ -435,7 +417,6 @@ void World::center_frame(ivec3 position)
 
     ivec3 distance = 
         position - origin - ivec3(h_radius/2, h_radius/2, v_radius/2)*CHUNK_DIMS;
-    //distance.z=0;
     if(abs(distance.x) >= 2*CHUNK_DIMS || abs(distance.y) >= 2*CHUNK_DIMS 
         || abs(distance.z) >= 2*CHUNK_DIMS)
     {

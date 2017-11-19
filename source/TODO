@@ -22,7 +22,7 @@ Todo:
     ☐ Implement Physics @low 
     ☐ Implement Menu and GUI @low 
   Debuging:
-    ☐ Gaps are created over time when moving around
+    ☐ Gaps are created over time when moving around @critical 
     ☐ Fix problem with world generation involving negative x,y coordinates @medium 
       (Currently fixed through absolute value, but this creates mirroring)
     ✔ Shifitng the world by more than 1 creates gaps @medium @done(17-11-15 22:58)
@@ -31,6 +31,7 @@ Todo:
     ☐ Improve documentation and comments @medium  
     ☐ If Doxygen is suitable, modify documentation to fit Doxygen @low 
   Refactoring:
+    ☐ Delete the black face code @high 
     ✔ Fix all modulus arithmetic @done(17-11-15 23:00)
       (you can reduce ((x+i)%n+n)%n to simply (x+i+n)%n)
     ☐ Try to move all rendering info (VBO's, SSBO's) to the renderign handler @low 
