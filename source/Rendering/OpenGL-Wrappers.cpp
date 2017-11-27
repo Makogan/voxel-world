@@ -36,6 +36,8 @@
 */
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+Renderer *Rendering_Handler;
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -271,6 +273,21 @@ Renderer::Renderer()
 }
 
 /*
+*	Class destructor
+*/
+Renderer::~Renderer()
+{
+	for(Shader s: vertex_shaders)
+		deleteShader(s);
+	for(Shader s: fragment_shaders)
+		deleteShader(s);
+	for(Shader s: tessellation_shaders)
+		deleteShader(s);
+	for(GLuint p: shading_programs)
+		glDeleteProgram(p);
+}
+
+/*
 *	Function to render multiple instances of the same mesh
 * 	index_num is the number of indices in the mesh (for drawing elements)
 *	layout_num is the number of layouts to enable (always 0 to layou_num-1)
@@ -409,21 +426,14 @@ Shader* Renderer::find_shader(string shader_name)
 	return NULL;
 }
 
-/*
-*	Class destructor
-*/
-Renderer::~Renderer()
+uint Renderer::add_Render_Info()
 {
-	for(Shader s: vertex_shaders)
-		deleteShader(s);
-	for(Shader s: fragment_shaders)
-		deleteShader(s);
-	for(Shader s: tessellation_shaders)
-		deleteShader(s);
-	for(GLuint p: shading_programs)
-		glDeleteProgram(p);
+	visible_objects.push_back(Render_Info());
+	return visible_objects.size()-1;
 }
 
-Renderer *Rendering_Handler;
-
+Render_Info* Renderer::get_Render_Info(uint index)
+{
+	return &visible_objects[index];
+}
 //########################################################################################

@@ -83,6 +83,21 @@ struct Mesh
     ~Mesh();
 };
 
+struct Buffer
+{
+    GLuint VBO;
+    GLuint type;
+};
+
+struct Render_Info
+{
+    GLuint VAO;
+    vector<Buffer> buffers;
+    uint layouts;
+    uint render_instances;
+    Mesh* geometry;
+};
+
 /*
 * General rendering manager class
 */
@@ -93,6 +108,7 @@ class Renderer
         vector<Shader> vertex_shaders;
         vector<Shader> fragment_shaders;
         vector<Shader> tessellation_shaders;
+        vector<Render_Info> visible_objects;
     
     public:
         Camera *cam;
@@ -100,11 +116,12 @@ class Renderer
         Renderer();
         ~Renderer();
 
-        void temporary();
+        Shader* find_shader(string shader_name);
+        Render_Info* get_Render_Info(uint);
+        uint add_Render_Info();
 
         void update(GLFWwindow* window);
         void add_Shader(string shader, GLuint type);
-        Shader* find_shader(string shader_name);
         void make_program(vector<uint> *shaders);
         void set_camera(Camera *new_cam);
         void addVBO(); //TODO: figure this one out
@@ -112,7 +129,6 @@ class Renderer
             vector<GLuint> *buffer_types, GLuint layout_num, 
             GLuint index_num, GLuint instances);
         void change_active_program(GLuint newProgram);
-
 };
 
 extern Renderer *Rendering_Handler;
