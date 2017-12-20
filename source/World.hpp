@@ -53,10 +53,9 @@ class Chunk
     private:
         World* world;
         Cube *chunk_cubes[CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS] = {};
+        uint draw_info; 
         vector<vec4> faces_info;
-
-        GLuint cubes_VAO;
-        vector<GLuint> cube_rendering_VBOs;
+        
         void update_visible_faces();
         void update_render_info();
 

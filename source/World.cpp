@@ -83,26 +83,32 @@ Chunk::Chunk(vec3 offset, World* w)
 {
     world = w;
 
+    draw_info = Rendering_Handler->add_Render_Info();
+
     this->create_cubes(offset);
 
+    Render_Info *info = Rendering_Handler->get_Render_Info(draw_info);
+    info->types={GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
+        GL_SHADER_STORAGE_BUFFER, GL_ELEMENT_ARRAY_BUFFER};
+
     //Create and initialize OpenGL rendering structures
-    cube_rendering_VBOs = vector<GLuint>(5);
-    glGenVertexArrays(1, &cubes_VAO);
-    glGenBuffers(5,cube_rendering_VBOs.data());
+    info->VBOs = vector<GLuint>(5);
+    glGenVertexArrays(1, &(info->VAO));
+    glGenBuffers(5,(info->VBOs.data()));
 
-    glBindVertexArray(cubes_VAO);
+    glBindVertexArray(info->VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, cube_rendering_VBOs[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, info->VBOs[0]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, MESH->vertices->size()*sizeof(vec3), 
     MESH->vertices->data(), GL_DYNAMIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, cube_rendering_VBOs[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, info->VBOs[1]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, MESH->normals->size()*sizeof(vec3),
     MESH->normals->data(), GL_DYNAMIC_DRAW);
     
-    glBindBuffer(GL_ARRAY_BUFFER, cube_rendering_VBOs[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, info->VBOs[2]);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, MESH->uvs->size()*sizeof(vec2),
         MESH->uvs->data(), GL_DYNAMIC_DRAW);
@@ -118,8 +124,8 @@ Chunk::~Chunk()
        delete(chunk_cubes[i]);
     }
 
-    glDeleteBuffers(5, cube_rendering_VBOs.data());
-    glDeleteVertexArrays(1, &cubes_VAO);
+    //glDeleteBuffers(5, cube_rendering_VBOs.data());
+    //glDeleteVertexArrays(1, &cubes_VAO);
 }
 
 /*
@@ -186,8 +192,9 @@ void Chunk::update()
 //TODO: Maybe delete this and have the handler fetch the information directly
 void Chunk::render_chunk()
 {
-    Rendering_Handler->multi_render(cubes_VAO, &cube_rendering_VBOs, 
-        &cube_VBO_types, 4, MESH->indices->size(),faces_info.size());
+    Render_Info *info = Rendering_Handler->get_Render_Info(draw_info);
+    Rendering_Handler->multi_render(info->VAO, &(info->VBOs), 
+        &(info->types), 4, MESH->indices->size(),faces_info.size());
 }
 
 //Help macro, correctly updates the visible faces info
@@ -239,14 +246,16 @@ void Chunk::update_visible_faces()
 */
 void Chunk::update_render_info()
 {
-    glBindVertexArray(cubes_VAO);
+    Render_Info *info = Rendering_Handler->get_Render_Info(draw_info);
 
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, cube_rendering_VBOs[3]);
+    glBindVertexArray(info->VAO);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, (info->VBOs[3]));
     glBufferData(GL_SHADER_STORAGE_BUFFER, faces_info.size()*sizeof(vec4), 
         faces_info.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, cube_rendering_VBOs[3]);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, (info->VBOs)[3]);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, cube_rendering_VBOs[4]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (info->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices->size()*sizeof(uint),
         MESH->indices->data(), GL_DYNAMIC_DRAW);
 }
@@ -382,6 +391,8 @@ World::World()
     vec_field_init();
         
     loaded_chunks = new Chunk_Holder(h_radius, h_radius, v_radius, this);
+
+    //cout << (*loaded_chunks)(0,0,0)->draw_info->VBOs.size() << endl;
 
     //First chunk update, to assert all values
     for(int i=0; i<h_radius; i++)

@@ -83,16 +83,11 @@ struct Mesh
     ~Mesh();
 };
 
-struct Buffer
-{
-    GLuint VBO;
-    GLuint type;
-};
-
 struct Render_Info
 {
     GLuint VAO;
-    vector<Buffer> buffers;
+    vector<GLuint> VBOs;
+    vector<GLuint> types;
     uint layouts;
     uint render_instances;
     Mesh* geometry;

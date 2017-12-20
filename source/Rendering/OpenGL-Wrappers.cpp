@@ -436,4 +436,5 @@ Render_Info* Renderer::get_Render_Info(uint index)
 {
 	return &visible_objects[index];
 }
+
 //########################################################################################
