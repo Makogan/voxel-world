@@ -83,32 +83,31 @@ Chunk::Chunk(vec3 offset, World* w)
 {
     world = w;
 
-    draw_info = Rendering_Handler->add_Render_Info();
+    render_data = new Render_Info();
 
     this->create_cubes(offset);
 
-    Render_Info *info = Rendering_Handler->get_Render_Info(draw_info);
-    info->types={GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
+    render_data->types={GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
         GL_SHADER_STORAGE_BUFFER, GL_ELEMENT_ARRAY_BUFFER};
 
     //Create and initialize OpenGL rendering structures
-    info->VBOs = vector<GLuint>(5);
-    glGenVertexArrays(1, &(info->VAO));
-    glGenBuffers(5,(info->VBOs.data()));
+    render_data->VBOs = vector<GLuint>(5);
+    glGenVertexArrays(1, &(render_data->VAO));
+    glGenBuffers(5,(render_data->VBOs.data()));
 
-    glBindVertexArray(info->VAO);
+    glBindVertexArray(render_data->VAO);
 
-    glBindBuffer(GL_ARRAY_BUFFER, info->VBOs[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[0]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, MESH->vertices->size()*sizeof(vec3), 
     MESH->vertices->data(), GL_DYNAMIC_DRAW);
 
-    glBindBuffer(GL_ARRAY_BUFFER, info->VBOs[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[1]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, MESH->normals->size()*sizeof(vec3),
     MESH->normals->data(), GL_DYNAMIC_DRAW);
     
-    glBindBuffer(GL_ARRAY_BUFFER, info->VBOs[2]);
+    glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[2]);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, MESH->uvs->size()*sizeof(vec2),
         MESH->uvs->data(), GL_DYNAMIC_DRAW);
@@ -190,11 +189,15 @@ void Chunk::update()
 *   Send rendering informationto the rendering handler
 */
 //TODO: Maybe delete this and have the handler fetch the information directly
-void Chunk::render_chunk()
+void Chunk::send_render_data(Renderer* handler)
 {
-    Render_Info *info = Rendering_Handler->get_Render_Info(draw_info);
-    Rendering_Handler->multi_render(info->VAO, &(info->VBOs), 
-        &(info->types), 4, MESH->indices->size(),faces_info.size());
+    render_data->layouts = 4;
+    render_data->render_instances=faces_info.size();
+    render_data->geometry = MESH;
+
+    handler->add_data(render_data);
+   /* Rendering_Handler->multi_render(render_data->VAO, &(render_data->VBOs), 
+        &(render_data->types), 4, MESH->indices->size(),faces_info.size());*/
 }
 
 //Help macro, correctly updates the visible faces info
@@ -246,16 +249,14 @@ void Chunk::update_visible_faces()
 */
 void Chunk::update_render_info()
 {
-    Render_Info *info = Rendering_Handler->get_Render_Info(draw_info);
+    glBindVertexArray(render_data->VAO);
 
-    glBindVertexArray(info->VAO);
-
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, (info->VBOs[3]));
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, (render_data->VBOs[3]));
     glBufferData(GL_SHADER_STORAGE_BUFFER, faces_info.size()*sizeof(vec4), 
         faces_info.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, (info->VBOs)[3]);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, (render_data->VBOs)[3]);
 
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (info->VBOs)[4]);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices->size()*sizeof(uint),
         MESH->indices->data(), GL_DYNAMIC_DRAW);
 }
@@ -392,7 +393,7 @@ World::World()
         
     loaded_chunks = new Chunk_Holder(h_radius, h_radius, v_radius, this);
 
-    //cout << (*loaded_chunks)(0,0,0)->draw_info->VBOs.size() << endl;
+    //cout << (*loaded_chunks)(0,0,0)->rendering_index->VBOs.size() << endl;
 
     //First chunk update, to assert all values
     for(int i=0; i<h_radius; i++)
@@ -460,10 +461,7 @@ Cube* World::operator()(int x, int y, int z)
     return (*(*loaded_chunks)(chunk_x,chunk_y,chunk_z))(x,y,z);
 }
 
-/*
-* Render all world chunks
-*/
-void World::render_world()
+void World::send_render_data(Renderer* handler)
 {
    for(int i=0; i<h_radius; i++)
    {
@@ -471,8 +469,7 @@ void World::render_world()
        {
            for(int k=0; k<v_radius; k++)
            {
-               Chunk* c = (*loaded_chunks)(i,j,k);
-               c->render_chunk();
+               ((*loaded_chunks)(i,j,k))->send_render_data(handler);
            }
        }
    }

@@ -53,7 +53,7 @@ class Chunk
     private:
         World* world;
         Cube *chunk_cubes[CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS] = {};
-        uint draw_info; 
+        Render_Info *render_data;  
         vector<vec4> faces_info;
         
         void update_visible_faces();
@@ -69,7 +69,7 @@ class Chunk
 
         void create_cubes(vec3);
         void update();
-        void render_chunk();
+        void send_render_data(Renderer*);
 };
 
 class Chunk_Holder
@@ -103,6 +103,6 @@ class World
 
         Cube* operator()(int x, int y, int z);
         void center_frame(ivec3 offset);
-        void render_world();        
+        void send_render_data(Renderer*);        
 };
 //########################################################################################

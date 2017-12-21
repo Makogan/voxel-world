@@ -100,7 +100,8 @@ void render_loop(GLFWwindow* window)
 			c.center_frame(ivec3(Rendering_Handler->cam->getPosition()));
 		}
 
-		c.render_world();
+		c.send_render_data(Rendering_Handler);
+		Rendering_Handler->render();
 
 		openGLerror();
 	}

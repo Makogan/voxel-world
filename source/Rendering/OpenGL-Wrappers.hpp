@@ -103,7 +103,7 @@ class Renderer
         vector<Shader> vertex_shaders;
         vector<Shader> fragment_shaders;
         vector<Shader> tessellation_shaders;
-        vector<Render_Info> visible_objects;
+        vector<Render_Info*> visible_objects;
     
     public:
         Camera *cam;
@@ -112,8 +112,6 @@ class Renderer
         ~Renderer();
 
         Shader* find_shader(string shader_name);
-        Render_Info* get_Render_Info(uint);
-        uint add_Render_Info();
 
         void update(GLFWwindow* window);
         void add_Shader(string shader, GLuint type);
@@ -124,6 +122,8 @@ class Renderer
             vector<GLuint> *buffer_types, GLuint layout_num, 
             GLuint index_num, GLuint instances);
         void change_active_program(GLuint newProgram);
+        void add_data(Render_Info*);
+        void render();
 };
 
 extern Renderer *Rendering_Handler;
