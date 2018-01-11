@@ -253,7 +253,7 @@ void loadTexture(GLuint program, Texture &t)
 */
 Renderer::Renderer()
 {
-	visible_objects.reserve(4096);
+	render_queue.reserve(4096);
 	//Create cube rendering shader
 	vertex_shaders.push_back(Shader());
 	createShader(vertex_shaders[0],"./Shaders/CubeFaceVertexShader.glsl", GL_VERTEX_SHADER);
@@ -430,19 +430,27 @@ Shader* Renderer::find_shader(string shader_name)
 
 void Renderer::add_data(Render_Info* data)
 {
-	visible_objects.push_back(data);
+	busy_queue.lock();
+	render_queue.push_back(data);
+	busy_queue.unlock();
 }
 
 void Renderer::render()
 {
-	for(uint i=0; i<visible_objects.size(); i++)
+	busy_queue.lock();
+
+	for(uint i=0; i<render_queue.size(); i++)
 	{
-		Render_Info *render_data = visible_objects[i]; 
+		Render_Info *render_data = render_queue[i]; 
+		render_data->info_lock.lock();
 		multi_render(render_data->VAO, &(render_data->VBOs), 
 			&(render_data->types), render_data->layouts, 
 			render_data->geometry->indices->size(), render_data->render_instances);
+		render_data->info_lock.unlock();
 	}
 
-	visible_objects.clear();
+	render_queue.clear();
+
+	busy_queue.unlock();
 }
 //########################################################################################

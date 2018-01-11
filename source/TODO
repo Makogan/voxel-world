@@ -31,6 +31,8 @@ Todo:
     ☐ Improve documentation and comments @medium  
     ☐ If Doxygen is suitable, modify documentation to fit Doxygen @low 
   Refactoring:
+    ☐ Move all general headers to a single header @medium 
+    ☐ Move Perlin noise and similar functions to library @medium 
     ☐ Delete the black face code @high 
     ✔ Fix all modulus arithmetic @done(17-11-15 23:00)
       (you can reduce ((x+i)%n+n)%n to simply (x+i+n)%n)

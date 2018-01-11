@@ -28,6 +28,8 @@
 #include <cstdlib>
 #include <unistd.h>
 #include <time.h>
+#include <thread>
+#include <mutex>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -85,6 +87,7 @@ struct Mesh
 
 struct Render_Info
 {
+    mutex info_lock;
     GLuint VAO;
     vector<GLuint> VBOs;
     vector<GLuint> types;
@@ -103,7 +106,8 @@ class Renderer
         vector<Shader> vertex_shaders;
         vector<Shader> fragment_shaders;
         vector<Shader> tessellation_shaders;
-        vector<Render_Info*> visible_objects;
+        mutex busy_queue;
+        vector<Render_Info*> render_queue;
     
     public:
         Camera *cam;

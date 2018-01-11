@@ -20,6 +20,7 @@
 *	Includes and macros
 */
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+#include <thread>
 
 #include "Window-Management.hpp"
 #include "Cube.hpp"
@@ -35,7 +36,7 @@
 //TODO: document
 void render_loop(GLFWwindow* window);
 void end_rendering(GLFWwindow* window);
-
+void update_loop(GLFWwindow*);
 //########################################################################################
 
 //**************************************************************************************\\
@@ -48,16 +49,23 @@ void end_rendering(GLFWwindow* window);
 int main(int argc, char **argv)
 {
 	//Init OpenGL
-	GLFWwindow* window = create_context();
+	GLFWwindow* window = create_context(VISIBLE, NULL);
 
 	Rendering_Handler = new Renderer();
 
 	int width, height;
     glfwGetWindowSize(window, &width, &height);
 	Rendering_Handler->set_camera(new Camera(mat3(1), vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,2*CHUNK_DIMS), width, height));
-	
+	Cube c = Cube();
+
+	//thread world_thread(update_loop, window);
+	//update_loop(window);
+
 	//Render loop
 	render_loop(window);
+
+	//world_thread.join();
+
 	//cleanup
 	end_rendering(window);
 }
@@ -79,39 +87,47 @@ bool temp = false;
 //main render loop
 void render_loop(GLFWwindow* window)
 {
+
 	//Set default OpenGL values for rendering
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 	glPointSize(10.f);
 
 	World c = World();
+	
 	double prevTime = 0, currentTime=0;
 	//TODO: this is temprorary, implement this correctly
 	loadTexture(Rendering_Handler->current_program, *(Cube::textures[0]));
 
     while (!glfwWindowShouldClose(window))
 	{
+
 		glfwPollEvents();
 		Rendering_Handler->update(window);
 
-		//if(temp)
-		{
-			//temp=false;
-			c.center_frame(ivec3(Rendering_Handler->cam->getPosition()));
-		}
-
+		c.center_frame(ivec3(Rendering_Handler->cam->getPosition()));
 		c.send_render_data(Rendering_Handler);
+
 		Rendering_Handler->render();
 
 		openGLerror();
 	}
 }
 
+void update_loop(GLFWwindow* window)
+{
+	World c = World();
+
+	while (!glfwWindowShouldClose(window))
+	{
+		c.center_frame(ivec3(Rendering_Handler->cam->getPosition()));
+		c.send_render_data(Rendering_Handler);
+	}
+}
+
 //cleanup
 void end_rendering(GLFWwindow* window)
 {
-
-
 	Cube::cleanup();
 
     glfwDestroyWindow(window);

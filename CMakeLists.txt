@@ -8,7 +8,7 @@ set(LIBRARY_OUTPUT_PATH ${CMAKE_BINARY_DIR})
 set(PROJECT_SOURCE_DIR ${CMAKE_SOURCE_DIR}/source)
 
 if ( CMAKE_COMPILER_IS_GNUCC )
-    set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -Wall")
+    set(CMAKE_CXX_FLAGS  "-Wall")
 endif ( CMAKE_COMPILER_IS_GNUCC )
 
 add_executable(voxel-world ${PROJECT_SOURCE_DIR}/main.cpp)
@@ -26,7 +26,7 @@ find_package(glfw3 REQUIRED)
 find_package(Freetype REQUIRED)
 include_directories(${FREETYPE_INCLUDE_DIRS})
 
-target_link_libraries(voxel-world glfw GL GLEW freetype)
+target_link_libraries(voxel-world glfw GL GLEW freetype pthread)
 
 SET(CMAKE_CXX_FLAGS "-std=c++1y")
 

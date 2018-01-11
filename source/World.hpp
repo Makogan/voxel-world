@@ -90,7 +90,6 @@ class Chunk_Holder
 class World
 {
     private:
-        //Chunk ****loaded_chunks;
         Chunk_Holder *loaded_chunks;
 
     public:

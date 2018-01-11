@@ -33,6 +33,8 @@
 */
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+enum WINDOW_TYPE {VISIBLE, INVISIBLE};
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -53,9 +55,10 @@ void callBackInit(GLFWwindow* window);
 double calculateFPS(double prevTime, double currentTime);
 
 //Create a GLFW window
-GLFWwindow* createWindow();
+GLFWwindow* createWindow(GLFWwindow* other_window);
+GLFWwindow* createInvWindow(GLFWwindow* other_window);
 
 //Initialize GLEW, GLFW, Opengl context and create a window.
-GLFWwindow* create_context();
+GLFWwindow* create_context(WINDOW_TYPE w_type, GLFWwindow* other_window);
 
 //########################################################################################

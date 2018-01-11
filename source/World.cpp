@@ -84,6 +84,7 @@ Chunk::Chunk(vec3 offset, World* w)
     world = w;
 
     render_data = new Render_Info();
+    render_data->info_lock.lock();
 
     this->create_cubes(offset);
 
@@ -93,7 +94,7 @@ Chunk::Chunk(vec3 offset, World* w)
     //Create and initialize OpenGL rendering structures
     render_data->VBOs = vector<GLuint>(5);
     glGenVertexArrays(1, &(render_data->VAO));
-    glGenBuffers(5,(render_data->VBOs.data()));
+   /* glGenBuffers(5,(render_data->VBOs.data()));
 
     glBindVertexArray(render_data->VAO);
 
@@ -110,7 +111,9 @@ Chunk::Chunk(vec3 offset, World* w)
     glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[2]);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, MESH->uvs->size()*sizeof(vec2),
-        MESH->uvs->data(), GL_DYNAMIC_DRAW);
+        MESH->uvs->data(), GL_DYNAMIC_DRAW);*/
+    
+    render_data->info_lock.unlock();
 }
 
 /*
@@ -191,11 +194,13 @@ void Chunk::update()
 //TODO: Maybe delete this and have the handler fetch the information directly
 void Chunk::send_render_data(Renderer* handler)
 {
+    render_data->info_lock.lock();
     render_data->layouts = 4;
     render_data->render_instances=faces_info.size();
     render_data->geometry = MESH;
 
     handler->add_data(render_data);
+    render_data->info_lock.unlock();
    /* Rendering_Handler->multi_render(render_data->VAO, &(render_data->VBOs), 
         &(render_data->types), 4, MESH->indices->size(),faces_info.size());*/
 }
@@ -249,6 +254,7 @@ void Chunk::update_visible_faces()
 */
 void Chunk::update_render_info()
 {
+    render_data->info_lock.lock();
     glBindVertexArray(render_data->VAO);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, (render_data->VBOs[3]));
@@ -259,6 +265,7 @@ void Chunk::update_render_info()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices->size()*sizeof(uint),
         MESH->indices->data(), GL_DYNAMIC_DRAW);
+    render_data->info_lock.unlock();
 }
 //########################################################################################
 
@@ -392,8 +399,6 @@ World::World()
     vec_field_init();
         
     loaded_chunks = new Chunk_Holder(h_radius, h_radius, v_radius, this);
-
-    //cout << (*loaded_chunks)(0,0,0)->rendering_index->VBOs.size() << endl;
 
     //First chunk update, to assert all values
     for(int i=0; i<h_radius; i++)

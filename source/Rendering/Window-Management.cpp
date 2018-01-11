@@ -34,14 +34,21 @@
 */
 //========================================================================================
 
+//TODO: fix documentation
+
 /*
 * Function to create the OpenGL context.
 * 
 * return GLFWwindow*: the pointer to the GLFW window containing the current context.
 */
-GLFWwindow* create_context()
+GLFWwindow* create_context(WINDOW_TYPE w_type, GLFWwindow* other_window)
 {
-    GLFWwindow* window = createWindow();
+	GLFWwindow* window;
+	if(w_type==VISIBLE)
+		window = createWindow(other_window);
+	else 
+		window = createInvWindow(other_window);	
+
 	if(window==NULL)
 	{
 		cerr << "Error when creating GLFW window" << endl;
@@ -126,7 +133,7 @@ void callBackInit(GLFWwindow* window)
 *
 * return GLFWwindow*: a pointer to teh created window.
 */
-GLFWwindow* createWindow()
+GLFWwindow* createWindow(GLFWwindow* other_window)
 {
 	//Initialize GLFW
 	if (!glfwInit())
@@ -145,7 +152,42 @@ GLFWwindow* createWindow()
 	//Create a GLFW window with the main monitors width, reduced height, 
 	//name, on windowed mode, not sharing resources with any context
 	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height-40, 
-		"Voxel World", NULL, NULL);
+		"Voxel World", NULL, other_window);
+	if (!window)//Check for errors
+	{
+		cerr<< "Failed to glfwCreateWindow.\nTerminating program." << endl;
+		return NULL;
+	}
+	//TODO: delete or uncomment at one point
+	//glfwMaximizeWindow(window);//Make the window maximized
+	//Set the current window to be the current OpenGL context
+	glfwMakeContextCurrent(window);
+
+	return window;
+}
+
+GLFWwindow* createInvWindow(GLFWwindow* other_window)
+{
+	//Initialize GLFW
+	if (!glfwInit())
+	{
+		cerr<< "Failed to initialize GLFW.\nTerminating program." << endl;
+		return NULL;
+	}
+
+	//Get the primiray monitor of the current system's info
+	/*const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);//OpenGL major version
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);//OpenGL minor version
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);//Set Forward compatibility
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//Use GLFW defaults
+	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);//Make the window decorated
+	//Create a GLFW window with the main monitors width, reduced height, 
+	//name, on windowed mode, not sharing resources with any context*/
+
+	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+	GLFWwindow* window = glfwCreateWindow(100, 100, 
+		"invisible window", NULL, other_window);
 	if (!window)//Check for errors
 	{
 		cerr<< "Failed to glfwCreateWindow.\nTerminating program." << endl;
