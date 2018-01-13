@@ -76,7 +76,7 @@ void deleteShader(Shader &s)
 }
 
 /*
-* Compile a glsl file and generate an OpenGL shading program on teh GPU
+* Compile a glsl file and generate an OpenGL shading program on the GPU
 *
 *	Params:	
 *		shader: where the shader ID will be returned
@@ -341,7 +341,7 @@ void Renderer::update(GLFWwindow* window)
 	glClearColor(0, 0.7f, 1.f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	//Update general uniform values in teh rendering program
+	//Update general uniform values in the rendering program
 	glUseProgram(current_program);
 	GLint loc = glGetUniformLocation(current_program, "view");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
@@ -430,14 +430,15 @@ Shader* Renderer::find_shader(string shader_name)
 
 void Renderer::add_data(Render_Info* data)
 {
-	busy_queue.lock();
+	//busy_queue.lock();
 	render_queue.push_back(data);
-	busy_queue.unlock();
+	//busy_queue.unlock();
 }
 
 void Renderer::render()
 {
 	busy_queue.lock();
+	Rendering_Handler->global_lock.lock();
 
 	for(uint i=0; i<render_queue.size(); i++)
 	{
@@ -449,8 +450,14 @@ void Renderer::render()
 		render_data->info_lock.unlock();
 	}
 
-	render_queue.clear();
+	//render_queue.clear();
 
+	Rendering_Handler->global_lock.unlock();
 	busy_queue.unlock();
+}
+
+void Renderer::clear()
+{
+	render_queue.clear();
 }
 //########################################################################################

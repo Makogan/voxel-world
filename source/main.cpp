@@ -21,6 +21,7 @@
 */
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #include <thread>
+#include <unistd.h>
 
 #include "Window-Management.hpp"
 #include "Cube.hpp"
@@ -36,7 +37,7 @@
 //TODO: document
 void render_loop(GLFWwindow* window);
 void end_rendering(GLFWwindow* window);
-void update_loop(GLFWwindow*);
+void update_loop(GLFWwindow*, GLFWwindow*);
 //########################################################################################
 
 //**************************************************************************************\\
@@ -46,25 +47,30 @@ void update_loop(GLFWwindow*);
 //**************************************************************************************\\
 //--------------------------------------------------------------------------------------\\
 
+World* w;
 int main(int argc, char **argv)
 {
 	//Init OpenGL
-	GLFWwindow* window = create_context(VISIBLE, NULL);
+	GLFWwindow* window = create_context(NULL);
+	GLFWwindow* o_window = create_context(window);
 
 	Rendering_Handler = new Renderer();
 
 	int width, height;
     glfwGetWindowSize(window, &width, &height);
-	Rendering_Handler->set_camera(new Camera(mat3(1), vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,2*CHUNK_DIMS), width, height));
-	Cube c = Cube();
+	Rendering_Handler->set_camera(new Camera(mat3(1), 
+		vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,2*CHUNK_DIMS), width, height));
 
-	//thread world_thread(update_loop, window);
+	glfwMakeContextCurrent(window);
+
+	w = new World();
+	thread world_thread(update_loop, window, o_window);
 	//update_loop(window);
 
 	//Render loop
 	render_loop(window);
 
-	//world_thread.join();
+	world_thread.join();
 
 	//cleanup
 	end_rendering(window);
@@ -83,8 +89,9 @@ int main(int argc, char **argv)
 * The following functions are not final at all, if modifications can be done, do them
 */
 
-bool temp = false;
+
 //main render loop
+mutex temp;
 void render_loop(GLFWwindow* window)
 {
 
@@ -93,7 +100,7 @@ void render_loop(GLFWwindow* window)
     glDepthFunc(GL_LEQUAL);
 	glPointSize(10.f);
 
-	World c = World();
+	//World c = World();
 	
 	double prevTime = 0, currentTime=0;
 	//TODO: this is temprorary, implement this correctly
@@ -101,27 +108,38 @@ void render_loop(GLFWwindow* window)
 
     while (!glfwWindowShouldClose(window))
 	{
-
-		glfwPollEvents();
 		Rendering_Handler->update(window);
 
-		c.center_frame(ivec3(Rendering_Handler->cam->getPosition()));
-		c.send_render_data(Rendering_Handler);
+		//w->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
+		//w->send_render_data(Rendering_Handler);
 
+		currentTime=glfwGetTime();
+		double elapsed = currentTime-prevTime;
+		temp.lock();
 		Rendering_Handler->render();
+		prevTime=currentTime;
+
+		cout << 1.d/elapsed << endl;
+
+		temp.unlock();
+		usleep(16000);
 
 		openGLerror();
 	}
 }
 
-void update_loop(GLFWwindow* window)
+void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 {
-	World c = World();
+	//World c = World();
+	glfwMakeContextCurrent(o_window);
 
 	while (!glfwWindowShouldClose(window))
 	{
-		c.center_frame(ivec3(Rendering_Handler->cam->getPosition()));
-		c.send_render_data(Rendering_Handler);
+			temp.lock();
+			w->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
+			w->send_render_data(Rendering_Handler);
+			temp.unlock();
+			usleep(600);	
 	}
 }
 

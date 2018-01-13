@@ -84,7 +84,7 @@ Chunk::Chunk(vec3 offset, World* w)
     world = w;
 
     render_data = new Render_Info();
-    render_data->info_lock.lock();
+    //render_data->info_lock.lock();
 
     this->create_cubes(offset);
 
@@ -94,7 +94,7 @@ Chunk::Chunk(vec3 offset, World* w)
     //Create and initialize OpenGL rendering structures
     render_data->VBOs = vector<GLuint>(5);
     glGenVertexArrays(1, &(render_data->VAO));
-   /* glGenBuffers(5,(render_data->VBOs.data()));
+    glGenBuffers(5,(render_data->VBOs.data()));
 
     glBindVertexArray(render_data->VAO);
 
@@ -111,9 +111,9 @@ Chunk::Chunk(vec3 offset, World* w)
     glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[2]);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, MESH->uvs->size()*sizeof(vec2),
-        MESH->uvs->data(), GL_DYNAMIC_DRAW);*/
+        MESH->uvs->data(), GL_DYNAMIC_DRAW);
     
-    render_data->info_lock.unlock();
+    //render_data->info_lock.unlock();
 }
 
 /*
@@ -254,7 +254,7 @@ void Chunk::update_visible_faces()
 */
 void Chunk::update_render_info()
 {
-    render_data->info_lock.lock();
+    Rendering_Handler->global_lock.lock();
     glBindVertexArray(render_data->VAO);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, (render_data->VBOs[3]));
@@ -265,7 +265,7 @@ void Chunk::update_render_info()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices->size()*sizeof(uint),
         MESH->indices->data(), GL_DYNAMIC_DRAW);
-    render_data->info_lock.unlock();
+        Rendering_Handler->global_lock.unlock();
 }
 //########################################################################################
 
@@ -290,7 +290,7 @@ Chunk_Holder::Chunk_Holder(int x_dim, int y_dim, int z_dim, World* w)
             for(uint k=0; k<z_dim; k++)
             {
                 chunkBox[i][j][k] = 
-                    new Chunk(vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS), w);
+                    new Chunk(vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) + vec3(world->origin), w);
             }
         }
     }
@@ -318,7 +318,7 @@ Chunk* Chunk_Holder::operator()(int x, int y, int z)
 
 void Chunk_Holder::shift(ivec3 offset)
 {
-    chunkBox.shift(offset.x);
+    /*chunkBox.shift(offset.x);
     for(int i=0; i<world->h_radius; i++)
     {
         chunkBox[i].shift(offset.y);
@@ -367,6 +367,18 @@ void Chunk_Holder::shift(ivec3 offset)
                 int z = (start_z + k*sign_z + world->v_radius)%world->v_radius;
                 (chunkBox[i][j][z])->create_cubes(
                     vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,z*CHUNK_DIMS) + vec3(world->origin));
+            }
+        }
+    }*/
+
+    for(int i=0; i<world->h_radius; i++)
+    {
+        for(int j=0; j<world->h_radius; j++)
+        {
+            for(int k=0; k<world->v_radius; k++)
+            {
+                (chunkBox[i][j][k])->create_cubes(
+                    vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) + vec3(world->origin));
             }
         }
     }
@@ -468,16 +480,19 @@ Cube* World::operator()(int x, int y, int z)
 
 void World::send_render_data(Renderer* handler)
 {
-   for(int i=0; i<h_radius; i++)
-   {
-       for(int j=0; j<h_radius; j++)
-       {
-           for(int k=0; k<v_radius; k++)
-           {
-               ((*loaded_chunks)(i,j,k))->send_render_data(handler);
-           }
-       }
-   }
+    handler->busy_queue.lock();
+    handler->clear();
+    for(int i=0; i<h_radius; i++)
+    {
+        for(int j=0; j<h_radius; j++)
+        {
+            for(int k=0; k<v_radius; k++)
+            {
+                ((*loaded_chunks)(i,j,k))->send_render_data(handler);
+            }
+        }
+    }
+    handler->busy_queue.unlock();
 }
 //########################################################################################
 

@@ -41,13 +41,10 @@
 * 
 * return GLFWwindow*: the pointer to the GLFW window containing the current context.
 */
-GLFWwindow* create_context(WINDOW_TYPE w_type, GLFWwindow* other_window)
+GLFWwindow* create_context(GLFWwindow* other_window)
 {
 	GLFWwindow* window;
-	if(w_type==VISIBLE)
 		window = createWindow(other_window);
-	else 
-		window = createInvWindow(other_window);	
 
 	if(window==NULL)
 	{
@@ -166,40 +163,6 @@ GLFWwindow* createWindow(GLFWwindow* other_window)
 	return window;
 }
 
-GLFWwindow* createInvWindow(GLFWwindow* other_window)
-{
-	//Initialize GLFW
-	if (!glfwInit())
-	{
-		cerr<< "Failed to initialize GLFW.\nTerminating program." << endl;
-		return NULL;
-	}
-
-	//Get the primiray monitor of the current system's info
-	/*const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);//OpenGL major version
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);//OpenGL minor version
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);//Set Forward compatibility
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//Use GLFW defaults
-	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);//Make the window decorated
-	//Create a GLFW window with the main monitors width, reduced height, 
-	//name, on windowed mode, not sharing resources with any context*/
-
-	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-	GLFWwindow* window = glfwCreateWindow(100, 100, 
-		"invisible window", NULL, other_window);
-	if (!window)//Check for errors
-	{
-		cerr<< "Failed to glfwCreateWindow.\nTerminating program." << endl;
-		return NULL;
-	}
-	//TODO: delete or uncomment at one point
-	//glfwMaximizeWindow(window);//Make the window maximized
-	//Set the current window to be the current OpenGL context
-	glfwMakeContextCurrent(window);
-
-	return window;
-}
 //########################################################################################
 
 //========================================================================================
@@ -254,8 +217,6 @@ void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 
 }
 
-//TODO: delete when done
-extern bool temp;
 #define CAM_SPEED 0.3f
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -286,7 +247,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 
     else if(key == GLFW_KEY_R && action == GLFW_PRESS)
    	{
-		   temp = true;
+		
    	}
 
     else if(key == GLFW_KEY_F12 && action == GLFW_PRESS)

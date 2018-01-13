@@ -106,10 +106,11 @@ class Renderer
         vector<Shader> vertex_shaders;
         vector<Shader> fragment_shaders;
         vector<Shader> tessellation_shaders;
-        mutex busy_queue;
         vector<Render_Info*> render_queue;
     
     public:
+        mutex global_lock;
+        mutex busy_queue;
         Camera *cam;
         GLuint current_program;
         Renderer();
@@ -128,6 +129,7 @@ class Renderer
         void change_active_program(GLuint newProgram);
         void add_data(Render_Info*);
         void render();
+        void clear();
 };
 
 extern Renderer *Rendering_Handler;
