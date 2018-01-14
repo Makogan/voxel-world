@@ -194,13 +194,13 @@ void Chunk::update()
 //TODO: Maybe delete this and have the handler fetch the information directly
 void Chunk::send_render_data(Renderer* handler)
 {
-    render_data->info_lock.lock();
+    //render_data->info_lock.lock();
     render_data->layouts = 4;
     render_data->render_instances=faces_info.size();
     render_data->geometry = MESH;
 
     handler->add_data(render_data);
-    render_data->info_lock.unlock();
+   // render_data->info_lock.unlock();
    /* Rendering_Handler->multi_render(render_data->VAO, &(render_data->VBOs), 
         &(render_data->types), 4, MESH->indices->size(),faces_info.size());*/
 }
@@ -254,7 +254,7 @@ void Chunk::update_visible_faces()
 */
 void Chunk::update_render_info()
 {
-    Rendering_Handler->global_lock.lock();
+    //Rendering_Handler->global_lock.lock();
     glBindVertexArray(render_data->VAO);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, (render_data->VBOs[3]));
@@ -265,7 +265,7 @@ void Chunk::update_render_info()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices->size()*sizeof(uint),
         MESH->indices->data(), GL_DYNAMIC_DRAW);
-        Rendering_Handler->global_lock.unlock();
+       // Rendering_Handler->global_lock.unlock();
 }
 //########################################################################################
 
@@ -318,7 +318,7 @@ Chunk* Chunk_Holder::operator()(int x, int y, int z)
 
 void Chunk_Holder::shift(ivec3 offset)
 {
-    /*chunkBox.shift(offset.x);
+    chunkBox.shift(offset.x);
     for(int i=0; i<world->h_radius; i++)
     {
         chunkBox[i].shift(offset.y);
@@ -369,9 +369,9 @@ void Chunk_Holder::shift(ivec3 offset)
                     vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,z*CHUNK_DIMS) + vec3(world->origin));
             }
         }
-    }*/
+    }
 
-    for(int i=0; i<world->h_radius; i++)
+   /* for(int i=0; i<world->h_radius; i++)
     {
         for(int j=0; j<world->h_radius; j++)
         {
@@ -381,7 +381,7 @@ void Chunk_Holder::shift(ivec3 offset)
                     vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) + vec3(world->origin));
             }
         }
-    }
+    }*/
 
     for(int i=0; i<world->h_radius; i++)
     {
@@ -436,18 +436,10 @@ World::~World()
 
 void World::center_frame(ivec3 position)
 {
-
-    /*int distance = position.x - origin.x - (h_radius/2)*CHUNK_DIMS;
-    if(abs(distance) >= 1*CHUNK_DIMS)
-    {
-        origin.x+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
-        loaded_chunks->shift(ivec3(distance/CHUNK_DIMS,0,0));
-    }*/
-
     ivec3 distance = 
         position - origin - ivec3(h_radius/2, h_radius/2, v_radius/2)*CHUNK_DIMS;
-    if(abs(distance.x) >= 2*CHUNK_DIMS || abs(distance.y) >= 2*CHUNK_DIMS 
-        || abs(distance.z) >= 2*CHUNK_DIMS)
+    if(abs(distance.x) >= CHUNK_DIMS || abs(distance.y) >= CHUNK_DIMS 
+        || abs(distance.z) >= CHUNK_DIMS)
     {
         origin+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
         loaded_chunks->shift(distance/CHUNK_DIMS);

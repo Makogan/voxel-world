@@ -438,21 +438,19 @@ void Renderer::add_data(Render_Info* data)
 void Renderer::render()
 {
 	busy_queue.lock();
-	Rendering_Handler->global_lock.lock();
 
 	for(uint i=0; i<render_queue.size(); i++)
 	{
 		Render_Info *render_data = render_queue[i]; 
-		render_data->info_lock.lock();
+		//render_data->info_lock.lock();
 		multi_render(render_data->VAO, &(render_data->VBOs), 
 			&(render_data->types), render_data->layouts, 
 			render_data->geometry->indices->size(), render_data->render_instances);
-		render_data->info_lock.unlock();
+		//render_data->info_lock.unlock();
 	}
 
 	//render_queue.clear();
 
-	Rendering_Handler->global_lock.unlock();
 	busy_queue.unlock();
 }
 

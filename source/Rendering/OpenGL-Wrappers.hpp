@@ -109,7 +109,6 @@ class Renderer
         vector<Render_Info*> render_queue;
     
     public:
-        mutex global_lock;
         mutex busy_queue;
         Camera *cam;
         GLuint current_program;

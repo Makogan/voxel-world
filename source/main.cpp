@@ -22,6 +22,8 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #include <thread>
 #include <unistd.h>
+#include <chrono>         
+#include <ctime>          
 
 #include "Window-Management.hpp"
 #include "Cube.hpp"
@@ -92,6 +94,7 @@ int main(int argc, char **argv)
 
 //main render loop
 mutex temp;
+typedef std::chrono::duration<int, std::ratio<1, 60>> frame_duration;
 void render_loop(GLFWwindow* window)
 {
 
@@ -103,26 +106,26 @@ void render_loop(GLFWwindow* window)
 	//World c = World();
 	
 	double prevTime = 0, currentTime=0;
-	//TODO: this is temprorary, implement this correctly
+	//TODO: this is temporary, implement this correctly
 	loadTexture(Rendering_Handler->current_program, *(Cube::textures[0]));
 
     while (!glfwWindowShouldClose(window))
 	{
+		auto start_time = std::chrono::steady_clock::now();
 		Rendering_Handler->update(window);
-
-		//w->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
-		//w->send_render_data(Rendering_Handler);
 
 		currentTime=glfwGetTime();
 		double elapsed = currentTime-prevTime;
+		
 		temp.lock();
 		Rendering_Handler->render();
 		prevTime=currentTime;
 
 		cout << 1.d/elapsed << endl;
-
+		auto end_time = start_time + frame_duration(1);
 		temp.unlock();
-		usleep(16000);
+		glFinish();
+		std::this_thread::sleep_until(end_time);
 
 		openGLerror();
 	}
@@ -135,10 +138,11 @@ void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 
 	while (!glfwWindowShouldClose(window))
 	{
-			temp.lock();
 			w->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
+			temp.lock();
 			w->send_render_data(Rendering_Handler);
 			temp.unlock();
+			glFinish();
 			usleep(600);	
 	}
 }
