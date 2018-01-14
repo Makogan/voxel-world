@@ -43,7 +43,11 @@ class Chunk
         void update_visible_faces();
         void update_render_info();
 
+        inline void check_neighbour(Cube *c, Cube *n, Face f);
+
     public:
+        vec3 position;
+
         Cube* operator()(int, int, int);
 
         Chunk();
@@ -77,7 +81,7 @@ class World
         Chunk_Holder *loaded_chunks;
 
     public:
-        int h_radius = 10;
+        int h_radius = 20;
         int v_radius = 4;
         
         ivec3 origin = ivec3(0);

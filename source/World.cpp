@@ -47,6 +47,7 @@ Chunk::Chunk(vec3 offset) : Chunk(offset, NULL){}
 
 Chunk::Chunk(vec3 offset, World* w) 
 {
+    position = offset;
     world = w;
 
     render_data = new Render_Info();
@@ -78,8 +79,6 @@ Chunk::Chunk(vec3 offset, World* w)
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, MESH->uvs->size()*sizeof(vec2),
         MESH->uvs->data(), GL_DYNAMIC_DRAW);
-    
-    //render_data->info_lock.unlock();
 }
 
 /*
@@ -91,9 +90,6 @@ Chunk::~Chunk()
     {
        delete(chunk_cubes[i]);
     }
-
-    //glDeleteBuffers(5, cube_rendering_VBOs.data());
-    //glDeleteVertexArrays(1, &cubes_VAO);
 }
 
 /*
@@ -122,6 +118,8 @@ Cube* Chunk::operator()(int x, int y, int z)
 
 void Chunk::create_cubes(vec3 offset)
 {
+    position = offset;
+
     //Initialize all cubes in the chunk, with correct positions
     //offset represents the position of the chunk in the world
     for(int i=0; i<CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS; i++)
@@ -157,25 +155,23 @@ void Chunk::update()
 /*
 *   Send rendering informationto the rendering handler
 */
-//TODO: Maybe delete this and have the handler fetch the information directly
 void Chunk::send_render_data(Renderer* handler)
 {
-    //render_data->info_lock.lock();
     render_data->layouts = 4;
     render_data->render_instances=faces_info.size();
     render_data->geometry = MESH;
 
     handler->add_data(render_data);
-   // render_data->info_lock.unlock();
-   /* Rendering_Handler->multi_render(render_data->VAO, &(render_data->VBOs), 
-        &(render_data->types), 4, MESH->indices->size(),faces_info.size());*/
 }
 
-//Help macro, correctly updates the visible faces info
-#define CHECK_NEIGHBOUR(c,n,f) if(n==NULL)\
-faces_info.push_back(vec4(c->position,f+6));\
-else if(n->transparent)\
-faces_info.push_back(vec4(c->position,f));
+//correctly updates the visible faces info
+inline void Chunk::check_neighbour(Cube *c, Cube *n, Face f) 
+{
+    if(n==NULL)
+        faces_info.push_back(vec4(c->position,f+6));
+    else if(n->transparent)
+        faces_info.push_back(vec4(c->position,f));
+}
 
 /*
 *   Set the face_info array with the data of the currently visible faces
@@ -199,17 +195,17 @@ void Chunk::update_visible_faces()
 
                 //fetch all 6 neighbours and update accordingly
                 Cube* neighbour = (*world)(c_x-1,c_y,c_z);
-                CHECK_NEIGHBOUR(current, neighbour, Left);
+                check_neighbour(current, neighbour, Left);
                 neighbour = (*world)(c_x+1,c_y,c_z);
-                CHECK_NEIGHBOUR(current, neighbour, Right);
+                check_neighbour(current, neighbour, Right);
                 neighbour = (*world)(c_x,c_y+1,c_z);
-                CHECK_NEIGHBOUR(current, neighbour, Front);
+                check_neighbour(current, neighbour, Front);
                 neighbour = (*world)(c_x,c_y-1,c_z);
-                CHECK_NEIGHBOUR(current, neighbour, Back);
+                check_neighbour(current, neighbour, Back);
                 neighbour = (*world)(c_x,c_y,c_z+1);
-                CHECK_NEIGHBOUR(current, neighbour, Top);
+                check_neighbour(current, neighbour, Top);
                 neighbour = (*world)(c_x,c_y,c_z-1);
-                CHECK_NEIGHBOUR(current, neighbour, Bottom);
+                check_neighbour(current, neighbour, Bottom);
             }
         }
     }
@@ -429,13 +425,21 @@ void World::send_render_data(Renderer* handler)
 {
     handler->busy_queue.lock();
     handler->clear();
+
+    vec3 p_pos = handler->cam->getPosition();
     for(int i=0; i<h_radius; i++)
     {
         for(int j=0; j<h_radius; j++)
         {
             for(int k=0; k<v_radius; k++)
             {
-                ((*loaded_chunks)(i,j,k))->send_render_data(handler);
+                vec3 c_dir = ((*loaded_chunks)(i,j,k))->position - p_pos;
+                c_dir = normalize(c_dir);
+
+                float angle = acos(dot(c_dir, normalize(handler->cam->getForward())));
+
+                if(angle < (handler->cam->getFov()))
+                    ((*loaded_chunks)(i,j,k))->send_render_data(handler);
             }
         }
     }

@@ -98,6 +98,11 @@ vec3 Camera::getSide()
 	return side;
 }
 
+float Camera::getFov()
+{
+	return fov;
+}
+
 /*
 *	Get the view matrix of the camera
 */
