@@ -49,15 +49,13 @@ void update_loop(GLFWwindow*, GLFWwindow*);
 //**************************************************************************************\\
 //--------------------------------------------------------------------------------------\\
 
-World* w;
 int main(int argc, char **argv)
 {
 	//Init OpenGL
-	GLFWwindow* window = create_context(NULL);
-	GLFWwindow* o_window = create_context(window);
+	GLFWwindow* window = create_context(NULL, true);
+	GLFWwindow* o_window = create_context(window, false);
 
 	Rendering_Handler = new Renderer();
-
 	int width, height;
     glfwGetWindowSize(window, &width, &height);
 	Rendering_Handler->set_camera(new Camera(mat3(1), 
@@ -65,7 +63,7 @@ int main(int argc, char **argv)
 
 	glfwMakeContextCurrent(window);
 
-	w = new World();
+	the_world = new World();
 	thread world_thread(update_loop, window, o_window);
 	//update_loop(window);
 
@@ -75,7 +73,10 @@ int main(int argc, char **argv)
 	world_thread.join();
 
 	//cleanup
-	end_rendering(window);
+	Cube::cleanup();
+	glfwDestroyWindow(o_window);
+	glfwDestroyWindow(window);
+	glfwTerminate();
 }
 
 //**************************************************************************************\\
@@ -102,8 +103,6 @@ void render_loop(GLFWwindow* window)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 	glPointSize(10.f);
-
-	//World c = World();
 	
 	double prevTime = 0, currentTime=0;
 	//TODO: this is temporary, implement this correctly
@@ -133,28 +132,19 @@ void render_loop(GLFWwindow* window)
 
 void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 {
-	//World c = World();
 	glfwMakeContextCurrent(o_window);
 
 	while (!glfwWindowShouldClose(window))
 	{
-			w->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
+			the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
 			temp.lock();
-			w->send_render_data(Rendering_Handler);
+			the_world->send_render_data(Rendering_Handler);
 			temp.unlock();
 			glFinish();
 			usleep(600);	
 	}
 }
 
-//cleanup
-void end_rendering(GLFWwindow* window)
-{
-	Cube::cleanup();
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-}
 //########################################################################################
 
 

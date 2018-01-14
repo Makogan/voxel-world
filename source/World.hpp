@@ -104,4 +104,6 @@ class World
         void center_frame(ivec3 offset);
         void send_render_data(Renderer*);        
 };
+
+extern World* the_world;
 //########################################################################################

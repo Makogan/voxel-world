@@ -41,10 +41,10 @@
 * 
 * return GLFWwindow*: the pointer to the GLFW window containing the current context.
 */
-GLFWwindow* create_context(GLFWwindow* other_window)
+GLFWwindow* create_context(GLFWwindow* other_window, bool visible)
 {
 	GLFWwindow* window;
-		window = createWindow(other_window);
+		window = createWindow(other_window, visible);
 
 	if(window==NULL)
 	{
@@ -130,7 +130,7 @@ void callBackInit(GLFWwindow* window)
 *
 * return GLFWwindow*: a pointer to teh created window.
 */
-GLFWwindow* createWindow(GLFWwindow* other_window)
+GLFWwindow* createWindow(GLFWwindow* other_window, bool visible)
 {
 	//Initialize GLFW
 	if (!glfwInit())
@@ -146,6 +146,9 @@ GLFWwindow* createWindow(GLFWwindow* other_window)
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);//Set Forward compatibility
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);//Use GLFW defaults
 	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);//Make the window decorated
+	if(!visible)
+		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);//Make the window decorated
+
 	//Create a GLFW window with the main monitors width, reduced height, 
 	//name, on windowed mode, not sharing resources with any context
 	GLFWwindow* window = glfwCreateWindow(mode->width, mode->height-40, 
