@@ -14,7 +14,7 @@
 *	Includes and macros
 */
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#include <glm/gtc/matrix_transform.hpp>
+#include "system-libraries.hpp"
 
 #include "Cube.hpp"
 #include "cout-definitions.hpp"
@@ -28,7 +28,7 @@
 */
 //========================================================================================
 //Default texture for a cube object
-string Cube::Default_Texture = "Assets/Textures/Face_Orientation.png";
+string Cube::Default_Texture = "Assets/Textures/white_cube.png";
 
 //Global arrays for the cube class, used to store mesh and texture information of future
 //cube classes that inherit this class
