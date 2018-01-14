@@ -20,10 +20,7 @@
 *	Includes and macros
 */
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-#include <thread>
-#include <unistd.h>
-#include <chrono>         
-#include <ctime>          
+#include "system-libraries.hpp"        
 
 #include "Window-Management.hpp"
 #include "Cube.hpp"
@@ -33,12 +30,21 @@
 
 //========================================================================================
 /*
+*	Globals:
+*/
+//========================================================================================
+
+typedef std::chrono::duration<int, std::ratio<1, 60>> frame_duration;
+
+//########################################################################################
+
+//========================================================================================
+/*
 *	List of function headers:
 */
 //========================================================================================
 //TODO: document
 void render_loop(GLFWwindow* window);
-void end_rendering(GLFWwindow* window);
 void update_loop(GLFWwindow*, GLFWwindow*);
 //########################################################################################
 
@@ -51,7 +57,7 @@ void update_loop(GLFWwindow*, GLFWwindow*);
 
 int main(int argc, char **argv)
 {
-	//Init OpenGL
+	//Init OpenGL contexts
 	GLFWwindow* window = create_context(NULL, true);
 	GLFWwindow* o_window = create_context(window, false);
 
@@ -65,7 +71,6 @@ int main(int argc, char **argv)
 
 	the_world = new World();
 	thread world_thread(update_loop, window, o_window);
-	//update_loop(window);
 
 	//Render loop
 	render_loop(window);
@@ -91,11 +96,7 @@ int main(int argc, char **argv)
 /*
 * The following functions are not final at all, if modifications can be done, do them
 */
-
-
 //main render loop
-mutex temp;
-typedef std::chrono::duration<int, std::ratio<1, 60>> frame_duration;
 void render_loop(GLFWwindow* window)
 {
 
@@ -116,13 +117,11 @@ void render_loop(GLFWwindow* window)
 		currentTime=glfwGetTime();
 		double elapsed = currentTime-prevTime;
 		
-		temp.lock();
 		Rendering_Handler->render();
 		prevTime=currentTime;
 
 		cout << 1.d/elapsed << endl;
 		auto end_time = start_time + frame_duration(1);
-		temp.unlock();
 		glFinish();
 		std::this_thread::sleep_until(end_time);
 
@@ -137,9 +136,7 @@ void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 	while (!glfwWindowShouldClose(window))
 	{
 			the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
-			temp.lock();
 			the_world->send_render_data(Rendering_Handler);
-			temp.unlock();
 			glFinish();
 			usleep(600);	
 	}

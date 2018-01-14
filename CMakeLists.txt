@@ -35,6 +35,7 @@ target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/OpenGL-Wrapper
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/Camera/Camera.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/wavefront-loader.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/cout-definitions.cpp)
+target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Helpers/tools.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Cube.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/World.cpp)
 

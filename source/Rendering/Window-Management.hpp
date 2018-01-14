@@ -17,11 +17,7 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #pragma once
 
-#define GLEW_DYNAMIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
-#include <vector>
+#include "system-libraries.hpp"
 
 #include "OpenGL-Wrappers.hpp"
 

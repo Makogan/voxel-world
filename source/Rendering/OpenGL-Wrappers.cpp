@@ -15,17 +15,12 @@
 */
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#define GLEW_DYNAMIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb/stb_image.h>
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include <stb/stb_image_write.h>
 
-#include <vector>
-
+#include "system-libraries.hpp"
 #include "OpenGL-Wrappers.hpp"
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -442,14 +437,10 @@ void Renderer::render()
 	for(uint i=0; i<render_queue.size(); i++)
 	{
 		Render_Info *render_data = render_queue[i]; 
-		//render_data->info_lock.lock();
 		multi_render(render_data->VAO, &(render_data->VBOs), 
 			&(render_data->types), render_data->layouts, 
 			render_data->geometry->indices->size(), render_data->render_instances);
-		//render_data->info_lock.unlock();
 	}
-
-	//render_queue.clear();
 
 	busy_queue.unlock();
 }

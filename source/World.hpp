@@ -18,6 +18,7 @@
 #pragma once
 
 #include "Cube.hpp"
+#include "tools.hpp"
 
 class World;
 
@@ -30,23 +31,6 @@ class World;
 */
 //========================================================================================
 //TODO: document this section
-template <typename T> class cirArray
-{
-    private:
-        vector<T> array;
-        int start;
-
-    public:
-        cirArray();
-        cirArray(uint size);
-
-        void shift(int);
-
-        T& operator[](int);
-        void operator=(T);
-
-        uint size();
-};
 
 class Chunk
 {

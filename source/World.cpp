@@ -1,4 +1,4 @@
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 /*
 *	Author:	Camilo Talero
 *
@@ -7,66 +7,30 @@
 *
 *	Header for the definition of a generic cube object
 */
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /*
 *	Includes and macros
 */
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #include "World.hpp"
 #include "cout-definitions.hpp"
 
 #define MESH Cube::meshes[0]
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /*
 *	Global Values
 */
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-vector<GLuint> cube_VBO_types = {GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
-    GL_SHADER_STORAGE_BUFFER, GL_ELEMENT_ARRAY_BUFFER};
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 World* the_world;
+
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-//TODO: delete when done
-double noise_2D(double x, double y);
-void vec_field_init();
-//========================================================================================
-/*
-*	Circular array Class implementation:
-*/
-//========================================================================================
-template <typename T> cirArray<T>::cirArray() : cirArray(0){}
-
-template <typename T> cirArray<T>::cirArray(uint size)
-{
-    array = vector<T>(size);
-
-    start=0;
-}
-
-template <typename T> T& cirArray<T>::operator[](int i)
-{
-    int n = array.size();
-    return array[(start + i+n)%n];
-}
-
-template <typename T> void cirArray<T>::shift(int i)
-{
-    int n = array.size();
-    start = (start+i+n)%n;
-
-    //if(i<0) return 0; else return array.size()-1;
-}
-
-template <typename T> uint cirArray<T>::size()
-{
-    return array.size();
-}
-//########################################################################################
 
 //========================================================================================
 /*
@@ -292,7 +256,8 @@ Chunk_Holder::Chunk_Holder(int x_dim, int y_dim, int z_dim, World* w)
             for(uint k=0; k<z_dim; k++)
             {
                 chunkBox[i][j][k] = 
-                    new Chunk(vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) + vec3(world->origin), w);
+                    new Chunk(vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) + 
+                    vec3(world->origin), w);
             }
         }
     }
@@ -372,18 +337,6 @@ void Chunk_Holder::shift(ivec3 offset)
             }
         }
     }
-
-   /* for(int i=0; i<world->h_radius; i++)
-    {
-        for(int j=0; j<world->h_radius; j++)
-        {
-            for(int k=0; k<world->v_radius; k++)
-            {
-                (chunkBox[i][j][k])->create_cubes(
-                    vec3(i*CHUNK_DIMS,j*CHUNK_DIMS,k*CHUNK_DIMS) + vec3(world->origin));
-            }
-        }
-    }*/
 
     for(int i=0; i<world->h_radius; i++)
     {
@@ -489,89 +442,3 @@ void World::send_render_data(Renderer* handler)
     handler->busy_queue.unlock();
 }
 //########################################################################################
-
-//TODO: move this to it's own file
-int const size = 256;
-int const mask = size-1;
-
-int perm[ size ];
-float vec_field_x[ size ], vec_field_y[ size ];
-
-void vec_field_init()
-{
-    for ( int index = 0; index < size; ++index ) 
-    {
-        int other = rand() % ( index + 1 );
-        if ( index > other )
-            perm[ index ] = perm[ other ];
-        perm[ other ] = index;
-        vec_field_x[ index ] = cosf( 2.0f * M_PI * index / size );
-        vec_field_y[ index ] = sinf( 2.0f * M_PI * index / size );
-    }
-}
-
-double fade(double d)
-{
-  d = abs(d);
-  if(d>1)
-    return 0;
-  return 1.f-d*d*d*(d*(d*6-15)+10);
-}
-
-double test(double x, double y)
-{
-  return sqrt(x*x+y*y);
-}
-
-double surflet(double x, double y, double grad_x, double grad_y)
-{
-    return fade(test(x,y)) * ( grad_x * x + grad_y * y );
-}
-
-double perlin_noise(double x, double y)
-{
-    x = abs(x);
-    y = abs(y);
-    int xi = (int(x));
-    int yi = (int(y));
-    
-    double result = 0;
-    for(int grid_y=yi; grid_y <= yi+1; ++grid_y)
-    {
-        for(int grid_x=xi; grid_x <= xi+1; ++grid_x)
-        {
-            int hash = perm[(perm[grid_x & mask] + grid_y) & mask];
-            result += surflet(x-grid_x, y-grid_y, vec_field_x[hash], vec_field_y[hash]);
-        }
-    }
-    
-    return (result);
-}
-
-double noise_2D(double x, double y)
-{
-    double total=0;
-    double frequency=0.05;
-    double amplitude=10.d;
-    double maxValue=0.d;
-    double persistence = 0.5;
-
-    for(uint i=0; i<5; i++)
-    {
-        total += perlin_noise(x*frequency, y*frequency)*amplitude;
-
-        maxValue+=amplitude;
-        amplitude *= persistence;
-        frequency *= 2;
-    }
-    //cout << total << endl;
-    double p=total/maxValue;
-    /*if(abs(p)<0.01)
-    p+=perlin_noise(x*1,y*1);
-    if(p>=0)
-    p=1;
-    else
-    p=-1;*/
-    //cout <<  p << endl;
-    return p;
-}
