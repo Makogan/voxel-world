@@ -67,18 +67,18 @@ Chunk::Chunk(vec3 offset, World* w)
 
     glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[0]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, MESH->vertices->size()*sizeof(vec3), 
-    MESH->vertices->data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, MESH->vertices.size()*sizeof(vec3), 
+    MESH->vertices.data(), GL_DYNAMIC_DRAW);
 
     glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[1]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, MESH->normals->size()*sizeof(vec3),
-    MESH->normals->data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, MESH->normals.size()*sizeof(vec3),
+    MESH->normals.data(), GL_DYNAMIC_DRAW);
     
     glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[2]);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, MESH->uvs->size()*sizeof(vec2),
-        MESH->uvs->data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, MESH->uvs.size()*sizeof(vec2),
+        MESH->uvs.data(), GL_DYNAMIC_DRAW);
 }
 
 /*
@@ -95,8 +95,8 @@ void Chunk::update_render_info()
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, (render_data->VBOs)[3]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices->size()*sizeof(uint),
-        MESH->indices->data(), GL_DYNAMIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices.size()*sizeof(uint),
+        MESH->indices.data(), GL_DYNAMIC_DRAW);
        // Rendering_Handler->global_lock.unlock();
 }
 
@@ -184,12 +184,12 @@ void Chunk::send_render_data(Renderer* handler)
 }
 
 //correctly updates the visible faces info
-inline void Chunk::check_neighbour(Cube *c, Cube *n, Face f) 
+inline bool Chunk::check_neighbour(Cube *c, Cube *n, Face f) 
 {
-    if(n==NULL)
-        faces_info.push_back(vec4(c->position,f+6));
-    else if(n->transparent)
-        faces_info.push_back(vec4(c->position,f));
+    if(n==NULL || n->transparent)
+        return true;
+    
+    return false;
 }
 
 /*
@@ -212,19 +212,27 @@ void Chunk::update_visible_faces()
                 int c_y=(int)(current->position.y); 
                 int c_z=(int)(current->position.z);
 
+                bool visible = false;
                 //fetch all 6 neighbours and update accordingly
                 Cube* neighbour = (*world)(c_x-1,c_y,c_z);
-                check_neighbour(current, neighbour, Left);
+                visible = visible || check_neighbour(current, neighbour, Left);
                 neighbour = (*world)(c_x+1,c_y,c_z);
-                check_neighbour(current, neighbour, Right);
+                visible = visible || check_neighbour(current, neighbour, Right);
                 neighbour = (*world)(c_x,c_y+1,c_z);
-                check_neighbour(current, neighbour, Front);
+                visible = visible || check_neighbour(current, neighbour, Front);
                 neighbour = (*world)(c_x,c_y-1,c_z);
-                check_neighbour(current, neighbour, Back);
+                visible = visible || check_neighbour(current, neighbour, Back);
                 neighbour = (*world)(c_x,c_y,c_z+1);
-                check_neighbour(current, neighbour, Top);
+                visible = visible || check_neighbour(current, neighbour, Top);
                 neighbour = (*world)(c_x,c_y,c_z-1);
-                check_neighbour(current, neighbour, Bottom);
+                visible = visible || check_neighbour(current, neighbour, Bottom);
+
+                if(visible)
+                {
+                    faces_info.push_back(vec4(current->position,0));
+                    Mesh m = current->getMesh(); 
+                    world->addSilhouette(&m,0,0);
+                }
             }
         }
     }
@@ -360,7 +368,17 @@ World::World()
 {    
     //TODO: this should not be here
     vec_field_init();
-        
+
+    loaded_silhouettes = vector<vector<vector<vector<Silhouette>>>>(h_radius);
+    for(uint i=0; i<h_radius; i++)
+    {
+        loaded_silhouettes[i] = vector<vector<vector<Silhouette>>>(h_radius);
+        for(uint j=0; j<h_radius; j++)
+        {
+            loaded_silhouettes[i][j] = vector<vector<Silhouette>>(v_radius);
+        } 
+    }
+
     loaded_chunks = new Chunk_Holder(h_radius, h_radius, v_radius, this);
 
     //First chunk update, to assert all values
@@ -373,16 +391,6 @@ World::World()
                (*loaded_chunks)(i,j,k)->update();
             }
         }
-    }
-
-    loaded_silhouettes = vector<vector<vector<vector<Silhouette>>>>(h_radius);
-    for(uint i=0; i<h_radius; i++)
-    {
-        loaded_silhouettes[i] = vector<vector<vector<Silhouette>>>(h_radius);
-        for(uint j=0; j<h_radius; j++)
-        {
-            loaded_silhouettes[i][j] = vector<vector<Silhouette>>(v_radius);
-        } 
     }
 }
 
@@ -397,6 +405,8 @@ World::~World()
 
 void World::center_frame(ivec3 position)
 {
+    clearSilhouettes();
+
     ivec3 distance = 
         position - origin - ivec3(h_radius/2, h_radius/2, v_radius/2)*CHUNK_DIMS;
     if(abs(distance.x) >= CHUNK_DIMS || abs(distance.y) >= CHUNK_DIMS 
@@ -458,23 +468,43 @@ void World::send_render_data(Renderer* handler)
 
 void World::addSilhouette(Mesh* mesh, float trans, float ref)
 {
-    for(int i=0; i<mesh->indices->size()/3; i++)
+    if(mesh==NULL)
+        cerr << "Attempted to add null mesh" << endl;
+    //cout << mesh->indices.size() << endl;
+    for(int i=0; i<mesh->indices.size()/3; i++)
     {
         int x,y,z;
-        vec3 pos = (*mesh->vertices)[(*mesh->indices)[i]];
-        x = pos.x, y=pos.y, z=pos.z;
+        vec3 pos = (*mesh).vertices[(*mesh).indices[i]];
+        x = pos.x/CHUNK_DIMS, y=pos.y/CHUNK_DIMS, z=pos.z/CHUNK_DIMS;
+        x-=origin.x/CHUNK_DIMS, y-=origin.y/CHUNK_DIMS, z-=origin.z/CHUNK_DIMS;
+        x = (x%h_radius+h_radius)%h_radius, y=(y%h_radius+h_radius)%h_radius, 
+        z=(z%v_radius+v_radius)%v_radius;
 
         for(uint j=0; j<3; j++)
         {
             Silhouette s;
 
-            vec4 point = vec4((*mesh->vertices)[(*mesh->indices)[i]],0);
+            vec4 point = vec4((*mesh).vertices[(*mesh).indices[i]],0);
             s.vertices[j] = point;
             s.transparency = trans;
             s.reflectiveness = ref;
 
             loaded_silhouettes[x][y][z].push_back(s);
         }
+    }
+}
+
+void World::clearSilhouettes()
+{
+    for(uint i=0; i<h_radius; i++)
+    {
+        for(uint j=0; j<h_radius; j++)
+        {
+            for(uint k=0; k<v_radius; k++)
+            {
+                loaded_silhouettes[i][j][k].clear();
+            }
+        } 
     }
 }
 //########################################################################################

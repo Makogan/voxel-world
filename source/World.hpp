@@ -57,7 +57,7 @@ class Chunk
         void update_visible_faces();
         void update_render_info();
 
-        inline void check_neighbour(Cube *c, Cube *n, Face f);
+        inline bool check_neighbour(Cube *c, Cube *n, Face f);
 
     public:
         vec3 position;
@@ -108,6 +108,7 @@ class World
         void center_frame(ivec3 offset);
         void send_render_data(Renderer*);        
         void addSilhouette(Mesh*, float, float);
+        void clearSilhouettes();
 };
 
 extern World* the_world;

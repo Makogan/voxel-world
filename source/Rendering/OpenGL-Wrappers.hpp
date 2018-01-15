@@ -57,10 +57,10 @@ struct Texture
 
 struct Mesh
 {
-    vector<vec3> *vertices;  //Vertex data
-    vector<vec3> *normals;   //Normal data
-	vector<uint> *indices;   //Element data (sequence in which data will be read)
-    vector<vec2> *uvs;       //Texture data for this geometry 
+    vector<vec3> vertices;  //Vertex data
+    vector<vec3> normals;   //Normal data
+	vector<uint> indices;   //Element data (sequence in which data will be read)
+    vector<vec2> uvs;       //Texture data for this geometry 
                              //(the associated coordinates on the mesh)
 
     ~Mesh();

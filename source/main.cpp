@@ -121,7 +121,7 @@ void render_loop(GLFWwindow* window)
 		Rendering_Handler->render();
 		prevTime=currentTime;
 
-		cout << 1.d/elapsed << endl;
+		//cout << 1.d/elapsed << endl;
 		auto end_time = start_time + frame_duration(1);
 		glFinish();
 		std::this_thread::sleep_until(end_time);

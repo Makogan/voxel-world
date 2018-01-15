@@ -41,9 +41,9 @@ uniform sampler2D text;
 
 void main()
 {
-  float angle = dot(normal, cameraDir);
+  /*float angle = dot(normal, cameraDir);
   if(angle > 0)
-    return;
+    return;*/
 
   vec3 l = vec3(lum-vertexPos);
   l = normalize(l);
@@ -53,7 +53,7 @@ void main()
   e = normalize(e);
   vec3 h = normalize(e+l);
 
-  outColor = vec4(c*(vec3(0.1)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
+  outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
   /*float temp = visible;
   if(temp == 0.f)*/
 }

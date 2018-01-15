@@ -70,18 +70,13 @@ Cube::Cube(vec3 p, uint type)
     {
         meshes[cube_type] = new Mesh();
 
-        MESH->vertices = new vector<vec3>();
-        MESH->normals = new vector<vec3>();
-        MESH->uvs = new vector<vec2>();
-        MESH->indices = new vector<uint>();
+        load_obj("Assets/Objs/cube.obj", (vector<float>*)&MESH->vertices, 
+        (vector<float>*)&MESH->normals, (vector<float>*)&MESH->uvs);
 
-        load_obj("Assets/Objs/cube.obj", (vector<float>*)MESH->vertices, 
-        (vector<float>*)MESH->normals, (vector<float>*)MESH->uvs);
+        MESH->indices = vector<uint>();
 
-        MESH->indices = new vector<uint>();
-
-        for(uint i=0; i<MESH->vertices->size(); i++)
-            MESH->indices->push_back(i);
+        for(uint i=0; i<MESH->vertices.size(); i++)
+            MESH->indices.push_back(i);
     }
     //set world offset
     position = p;
@@ -98,5 +93,10 @@ void Cube::update(vec3 offset)
 {
     transparent = false;
     position = offset;
+}
+
+Mesh Cube::getMesh()
+{
+    return *MESH;
 }
 //########################################################################################

@@ -148,10 +148,10 @@ string loadSourceFile(string &filepath)
 
 Mesh::~Mesh()
 {
-	delete(vertices);
+	/*delete(vertices);
 	delete(normals);
 	delete(indices);
-	delete(uvs);
+	delete(uvs);*/
 }
 
 //########################################################################################
@@ -453,7 +453,7 @@ void Renderer::render()
 		Render_Info *render_data = render_queue[i]; 
 		multi_render(render_data->VAO, &(render_data->VBOs), 
 			&(render_data->types), render_data->layouts, 
-			render_data->geometry->indices->size(), render_data->render_instances);
+			render_data->geometry->indices.size(), render_data->render_instances);
 	}
 
 	busy_queue.unlock();
