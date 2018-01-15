@@ -468,7 +468,7 @@ void World::addSilhouette(Mesh* mesh, float trans, float ref)
         {
             Silhouette s;
 
-            vec3 point = (*mesh->vertices)[(*mesh->indices)[i]];
+            vec4 point = vec4((*mesh->vertices)[(*mesh->indices)[i]],0);
             s.vertices[j] = point;
             s.transparency = trans;
             s.reflectiveness = ref;

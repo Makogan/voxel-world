@@ -40,7 +40,7 @@ struct Light
 
 struct Silhouette
 {
-    vec3 vertices[3];
+    vec4 vertices[3];
 
     float transparency;
     float reflectiveness;
