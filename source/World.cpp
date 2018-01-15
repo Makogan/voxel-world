@@ -56,7 +56,7 @@ Chunk::Chunk(vec3 offset, World* w)
     this->create_cubes(offset);
 
     render_data->types={GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
-        GL_SHADER_STORAGE_BUFFER, GL_SHADER_STORAGE_BUFFER, GL_ELEMENT_ARRAY_BUFFER};
+        GL_SHADER_STORAGE_BUFFER, GL_ELEMENT_ARRAY_BUFFER};
 
     //Create and initialize OpenGL rendering structures
     render_data->VBOs = vector<GLuint>(render_data->types.size());
@@ -93,12 +93,6 @@ void Chunk::update_render_info()
     glBufferData(GL_SHADER_STORAGE_BUFFER, faces_info.size()*sizeof(vec4), 
         faces_info.data(), GL_DYNAMIC_COPY);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, (render_data->VBOs)[3]);
-
-    vector<light> empty;
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, (render_data->VBOs[4]));
-    glBufferData(GL_SHADER_STORAGE_BUFFER, empty.size()*sizeof(light), 
-        empty.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, (render_data->VBOs)[4]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices->size()*sizeof(uint),
@@ -182,7 +176,7 @@ void Chunk::update()
 */
 void Chunk::send_render_data(Renderer* handler)
 {
-    render_data->layouts = 5;
+    render_data->layouts = render_data->types.size()-1;
     render_data->render_instances=faces_info.size();
     render_data->geometry = MESH;
 

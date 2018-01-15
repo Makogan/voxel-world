@@ -19,7 +19,7 @@ in vec2 texture_coord;
 
 struct light
 {
-  vec3 position;
+  vec4 position;
   vec4 color;
   double intensity;
 };
@@ -27,7 +27,7 @@ struct light
 in light lights[];
 
 ivec2 solids_meta_data[];
-in vec3 solids[];
+in vec4 solids[];
 
 out vec4 outColor;//Final color of the pixel
 
@@ -35,11 +35,16 @@ uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
 uniform vec3 lum = vec3(0,1000,5000);//A unique light position
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
+uniform vec3 cameraDir = vec3(0);
 
 uniform sampler2D text;
 
 void main()
 {
+  float angle = dot(normal, cameraDir);
+  if(angle > 0)
+    return;
+
   vec3 l = vec3(lum-vertexPos);
   l = normalize(l);
   vec3 c = vec3(texture(text,abs(texture_coord)));
@@ -49,7 +54,6 @@ void main()
   vec3 h = normalize(e+l);
 
   outColor = vec4(c*(vec3(0.1)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
-  float temp = visible;
-  if(temp == 0.f)
-  outColor = vec4(0);
+  /*float temp = visible;
+  if(temp == 0.f)*/
 }

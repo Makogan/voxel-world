@@ -31,6 +31,12 @@ class World;
 */
 //========================================================================================
 //TODO: document this section
+struct Light
+{
+  vec3 position;
+  vec4 color;
+  double intensity;
+};
 
 class Chunk
 {
@@ -79,6 +85,8 @@ class World
 {
     private:
         Chunk_Holder *loaded_chunks;
+        vector<Light*> loaded_lights;
+        vector<Mesh*> loaded_meshes;
 
     public:
         int h_radius = 10;
@@ -94,11 +102,4 @@ class World
 };
 
 extern World* the_world;
-
-struct light
-{
-  vec3 position;
-  vec4 color;
-  double intensity;
-};
 //########################################################################################

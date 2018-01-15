@@ -319,7 +319,6 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 
 	//Draw call
 	glDrawElementsInstanced(GL_TRIANGLES, index_num, GL_UNSIGNED_INT, (void*)0, instances);
-	
 }
 
 /* 
@@ -341,8 +340,6 @@ void Renderer::update(GLFWwindow* window)
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{
 		cerr << "Error returned when trying to find view matrix."
-			<< "\nuniform: view"
-			<< "Error num: " << loc
 			<< endl;
 		return;
 	}
@@ -352,15 +349,33 @@ void Renderer::update(GLFWwindow* window)
 	loc = glGetUniformLocation(current_program, "proj");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{
-
 		cerr << "Error returned when trying to find projection matrix."
-			<< "\nuniform: proj"
-			<< "Error num: " << loc
 			<< endl;
 		return;
 	}
 	//Pass the calculated projection/perspective matrix onto the shader
 	glUniformMatrix4fv(loc, 1, GL_FALSE, value_ptr(cam->getPerspectiveMatrix()));
+
+	loc = glGetUniformLocation(current_program, "cameraPos");
+	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
+	{
+		cerr << "Error returned when trying to find camera position"
+			<< endl;
+		return;
+	}
+	vec3 camPos = cam->getPosition();
+	glUniform3fv(loc, 1, (GLfloat*)&(camPos));
+
+	loc = glGetUniformLocation(current_program, "cameraDir");
+	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
+	{
+		cerr << "Error returned when trying to find camera direction"
+			<< endl;
+		return;
+	}
+	vec3 camDir = normalize(cam->getForward());
+	glUniform3fv(loc, 1, (GLfloat*)&(camDir));
+
 	glUseProgram(0);
 }
 
