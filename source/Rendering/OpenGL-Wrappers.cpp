@@ -310,10 +310,9 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 	//Bind VBO's storing rendering data
 	for(uint i=0; i<buffer_types->size(); i++)
 	{
-		glBindBuffer((*buffer_types)[i], (*VBOs)[i]);
-
 		if((*buffer_types)[i]==GL_SHADER_STORAGE_BUFFER)
 		{
+			glBindBuffer((*buffer_types)[i], (*VBOs)[i]);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i, (*VBOs)[i]);
 		}
 	}

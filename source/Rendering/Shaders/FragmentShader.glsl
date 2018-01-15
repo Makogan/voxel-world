@@ -25,6 +25,8 @@ struct light
 };
 
 in light lights[];
+
+ivec2 solids_meta_data[];
 in vec3 solids[];
 
 out vec4 outColor;//Final color of the pixel

@@ -94,4 +94,11 @@ class World
 };
 
 extern World* the_world;
+
+struct light
+{
+  vec3 position;
+  vec4 color;
+  double intensity;
+};
 //########################################################################################

@@ -34,7 +34,12 @@ layout(std430, binding = 4) buffer light_buffer
     light w_lights[];
 };
 
-layout(std430, binding = 5) buffer object_buffer
+layout(std430, binding = 5) buffer index_buffer
+{
+   ivec2 solids_meta_data[];
+};
+
+layout(std430, binding = 6) buffer object_buffer
 {
    vec3 w_solids[];
 };
