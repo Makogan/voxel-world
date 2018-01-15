@@ -374,6 +374,16 @@ World::World()
             }
         }
     }
+
+    loaded_silhouettes = vector<vector<vector<vector<Silhouette>>>>(h_radius);
+    for(uint i=0; i<h_radius; i++)
+    {
+        loaded_silhouettes[i] = vector<vector<vector<Silhouette>>>(h_radius);
+        for(uint j=0; j<h_radius; j++)
+        {
+            loaded_silhouettes[i][j] = vector<vector<Silhouette>>(v_radius);
+        } 
+    }
 }
 
 /*
@@ -444,5 +454,27 @@ void World::send_render_data(Renderer* handler)
         }
     }
     handler->busy_queue.unlock();
+}
+
+void World::addSilhouette(Mesh* mesh, float trans, float ref)
+{
+    for(int i=0; i<mesh->indices->size()/3; i++)
+    {
+        int x,y,z;
+        vec3 pos = (*mesh->vertices)[(*mesh->indices)[i]];
+        x = pos.x, y=pos.y, z=pos.z;
+
+        for(uint j=0; j<3; j++)
+        {
+            Silhouette s;
+
+            vec3 point = (*mesh->vertices)[(*mesh->indices)[i]];
+            s.vertices[j] = point;
+            s.transparency = trans;
+            s.reflectiveness = ref;
+
+            loaded_silhouettes[x][y][z].push_back(s);
+        }
+    }
 }
 //########################################################################################

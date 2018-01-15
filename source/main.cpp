@@ -35,6 +35,7 @@
 //========================================================================================
 
 typedef std::chrono::duration<int, std::ratio<1, 60>> frame_duration;
+typedef std::chrono::duration<int, std::ratio<1, 10>> world_duration;
 
 //########################################################################################
 
@@ -135,10 +136,12 @@ void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 
 	while (!glfwWindowShouldClose(window))
 	{
+			auto start_time = std::chrono::steady_clock::now();
 			the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
 			the_world->send_render_data(Rendering_Handler);
 			glFinish();
-			usleep(600);	
+			auto end_time = (start_time + world_duration(1));	
+			std::this_thread::sleep_until(end_time);
 	}
 }
 

@@ -38,6 +38,14 @@ struct Light
   double intensity;
 };
 
+struct Silhouette
+{
+    vec3 vertices[3];
+
+    float transparency;
+    float reflectiveness;
+};
+
 class Chunk
 {
     private:
@@ -85,8 +93,8 @@ class World
 {
     private:
         Chunk_Holder *loaded_chunks;
-        vector<Light*> loaded_lights;
-        vector<Mesh*> loaded_meshes;
+        vector<Light> loaded_lights;
+        vector<vector<vector<vector<Silhouette>>>> loaded_silhouettes;
 
     public:
         int h_radius = 10;
@@ -99,6 +107,7 @@ class World
         Cube* operator()(int x, int y, int z);
         void center_frame(ivec3 offset);
         void send_render_data(Renderer*);        
+        void addSilhouette(Mesh*, float, float);
 };
 
 extern World* the_world;
