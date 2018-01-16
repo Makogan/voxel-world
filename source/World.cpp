@@ -176,7 +176,7 @@ void Chunk::update()
 */
 void Chunk::send_render_data(Renderer* handler)
 {
-    render_data->layouts = 6;//render_data->types.size()-1;
+    render_data->layouts = 9;//render_data->types.size()-1;
     render_data->render_instances=faces_info.size();
     render_data->geometry = MESH;
 
@@ -396,7 +396,7 @@ World::World()
 
     VBOs = vector<GLuint>(2);
     glGenVertexArrays(1, &VAO);
-    glGenBuffers(5,VBOs.data());
+    glGenBuffers(2,VBOs.data());
 }
 
 /*
@@ -492,8 +492,8 @@ void World::addSilhouette(Mesh* mesh, float trans, float ref)
 
             vec4 point = vec4((*mesh).vertices[(*mesh).indices[i]],0);
             s.vertices[j] = point;
-            s.transparency = trans;
-            s.reflectiveness = ref;
+            //s.transparency = trans;
+            //s.reflectiveness = ref;
      
             loaded_silhouettes[x][y][z].push_back(s);
         }
@@ -531,7 +531,22 @@ void World::loadShadingData()
             }
         } 
     }
-    
+
+    holder.clear();
+    Silhouette s; 
+
+    s.vertices[0] = vec4(7,7,7,7);
+    s.vertices[1] = vec4(7,7,7,7);
+    s.vertices[2] = vec4(7,7,7,7);
+
+    //s.transparency = 7;
+    //s.reflectiveness = 7;
+
+
+    holder.push_back(s);
+
+    glUseProgram(Rendering_Handler->current_program);
+    glBindVertexArray(VAO);   
     GLint loc = glGetUniformLocation(Rendering_Handler->current_program, "s_num");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{

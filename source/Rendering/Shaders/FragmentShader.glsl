@@ -22,8 +22,8 @@ struct Silhouette
 {
     vec4 vertices[3];
 
-    float transparency;
-    float reflectiveness;
+    //float transparency;
+    //float reflectiveness;
 };
 
 in float visible;
@@ -57,14 +57,19 @@ float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 	mat3 mv = mat3(-ray, e1, s);
 	mat3 md = mat3(-ray,e1,e2);
 
-	float t = determinant(mt)/determinant(md);
-	float u = determinant(mu)/determinant(md);
-	float v = determinant(mv)/determinant(md);
+  float d = determinant(md);
 
-	if(t > 0 && (u+v)<1 && (u+v)>0 && u<1 && u>0 && v<1 && v>0)
+  if(isinf(d) || isnan(d)){
+    return 500.f;
+  }
+/*	float t = determinant(mt)/d;
+	float u = determinant(mu)/d;
+	float v = determinant(mv)/d;*/
+
+/*	if(t > 0 && (u+v)<1 && (u+v)>0 && u<1 && u>0 && v<1 && v>0)
 	{
 		return t;
-	}
+	}*/
 
 	return -1;
 
@@ -86,10 +91,27 @@ void main()
   //look here
   for(int i=0; i<0;  i++)
   {
+    
+    /*
     float t = triangleIntersection(l, vertexPos, 
-      vec3(solids[0].vertices[0]), vec3(solids[0].vertices[1]), vec3(solids[0].vertices[2]));
+      vec3(solids[0].vertices[0]),
+       vec3(solids[0].vertices[1]),
+        vec3(solids[0].vertices[2]));
+    */
+    
   }
 
+
   //Ignore
-  outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
+  //outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
+
+  //bool t = solids[0].transparency != 1;
+
+//  if(t){
+    outColor = vec4(solids[0].vertices[0]);
+//    outColor = vec4(s_num,s_num,s_num,s_num);
+//  }else
+//   outColor = vec4(0,0,0,0);
+
+  
 }

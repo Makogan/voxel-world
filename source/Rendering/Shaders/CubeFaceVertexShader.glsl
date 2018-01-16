@@ -24,8 +24,8 @@ struct Silhouette
 {
     vec4 vertices[3];
 
-    float transparency;
-    float reflectiveness;
+    //float transparency;
+    //float reflectiveness;
 };
 
 layout(location = 0) in vec3 position; //(x,y,z) coordinates of a vertex

@@ -42,8 +42,8 @@ struct Silhouette
 {
     vec4 vertices[3];
 
-    float transparency;
-    float reflectiveness;
+    //float transparency;
+    //float reflectiveness;
 };
 
 class Chunk
