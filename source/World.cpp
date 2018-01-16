@@ -97,7 +97,7 @@ void Chunk::update_render_info()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices.size()*sizeof(uint),
         MESH->indices.data(), GL_DYNAMIC_DRAW);
-       // Rendering_Handler->global_lock.unlock();
+   // Rendering_Handler->global_lock.unlock();
 }
 
 /*
@@ -196,7 +196,7 @@ inline bool Chunk::check_neighbour(Cube *c, Cube *n, Face f)
 *   Set the face_info array with the data of the currently visible faces
 */
 void Chunk::update_visible_faces()
-{
+{       
     for(int i=0; i<CHUNK_DIMS; i++)
     {
         for(int j=0; j<CHUNK_DIMS; j++)
@@ -229,9 +229,10 @@ void Chunk::update_visible_faces()
 
                 if(visible)
                 {
-                    faces_info.push_back(vec4(current->position,0));
                     Mesh m = current->getMesh(); 
+                    faces_info.push_back(vec4(current->position,0));
                     world->addSilhouette(&m,0,0);
+                    
                 }
             }
         }
@@ -488,7 +489,7 @@ void World::addSilhouette(Mesh* mesh, float trans, float ref)
             s.vertices[j] = point;
             s.transparency = trans;
             s.reflectiveness = ref;
-
+     
             loaded_silhouettes[x][y][z].push_back(s);
         }
     }

@@ -28,7 +28,7 @@ include_directories(${FREETYPE_INCLUDE_DIRS})
 
 target_link_libraries(voxel-world glfw GL GLEW freetype pthread)
 
-SET(CMAKE_CXX_FLAGS "-std=c++1y -g")
+SET(CMAKE_CXX_FLAGS "-std=c++1y -g -fopenmp")
 
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/Window-Management.cpp)
 target_sources(voxel-world PUBLIC ${PROJECT_SOURCE_DIR}/Rendering/OpenGL-Wrappers.cpp)
