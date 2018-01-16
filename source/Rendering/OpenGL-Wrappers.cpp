@@ -439,9 +439,7 @@ Shader* Renderer::find_shader(string shader_name)
 
 void Renderer::add_data(Render_Info* data)
 {
-	//busy_queue.lock();
 	render_queue.push_back(data);
-	//busy_queue.unlock();
 }
 
 void Renderer::render()

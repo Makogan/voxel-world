@@ -11,23 +11,32 @@
 
 #version 410
 
-in float visible;
-in vec3 normal;//Normal to the vertex
-in vec3 vertexPos;//True position of the vertex (i.e it's location in space)
-
-in vec2 texture_coord;
-
-struct light
+struct Light
 {
   vec4 position;
   vec4 color;
   double intensity;
 };
 
-in light lights[];
+struct Silhouette
+{
+    vec4 vertices[3];
 
-ivec2 solids_meta_data[];
-in vec4 solids[];
+    float transparency;
+    float reflectiveness;
+};
+
+in float visible;
+in vec3 normal;//Normal to the vertex
+in vec3 vertexPos;//True position of the vertex (i.e it's location in space)
+
+in vec2 texture_coord;
+
+in Light lights[];
+in ivec2 solids_meta_data[];
+in Silhouette solids[];
+
+uniform int s_num=0;
 
 out vec4 outColor;//Final color of the pixel
 
@@ -37,14 +46,35 @@ uniform vec3 lum = vec3(0,1000,5000);//A unique light position
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
+float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
+{
+	vec3 s = origin - p0;
+	vec3 e1 = p1-p0;
+	vec3 e2 = p2-p0;
+	
+	mat3 mt = mat3(s, e1, e2);
+	mat3 mu = mat3(-ray, s, e2);
+	mat3 mv = mat3(-ray, e1, s);
+	mat3 md = mat3(-ray,e1,e2);
+
+	float t = determinant(mt)/determinant(md);
+	float u = determinant(mu)/determinant(md);
+	float v = determinant(mv)/determinant(md);
+
+	if(t > 0 && (u+v)<1 && (u+v)>0 && u<1 && u>0 && v<1 && v>0)
+	{
+		return t;
+	}
+
+	return -1;
+
+}
+
 uniform sampler2D text;
 
 void main()
 {
-  /*float angle = dot(normal, cameraDir);
-  if(angle > 0)
-    return;*/
-
+  //Ignore
   vec3 l = vec3(lum-vertexPos);
   l = normalize(l);
   vec3 c = vec3(texture(text,abs(texture_coord)));
@@ -53,7 +83,13 @@ void main()
   e = normalize(e);
   vec3 h = normalize(e+l);
 
+  //look here
+  for(int i=0; i<0;  i++)
+  {
+    float t = triangleIntersection(l, vertexPos, 
+      vec3(solids[0].vertices[0]), vec3(solids[0].vertices[1]), vec3(solids[0].vertices[2]));
+  }
+
+  //Ignore
   outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
-  /*float temp = visible;
-  if(temp == 0.f)*/
 }

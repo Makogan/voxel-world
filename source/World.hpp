@@ -93,6 +93,9 @@ class World
 {
     private:
         Chunk_Holder *loaded_chunks;
+
+        GLuint VAO;
+        vector<GLuint> VBOs;
         vector<Light> loaded_lights;
         vector<vector<vector<vector<Silhouette>>>> loaded_silhouettes;
 
@@ -107,8 +110,11 @@ class World
         Cube* operator()(int x, int y, int z);
         void center_frame(ivec3 offset);
         void send_render_data(Renderer*);        
+
         void addSilhouette(Mesh*, float, float);
         void clearSilhouettes();
+
+        void loadShadingData();
 };
 
 extern World* the_world;

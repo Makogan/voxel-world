@@ -35,7 +35,7 @@
 //========================================================================================
 
 typedef std::chrono::duration<int, std::ratio<1, 60>> frame_duration;
-typedef std::chrono::duration<int, std::ratio<1, 10>> world_duration;
+typedef std::chrono::duration<int, std::ratio<1, 600>> world_duration;
 
 //########################################################################################
 

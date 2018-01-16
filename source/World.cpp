@@ -86,7 +86,7 @@ Chunk::Chunk(vec3 offset, World* w)
 */
 void Chunk::update_render_info()
 {
-    //Rendering_Handler->global_lock.lock();
+    Rendering_Handler->busy_queue.lock();
     glBindVertexArray(render_data->VAO);
 
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, (render_data->VBOs[3]));
@@ -97,7 +97,7 @@ void Chunk::update_render_info()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices.size()*sizeof(uint),
         MESH->indices.data(), GL_DYNAMIC_DRAW);
-   // Rendering_Handler->global_lock.unlock();
+    Rendering_Handler->busy_queue.unlock();
 }
 
 /*
@@ -176,7 +176,7 @@ void Chunk::update()
 */
 void Chunk::send_render_data(Renderer* handler)
 {
-    render_data->layouts = render_data->types.size()-1;
+    render_data->layouts = 6;//render_data->types.size()-1;
     render_data->render_instances=faces_info.size();
     render_data->geometry = MESH;
 
@@ -393,6 +393,10 @@ World::World()
             }
         }
     }
+
+    VBOs = vector<GLuint>(2);
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(5,VBOs.data());
 }
 
 /*
@@ -407,6 +411,7 @@ World::~World()
 void World::center_frame(ivec3 position)
 {
     clearSilhouettes();
+    loadShadingData();
 
     ivec3 distance = 
         position - origin - ivec3(h_radius/2, h_radius/2, v_radius/2)*CHUNK_DIMS;
@@ -507,5 +512,38 @@ void World::clearSilhouettes()
             }
         } 
     }
+}
+
+void World::loadShadingData()
+{
+    vector<Silhouette> holder;
+    for(uint i=0; i<h_radius; i++)
+    {
+        for(uint j=0; j<h_radius; j++)
+        {
+            for(uint k=0; k<v_radius; k++)
+            {
+                uint size=loaded_silhouettes[i][j][k].size();
+                for(uint w=0; w<size; w++)
+                {
+                    holder.push_back(loaded_silhouettes[i][j][k][w]);
+                }
+            }
+        } 
+    }
+    
+    GLint loc = glGetUniformLocation(Rendering_Handler->current_program, "s_num");
+	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
+	{
+		cerr << "Error returned when trying to find texture uniform."
+			<< endl;
+		return;
+	}
+	glUniform1i(loc,holder.size());
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, VBOs[0]);
+    glBufferData(GL_SHADER_STORAGE_BUFFER, holder.size()*sizeof(Silhouette), 
+        holder.data(), GL_DYNAMIC_COPY);
+    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, VBOs[0]);
 }
 //########################################################################################
