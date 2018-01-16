@@ -295,7 +295,7 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 	//error check
 	if(VBOs->size() != buffer_types->size())
 	{
-		cerr << "Mismatching VBO's and buffer_types sizes" << endl;
+		cerr << "Mismatching VBOs's and buffer_types sizes" << endl;
 		return;
 	}
 

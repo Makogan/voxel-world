@@ -56,6 +56,8 @@ void update_loop(GLFWwindow*, GLFWwindow*);
 //**************************************************************************************\\
 //--------------------------------------------------------------------------------------\\
 
+GLuint DEVAO;
+
 int main(int argc, char **argv)
 {
 	//Init OpenGL contexts
@@ -69,6 +71,8 @@ int main(int argc, char **argv)
 		vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,2*CHUNK_DIMS), width, height));
 
 	glfwMakeContextCurrent(window);
+
+	glGenVertexArrays(1, &DEVAO);
 
 	the_world = new World();
 	thread world_thread(update_loop, window, o_window);

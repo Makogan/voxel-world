@@ -45,6 +45,8 @@ Chunk::Chunk() : Chunk(vec3(0)){}
 
 Chunk::Chunk(vec3 offset) : Chunk(offset, NULL){}
 
+extern GLuint DEVAO;
+
 Chunk::Chunk(vec3 offset, World* w) 
 {
     position = offset;
@@ -60,7 +62,8 @@ Chunk::Chunk(vec3 offset, World* w)
 
     //Create and initialize OpenGL rendering structures
     render_data->VBOs = vector<GLuint>(render_data->types.size());
-    glGenVertexArrays(1, &(render_data->VAO));
+    //glGenVertexArrays(1, &(render_data->VAO));
+    render_data->VAO = DEVAO;
     glGenBuffers(5,(render_data->VBOs.data()));
 
     glBindVertexArray(render_data->VAO);
@@ -395,7 +398,9 @@ World::World()
     }
 
     VBOs = vector<GLuint>(2);
-    glGenVertexArrays(1, &VAO);
+    //glGenVertexArrays(1, &VAO);
+    VAO = DEVAO;
+    glBindVertexArray(VAO);
     glGenBuffers(2,VBOs.data());
 }
 
@@ -535,10 +540,10 @@ void World::loadShadingData()
     holder.clear();
     Silhouette s; 
 
-    s.vertices[0] = vec4(7,7,7,7);
-    s.vertices[1] = vec4(7,7,7,7);
-    s.vertices[2] = vec4(7,7,7,7);
-
+    s.vertices[0] = vec4(7,7,7,0);
+    s.vertices[1] = vec4(7,7,7,0);
+    s.vertices[2] = vec4(7,7,7,0);
+    
     //s.transparency = 7;
     //s.reflectiveness = 7;
 

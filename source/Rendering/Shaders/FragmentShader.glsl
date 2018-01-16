@@ -111,7 +111,7 @@ void main()
     outColor = vec4(solids[0].vertices[0]);
 //    outColor = vec4(s_num,s_num,s_num,s_num);
 //  }else
-//   outColor = vec4(0,0,0,0);
+   //outColor = vec4(1,0,0,0);
 
   
 }
