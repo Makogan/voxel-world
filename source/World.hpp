@@ -95,11 +95,11 @@ class World
         Chunk_Holder *loaded_chunks;
 
         GLuint VAO;
-        vector<GLuint> VBOs;
         vector<Light> loaded_lights;
         vector<vector<vector<vector<Silhouette>>>> loaded_silhouettes;
 
     public:
+        vector<GLuint> VBOs;
         int h_radius = 10;
         int v_radius = 4;
         

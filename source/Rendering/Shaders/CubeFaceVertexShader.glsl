@@ -39,9 +39,9 @@ layout(std430, binding = 3) buffer face_buffer
 
 layout(std430, binding = 4) buffer index_buffer
 {
-   ivec2 solids_meta_data[];
+ivec2 solids_meta_data[];
 };
-
+/*
 layout(std430, binding = 5) buffer object_buffer
 {
     Silhouette w_solids[];
@@ -51,7 +51,7 @@ layout(std430, binding = 6) buffer light_buffer
 {
     Light w_lights[];
 };
-
+*/
 out float visible;
 out vec3 normal; 
 out vec3 vertexPos; //projected vertex
@@ -70,6 +70,15 @@ void main()
     normal = normalize(norm);
     vertexPos = vec3(vec4(position+vec3(face_info[gl_InstanceID]), 1.0)); //calculate the transformed pos
 
-    lights = w_lights;   
-    solids = w_solids;
+    //lights = w_lights;   
+    //solids = w_solids;
+
+   /* fun = vec4(w_solids[0].vertices[0]);
+    for(int i = 0; i < 3; i++){
+        solids[0].vertices[i] = w_solids[0].vertices[i];
+        
+    }
+    */
+
+    //fun = vec4(1);
 }

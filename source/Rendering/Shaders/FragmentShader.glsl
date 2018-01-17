@@ -9,7 +9,7 @@
 */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-#version 410
+#version 450
 
 struct Light
 {
@@ -34,7 +34,9 @@ in vec2 texture_coord;
 
 in Light lights[];
 in ivec2 solids_meta_data[];
-in Silhouette solids[];
+//in Silhouette solids[];
+
+in vec4 fun;
 
 uniform int s_num=0;
 
@@ -45,6 +47,12 @@ uniform vec4 color = vec4(1);//Default color
 uniform vec3 lum = vec3(0,1000,5000);//A unique light position
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
+
+layout(std430, binding = 5) buffer object_buffer
+{
+    Silhouette solids[];
+};
+
 
 float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 {
@@ -103,12 +111,13 @@ void main()
 
 
   //Ignore
-  //outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
+  outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
   //bool t = solids[0].transparency != 1;
 
 //  if(t){
     outColor = vec4(solids[0].vertices[0]);
+    //outColor = fun;
 //    outColor = vec4(s_num,s_num,s_num,s_num);
 //  }else
    //outColor = vec4(1,0,0,0);

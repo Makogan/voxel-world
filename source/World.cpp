@@ -64,7 +64,9 @@ Chunk::Chunk(vec3 offset, World* w)
     render_data->VBOs = vector<GLuint>(render_data->types.size());
     //glGenVertexArrays(1, &(render_data->VAO));
     render_data->VAO = DEVAO;
+    
     glGenBuffers(5,(render_data->VBOs.data()));
+    
 
     glBindVertexArray(render_data->VAO);
 
@@ -95,7 +97,7 @@ void Chunk::update_render_info()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, (render_data->VBOs[3]));
     glBufferData(GL_SHADER_STORAGE_BUFFER, faces_info.size()*sizeof(vec4), 
         faces_info.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, (render_data->VBOs)[3]);
+    //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, (render_data->VBOs)[3]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices.size()*sizeof(uint),
@@ -400,7 +402,14 @@ World::World()
     VBOs = vector<GLuint>(2);
     //glGenVertexArrays(1, &VAO);
     VAO = DEVAO;
+    /*
     glBindVertexArray(VAO);
+    for (int i =0; i < 2; i++){
+        GLuint tmp;
+        glGenBuffers(1, &tmp);
+        std::cout << tmp << std::endl;
+        VBOs.push_back(tmp);
+    }*/
     glGenBuffers(2,VBOs.data());
 }
 
@@ -540,18 +549,19 @@ void World::loadShadingData()
     holder.clear();
     Silhouette s; 
 
-    s.vertices[0] = vec4(7,7,7,0);
-    s.vertices[1] = vec4(7,7,7,0);
-    s.vertices[2] = vec4(7,7,7,0);
+    s.vertices[0] = vec4(0,0,7,0);
+    s.vertices[1] = vec4(0,0,7,0);
+    s.vertices[2] = vec4(0,0,7,0);
     
     //s.transparency = 7;
     //s.reflectiveness = 7;
 
-
     holder.push_back(s);
 
+    GLuint tmp = 2001;
     glUseProgram(Rendering_Handler->current_program);
-    glBindVertexArray(VAO);   
+    glBindVertexArray(VAO); 
+    std::cout <<"VAO2: " << VAO << std::endl;  
     GLint loc = glGetUniformLocation(Rendering_Handler->current_program, "s_num");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{
@@ -559,11 +569,14 @@ void World::loadShadingData()
 			<< endl;
 		return;
 	}
-	glUniform1i(loc,holder.size());
 
+	glUniform1i(loc,holder.size());
+    
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, VBOs[0]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, holder.size()*sizeof(Silhouette), 
         holder.data(), GL_DYNAMIC_COPY);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, VBOs[0]);
+    std::cout << VBOs[0] << std::endl;
+    glFinish();
 }
 //########################################################################################

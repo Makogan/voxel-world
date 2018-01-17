@@ -58,29 +58,128 @@ void update_loop(GLFWwindow*, GLFWwindow*);
 
 GLuint DEVAO;
 
+
+/* SCOTT ERROR */
+
+#define lcase(X)	case(X): cout << #X << endl; break;
+
+void check_glerror(){
+	GLenum error = (glGetError());
+	switch (error){
+		case(GL_NO_ERROR) :
+		default :
+//			cout << GL_NO_ERROR << ":" << error << endl;
+			return;
+		case(GL_INVALID_ENUM):
+			cout << "GL_INVALID_ENUM" << endl;
+			break;
+		case(GL_INVALID_VALUE):
+			cout << "GL_INVALID_VALUE" << endl;
+			break;
+		case(GL_INVALID_OPERATION):
+			cout << "GL_INVALID_OPERATION" << endl;
+			break;
+		case(GL_INVALID_FRAMEBUFFER_OPERATION):
+			cout << "GL_INVALID_FRAMEBUFFER_OPERATION" << endl;
+			break;
+		case(GL_OUT_OF_MEMORY):
+			cout << "GL_OUT_OF_MEMORY" << endl;
+			break;
+		case(GL_STACK_UNDERFLOW):
+			cout << "GL_STACK_UNDERFLOW" << endl;
+			break;
+		case(GL_STACK_OVERFLOW):
+			cout << "GL_STACK_OVERFLOW" <<endl;
+			break;
+	}
+}
+
+void GL_error_callback(GLenum source, GLenum type, GLuint id,
+   GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+	{
+	if( true && severity != GL_DEBUG_SEVERITY_NOTIFICATION){
+
+	cout << "GL ERROR CALLBACK: " << endl;
+	cout << "Source: " << source << " : ";
+	switch (source){
+		lcase(GL_DEBUG_SOURCE_API)
+		lcase(GL_DEBUG_SOURCE_WINDOW_SYSTEM)
+		lcase(GL_DEBUG_SOURCE_SHADER_COMPILER)
+		lcase(GL_DEBUG_SOURCE_THIRD_PARTY)
+		lcase(GL_DEBUG_SOURCE_APPLICATION)
+		lcase(GL_DEBUG_SOURCE_OTHER)				//THESE ARN'T DEFINED?
+	}  
+
+	cout << "Type: " <<  type << " : ";
+	switch (type){
+		lcase(GL_DEBUG_TYPE_ERROR)
+		lcase(GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR)
+		lcase(GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR)
+		lcase(GL_DEBUG_TYPE_PORTABILITY)
+		lcase(GL_DEBUG_TYPE_PERFORMANCE)
+		lcase(GL_DEBUG_TYPE_MARKER)
+		lcase(GL_DEBUG_TYPE_PUSH_GROUP)
+		lcase(GL_DEBUG_TYPE_POP_GROUP)
+		lcase(GL_DEBUG_TYPE_OTHER)
+	}
+		
+	cout << "ID: " << id << endl;
+	cout << "Serverity: " << severity << " : ";
+	switch (severity){
+		lcase(GL_DEBUG_SEVERITY_HIGH)
+		lcase(GL_DEBUG_SEVERITY_MEDIUM)
+		lcase(GL_DEBUG_SEVERITY_LOW)
+		lcase(GL_DEBUG_SEVERITY_NOTIFICATION)
+	}
+	cout << "Length: " << length << endl;
+	cout << "Message: " << message << endl;
+	cout << "UserParam: " << userParam << endl;
+	cout << "END: GL ERROR CALLBACK: " << endl;
+
+	}
+}
+
+
+
 int main(int argc, char **argv)
 {
 	//Init OpenGL contexts
 	GLFWwindow* window = create_context(NULL, true);
 	GLFWwindow* o_window = create_context(window, false);
-
-	Rendering_Handler = new Renderer();
+    
 	int width, height;
-    glfwGetWindowSize(window, &width, &height);
+	glfwGetWindowSize(window, &width, &height);
+	glfwMakeContextCurrent(window);
+
+	glDebugMessageCallback(	GL_error_callback, NULL);
+	glEnable(GL_DEBUG_OUTPUT);								//DEBUG :D
+	glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+
+	cout << "sanity1" << endl;
+	Rendering_Handler = new Renderer();
+	cout << "sanity2" << endl;
+
 	Rendering_Handler->set_camera(new Camera(mat3(1), 
 		vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,2*CHUNK_DIMS), width, height));
 
-	glfwMakeContextCurrent(window);
+	cout << "sanity3" << endl;
 
 	glGenVertexArrays(1, &DEVAO);
-
+	std::cout <<"VAO: " << DEVAO << std::endl;
+	cout << "sanity10" << endl;
 	the_world = new World();
-	thread world_thread(update_loop, window, o_window);
+	cout << "sanity11" << endl;
+
+	glBindVertexArray(DEVAO);
+cout << "sanity12" << endl;
+	//thread world_thread(update_loop, window, o_window);
 
 	//Render loop
+	cout << "sanity13" << endl;
 	render_loop(window);
-
-	world_thread.join();
+cout << "sanity14" << endl;
+	//world_thread.join();
 
 	//cleanup
 	Cube::cleanup();
@@ -102,6 +201,7 @@ int main(int argc, char **argv)
 * The following functions are not final at all, if modifications can be done, do them
 */
 //main render loop
+GLuint DEVBO;
 void render_loop(GLFWwindow* window)
 {
 
@@ -109,20 +209,30 @@ void render_loop(GLFWwindow* window)
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 	glPointSize(10.f);
+	cout << "sanity14" << endl;
+	glFinish();
+	cout << "sanity15" << endl;
 	
 	double prevTime = 0, currentTime=0;
 	//TODO: this is temporary, implement this correctly
 	loadTexture(Rendering_Handler->current_program, *(Cube::textures[0]));
-
+	cout << "sanity16" << endl;
+	
     while (!glfwWindowShouldClose(window))
 	{
 		auto start_time = std::chrono::steady_clock::now();
+		cout << "sanity5" << endl;
 		Rendering_Handler->update(window);
+		cout << "sanity7" << endl;
 
 		currentTime=glfwGetTime();
 		double elapsed = currentTime-prevTime;
-		
+		update_loop(window, NULL);
+		//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, the_world->VBOs[0]);
+		DEVBO = the_world->VBOs[0];
+		cout << "sanity4" << endl;
 		Rendering_Handler->render();
+		cout << "sanity6" << endl;
 		prevTime=currentTime;
 
 		//cout << 1.d/elapsed << endl;
@@ -136,9 +246,9 @@ void render_loop(GLFWwindow* window)
 
 void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 {
-	glfwMakeContextCurrent(o_window);
+	//glfwMakeContextCurrent(o_window);
 
-	while (!glfwWindowShouldClose(window))
+	//while (!glfwWindowShouldClose(window))
 	{
 			auto start_time = std::chrono::steady_clock::now();
 			the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));

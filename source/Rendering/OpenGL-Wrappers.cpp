@@ -87,7 +87,7 @@ void compileShader(GLuint &shader, string &filename, GLenum shaderType)
 	glShaderSource(shader, 1, &s_ptr, NULL);//set shader program source
 
 	glCompileShader(shader);
-
+	openGLerror();
 
 	//verify compilation
 	GLint status;
@@ -220,8 +220,13 @@ void DestroyTexture(Texture &texture)
 
 void loadTexture(GLuint program, Texture &t)
 {
+	std::cout << "WEE" << std::endl;
+	std::cout << program << std::endl;
 	glUseProgram(program);
+
+	std::cout << "WEE2" << std::endl;
 	glActiveTexture(GL_TEXTURE0);
+
 	glBindTexture(GL_TEXTURE_2D, t.textureID);
 	GLint loc = glGetUniformLocation(program, "text");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
@@ -252,20 +257,25 @@ Renderer::Renderer()
 	//Create cube rendering shader
 	vertex_shaders.push_back(Shader());
 	createShader(vertex_shaders[0],"./Shaders/CubeFaceVertexShader.glsl", GL_VERTEX_SHADER);
-
+	openGLerror();
 	//create fragment shader
 	fragment_shaders.push_back(Shader());
 	createShader(fragment_shaders[0], "./Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
-
+	openGLerror();
 	//Initialize and create the first rendering program
 	shading_programs.push_back(glCreateProgram());
-
+	openGLerror();
 	glAttachShader(shading_programs[0], vertex_shaders[0].shaderID);
+	openGLerror();
 	glAttachShader(shading_programs[0], fragment_shaders[0].shaderID);
-
+	openGLerror();
 	glLinkProgram(shading_programs[0]);
+	openGLerror();
 	current_program = shading_programs[0];
-	glUseProgram(0);
+	std::cout << current_program << std::endl;
+	glUseProgram(current_program);
+	
+	openGLerror();
 }
 
 /*
@@ -288,6 +298,7 @@ Renderer::~Renderer()
 * 	index_num is the number of indices in the mesh (for drawing elements)
 *	layout_num is the number of layouts to enable (always 0 to layou_num-1)
 */
+extern GLuint DEVBO;
 void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs, 
 	vector<GLuint> *buffer_types, GLuint layout_num, 
 	GLuint index_num, GLuint instances)
@@ -316,6 +327,9 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i, (*VBOs)[i]);
 		}
 	}
+
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, DEVBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, DEVBO);
 
 	//Draw call
 	glDrawElementsInstanced(GL_TRIANGLES, index_num, GL_UNSIGNED_INT, (void*)0, instances);
