@@ -155,31 +155,21 @@ int main(int argc, char **argv)
 	glEnable(GL_DEBUG_OUTPUT);								//DEBUG :D
 	glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS);
 
-
-	cout << "sanity1" << endl;
 	Rendering_Handler = new Renderer();
-	cout << "sanity2" << endl;
 
 	Rendering_Handler->set_camera(new Camera(mat3(1), 
 		vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,2*CHUNK_DIMS), width, height));
 
-	cout << "sanity3" << endl;
-
 	glGenVertexArrays(1, &DEVAO);
-	std::cout <<"VAO: " << DEVAO << std::endl;
-	cout << "sanity10" << endl;
+
 	the_world = new World();
-	cout << "sanity11" << endl;
 
 	glBindVertexArray(DEVAO);
-cout << "sanity12" << endl;
-	//thread world_thread(update_loop, window, o_window);
+	thread world_thread(update_loop, window, o_window);
 
 	//Render loop
-	cout << "sanity13" << endl;
 	render_loop(window);
-cout << "sanity14" << endl;
-	//world_thread.join();
+	world_thread.join();
 
 	//cleanup
 	Cube::cleanup();
@@ -204,35 +194,25 @@ cout << "sanity14" << endl;
 GLuint DEVBO;
 void render_loop(GLFWwindow* window)
 {
-
 	//Set default OpenGL values for rendering
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LEQUAL);
 	glPointSize(10.f);
-	cout << "sanity14" << endl;
 	glFinish();
-	cout << "sanity15" << endl;
 	
 	double prevTime = 0, currentTime=0;
 	//TODO: this is temporary, implement this correctly
 	loadTexture(Rendering_Handler->current_program, *(Cube::textures[0]));
-	cout << "sanity16" << endl;
 	
     while (!glfwWindowShouldClose(window))
 	{
 		auto start_time = std::chrono::steady_clock::now();
-		cout << "sanity5" << endl;
 		Rendering_Handler->update(window);
-		cout << "sanity7" << endl;
 
 		currentTime=glfwGetTime();
 		double elapsed = currentTime-prevTime;
-		update_loop(window, NULL);
-		//glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, the_world->VBOs[0]);
 		DEVBO = the_world->VBOs[0];
-		cout << "sanity4" << endl;
 		Rendering_Handler->render();
-		cout << "sanity6" << endl;
 		prevTime=currentTime;
 
 		//cout << 1.d/elapsed << endl;
@@ -246,9 +226,9 @@ void render_loop(GLFWwindow* window)
 
 void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 {
-	//glfwMakeContextCurrent(o_window);
+	glfwMakeContextCurrent(o_window);
 
-	//while (!glfwWindowShouldClose(window))
+	while (!glfwWindowShouldClose(window))
 	{
 			auto start_time = std::chrono::steady_clock::now();
 			the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));

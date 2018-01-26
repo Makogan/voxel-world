@@ -237,7 +237,6 @@ void Chunk::update_visible_faces()
                     Mesh m = current->getMesh(); 
                     faces_info.push_back(vec4(current->position,0));
                     world->addSilhouette(&m,0,0);
-                    
                 }
             }
         }
@@ -510,6 +509,7 @@ void World::addSilhouette(Mesh* mesh, float trans, float ref)
             //s.reflectiveness = ref;
      
             loaded_silhouettes[x][y][z].push_back(s);
+            cout << loaded_silhouettes[x][y][z].size() << endl;
         }
     }
 }
@@ -541,42 +541,39 @@ void World::loadShadingData()
                 for(uint w=0; w<size; w++)
                 {
                     holder.push_back(loaded_silhouettes[i][j][k][w]);
+                        cout << holder.size() << endl;
                 }
             }
         } 
     }
 
-    holder.clear();
+    /*holder.clear();
     Silhouette s; 
 
-    s.vertices[0] = vec4(0,0,7,0);
-    s.vertices[1] = vec4(0,0,7,0);
-    s.vertices[2] = vec4(0,0,7,0);
+    s.vertices[0] = vec4(0,1,0,0);
+    s.vertices[1] = vec4(0,1,0,0);
+    s.vertices[2] = vec4(0,1,0,0);
     
     //s.transparency = 7;
     //s.reflectiveness = 7;
 
-    holder.push_back(s);
+    holder.push_back(s);*/
 
-    GLuint tmp = 2001;
     glUseProgram(Rendering_Handler->current_program);
-    glBindVertexArray(VAO); 
-    std::cout <<"VAO2: " << VAO << std::endl;  
+    glBindVertexArray(VAO);  
     GLint loc = glGetUniformLocation(Rendering_Handler->current_program, "s_num");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{
-		cerr << "Error returned when trying to find texture uniform."
+		cerr << "Error returned when trying to find s_num uniform."
 			<< endl;
 		return;
 	}
-
 	glUniform1i(loc,holder.size());
     
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, VBOs[0]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, holder.size()*sizeof(Silhouette), 
         holder.data(), GL_DYNAMIC_COPY);
     glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, VBOs[0]);
-    std::cout << VBOs[0] << std::endl;
     glFinish();
 }
 //########################################################################################

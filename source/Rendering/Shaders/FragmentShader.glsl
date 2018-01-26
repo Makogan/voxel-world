@@ -38,9 +38,12 @@ in ivec2 solids_meta_data[];
 
 in vec4 fun;
 
+out vec4 outColor;//Final color of the pixel
+
 uniform int s_num=0;
 
-out vec4 outColor;//Final color of the pixel
+uniform sampler2D text;
+
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
@@ -68,26 +71,23 @@ float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
   float d = determinant(md);
 
   if(isinf(d) || isnan(d)){
-    return 500.f;
+    return -1;
   }
-/*	float t = determinant(mt)/d;
+	float t = determinant(mt)/d;
 	float u = determinant(mu)/d;
-	float v = determinant(mv)/d;*/
+	float v = determinant(mv)/d;
 
-/*	if(t > 0 && (u+v)<1 && (u+v)>0 && u<1 && u>0 && v<1 && v>0)
+	if(t > 0 && (u+v)<1 && (u+v)>0 && u<1 && u>0 && v<1 && v>0)
 	{
 		return t;
-	}*/
+	}
 
 	return -1;
 
 }
 
-uniform sampler2D text;
-
 void main()
 {
-  //Ignore
   vec3 l = vec3(lum-vertexPos);
   l = normalize(l);
   vec3 c = vec3(texture(text,abs(texture_coord)));
@@ -96,27 +96,26 @@ void main()
   e = normalize(e);
   vec3 h = normalize(e+l);
 
-  //look here
-  for(int i=0; i<0;  i++)
+  outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
+
+  for(int i=0; i<s_num;  i++)
   {
-    
-    /*
     float t = triangleIntersection(l, vertexPos, 
       vec3(solids[0].vertices[0]),
-       vec3(solids[0].vertices[1]),
-        vec3(solids[0].vertices[2]));
-    */
-    
+      vec3(solids[0].vertices[1]),
+      vec3(solids[0].vertices[2]));
+
+    //if(t<0)
+      outColor = vec4(0);
   }
 
+  //outColor = vec4(s_num);
 
-  //Ignore
-  outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
   //bool t = solids[0].transparency != 1;
 
 //  if(t){
-    outColor = vec4(solids[0].vertices[0]);
+    outColor = abs(vec4(solids[6].vertices[2])+vec4(vertexPos,0))/1000;
     //outColor = fun;
 //    outColor = vec4(s_num,s_num,s_num,s_num);
 //  }else

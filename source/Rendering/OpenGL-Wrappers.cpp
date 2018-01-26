@@ -220,11 +220,7 @@ void DestroyTexture(Texture &texture)
 
 void loadTexture(GLuint program, Texture &t)
 {
-	std::cout << "WEE" << std::endl;
-	std::cout << program << std::endl;
 	glUseProgram(program);
-
-	std::cout << "WEE2" << std::endl;
 	glActiveTexture(GL_TEXTURE0);
 
 	glBindTexture(GL_TEXTURE_2D, t.textureID);
@@ -272,7 +268,6 @@ Renderer::Renderer()
 	glLinkProgram(shading_programs[0]);
 	openGLerror();
 	current_program = shading_programs[0];
-	std::cout << current_program << std::endl;
 	glUseProgram(current_program);
 	
 	openGLerror();
