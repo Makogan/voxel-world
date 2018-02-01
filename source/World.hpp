@@ -96,11 +96,11 @@ class World
 
         GLuint VAO;
         vector<Light> loaded_lights;
-        vector<vector<vector<vector<Silhouette>>>> loaded_silhouettes;
+        vector<vector<Silhouette>> loaded_silhouettes;
 
     public:
         vector<GLuint> VBOs;
-        int h_radius = 10;
+        int h_radius = 8;
         int v_radius = 4;
         
         ivec3 origin = ivec3(0);

@@ -10,6 +10,7 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #version 450
+#extension GL_NV_shader_buffer_load : enable
 
 struct Light
 {
@@ -47,7 +48,7 @@ uniform sampler2D text;
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
-uniform vec3 lum = vec3(0,1000,5000);//A unique light position
+uniform vec3 lum = vec3(0,0,2);//A unique light position
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
@@ -56,10 +57,59 @@ layout(std430, binding = 5) buffer object_buffer
     Silhouette solids[];
 };
 
+float sphereIntersection(vec3 ray, vec3 origin, vec3 center, float radius)
+{		 
+
+	float a = dot(ray,ray);
+	float b = -2*dot(center, ray)+2*dot(ray,origin);
+	float c = -2*dot(origin,center)+dot(center,center)
+			  -radius*radius+dot(origin,origin);
+
+	float discriminant =b*b - 4*a*c;
+		
+	float t, t1, t2;
+	if(discriminant < 0)
+	{
+		return -1;
+	}
+	
+	else
+	{
+		t1=(-b-sqrt(discriminant))/(2*a);
+		t2=(-b+sqrt(discriminant))/(2*a);
+	}
+	
+	if(t1<0 && t2>=0)
+		t1=t2;
+	else if (t1>=0 && t2<0)
+		t2=t1;
+
+	return min(t1,t2);
+}
 
 float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 {
-	vec3 s = origin - p0;
+  vec3 s = origin - p0;
+	vec3 e1 = p1-p0;
+	vec3 e2 = p2-p0;
+	
+	mat3 mt = mat3(s, e1, e2);
+	mat3 mu = mat3(-ray, s, e2);
+	mat3 mv = mat3(-ray, e1, s);
+	mat3 md = mat3(-ray,e1,e2);
+
+	float t = determinant(mt)/determinant(md);
+	float u = determinant(mu)/determinant(md);
+	float v = determinant(mv)/determinant(md);
+
+	if(t > 0 && (u+v)<1 && (u+v)>0 && u<1 && u>0 && v<1 && v>0)
+	{
+		return t;
+	}
+
+  return -1;
+
+	/*vec3 s = origin - p0;
 	vec3 e1 = p1-p0;
 	vec3 e2 = p2-p0;
 	
@@ -70,9 +120,11 @@ float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 
   float d = determinant(md);
 
-  if(isinf(d) || isnan(d)){
+  if(isinf(d) || isnan(d))
+  {
     return -1;
   }
+
 	float t = determinant(mt)/d;
 	float u = determinant(mu)/d;
 	float v = determinant(mv)/d;
@@ -82,7 +134,7 @@ float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 		return t;
 	}
 
-	return -1;
+	return -1;*/
 
 }
 
@@ -98,24 +150,36 @@ void main()
 
   outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
-  for(int i=0; i<s_num;  i++)
+  for(int i=0; i<s_num/1000;  i++)
   {
-    float t = triangleIntersection(l, vertexPos, 
-      vec3(solids[0].vertices[0]),
-      vec3(solids[0].vertices[1]),
-      vec3(solids[0].vertices[2]));
+    /*float t = triangleIntersection(lum, vertexPos, 
+      cameraPos+vec3(10,20,0),
+      cameraPos+vec3(0,-30,0),
+      cameraPos+vec3(20,-20,0));*/
+      float t = triangleIntersection(lum, vertexPos, 
+        vec3(solids[i].vertices[0]), 
+        vec3(solids[i].vertices[1]),
+        vec3(solids[i].vertices[2]));
+      /*vec3(10,10,50),
+      vec3(0,-10,50),
+      vec3(10,-10,50));*/
 
-    //if(t<0)
-      outColor = vec4(0);
+      /*vec4(700,100,100,0);
+    s.vertices[1] = vec4(0,-800,100,0);
+    s.vertices[2] = vec4(500,-1000,100,0);*/
+
+    //if(vertexPos.z > 2)
+    if(t>0.00)
+      outColor = vec4(1,0,0,0);
   }
-
+  //outColor = solids[0].vertices[0];
   //outColor = vec4(s_num);
 
 
   //bool t = solids[0].transparency != 1;
 
 //  if(t){
-    outColor = abs(vec4(solids[6].vertices[2])+vec4(vertexPos,0))/1000;
+    //outColor = abs(vec4(solids[6].vertices[2])+vec4(vertexPos,0))/1000;
     //outColor = fun;
 //    outColor = vec4(s_num,s_num,s_num,s_num);
 //  }else

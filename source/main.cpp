@@ -61,7 +61,7 @@ GLuint DEVAO;
 
 /* SCOTT ERROR */
 
-#define lcase(X)	case(X): cout << #X << endl; break;
+/*#define lcase(X)	case(X): cout << #X << endl; break;
 
 void check_glerror(){
 	GLenum error = (glGetError());
@@ -137,7 +137,7 @@ void GL_error_callback(GLenum source, GLenum type, GLuint id,
 	cout << "END: GL ERROR CALLBACK: " << endl;
 
 	}
-}
+}*/
 
 
 
@@ -151,7 +151,7 @@ int main(int argc, char **argv)
 	glfwGetWindowSize(window, &width, &height);
 	glfwMakeContextCurrent(window);
 
-	glDebugMessageCallback(	GL_error_callback, NULL);
+	//glDebugMessageCallback(	GL_error_callback, NULL);
 	glEnable(GL_DEBUG_OUTPUT);								//DEBUG :D
 	glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS);
 

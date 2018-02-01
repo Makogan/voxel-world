@@ -374,15 +374,7 @@ World::World()
     //TODO: this should not be here
     vec_field_init();
 
-    loaded_silhouettes = vector<vector<vector<vector<Silhouette>>>>(h_radius);
-    for(uint i=0; i<h_radius; i++)
-    {
-        loaded_silhouettes[i] = vector<vector<vector<Silhouette>>>(h_radius);
-        for(uint j=0; j<h_radius; j++)
-        {
-            loaded_silhouettes[i][j] = vector<vector<Silhouette>>(v_radius);
-        } 
-    }
+    loaded_silhouettes = vector<vector<Silhouette>>(h_radius*h_radius*v_radius);
 
     loaded_chunks = new Chunk_Holder(h_radius, h_radius, v_radius, this);
 
@@ -423,16 +415,16 @@ World::~World()
 
 void World::center_frame(ivec3 position)
 {
-    clearSilhouettes();
-    loadShadingData();
 
     ivec3 distance = 
         position - origin - ivec3(h_radius/2, h_radius/2, v_radius/2)*CHUNK_DIMS;
     if(abs(distance.x) >= CHUNK_DIMS || abs(distance.y) >= CHUNK_DIMS 
         || abs(distance.z) >= CHUNK_DIMS)
     {
+        clearSilhouettes();
         origin+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
         loaded_chunks->shift(distance/CHUNK_DIMS);
+        loadShadingData();
     }
 }
 
@@ -507,57 +499,43 @@ void World::addSilhouette(Mesh* mesh, float trans, float ref)
             s.vertices[j] = point;
             //s.transparency = trans;
             //s.reflectiveness = ref;
-     
-            loaded_silhouettes[x][y][z].push_back(s);
-            cout << loaded_silhouettes[x][y][z].size() << endl;
+
+            loaded_silhouettes[0].push_back(s);
+
         }
     }
 }
 
 void World::clearSilhouettes()
 {
-    for(uint i=0; i<h_radius; i++)
+    for(uint i=0; i<loaded_silhouettes.size(); i++)
     {
-        for(uint j=0; j<h_radius; j++)
-        {
-            for(uint k=0; k<v_radius; k++)
-            {
-                loaded_silhouettes[i][j][k].clear();
-            }
-        } 
+        loaded_silhouettes[i].clear();
     }
 }
 
 void World::loadShadingData()
 {
     vector<Silhouette> holder;
-    for(uint i=0; i<h_radius; i++)
-    {
-        for(uint j=0; j<h_radius; j++)
-        {
-            for(uint k=0; k<v_radius; k++)
-            {
-                uint size=loaded_silhouettes[i][j][k].size();
-                for(uint w=0; w<size; w++)
-                {
-                    holder.push_back(loaded_silhouettes[i][j][k][w]);
-                        cout << holder.size() << endl;
-                }
-            }
-        } 
-    }
+
+    holder = loaded_silhouettes[0];
 
     /*holder.clear();
-    Silhouette s; 
+    Silhouette s; */
 
-    s.vertices[0] = vec4(0,1,0,0);
-    s.vertices[1] = vec4(0,1,0,0);
-    s.vertices[2] = vec4(0,1,0,0);
+    /*s.vertices[0] = vec4(700,100,100,0);
+    s.vertices[1] = vec4(0,-800,100,0);
+    s.vertices[2] = vec4(500,-1000,100,0);*/
+
+    /*vec3 cameraPos = Rendering_Handler->cam->getPosition();
+    s.vertices[0] = vec4(cameraPos,0)+vec4(10,20,0,0);
+    s.vertices[1] = vec4(cameraPos,0)+vec4(0,-30,0,0);
+    s.vertices[2] = vec4(cameraPos,0)+vec4(20,-20,0,0);*/
     
     //s.transparency = 7;
     //s.reflectiveness = 7;
 
-    holder.push_back(s);*/
+    //holder.push_back(s);
 
     glUseProgram(Rendering_Handler->current_program);
     glBindVertexArray(VAO);  
@@ -568,7 +546,9 @@ void World::loadShadingData()
 			<< endl;
 		return;
 	}
-	glUniform1i(loc,holder.size());
+    glUniform1i(loc,holder.size());
+    
+    cout << holder.size() << endl;
     
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, VBOs[0]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, holder.size()*sizeof(Silhouette), 
