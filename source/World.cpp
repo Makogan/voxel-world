@@ -497,12 +497,13 @@ void World::addSilhouette(Mesh* mesh, vec3 offset, float trans, float ref)
 
             vec4 point = vec4((*mesh).vertices[(*mesh).indices[i+j]],0);
             s.vertices[j] = point+vec4(offset,0);//vec4(offset,0);
-            //cout << point.x << " " << point.y << " " << point.z <<  endl;
+            cout << s.vertices[j]<<  endl;
             //s.transparency = trans;
             //s.reflectiveness = ref;
 
             loaded_silhouettes[0].push_back(s);
         }
+        cout << endl;
     }
 }
 

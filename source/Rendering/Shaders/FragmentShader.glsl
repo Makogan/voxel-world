@@ -151,25 +151,27 @@ void main()
 	outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
 		
-	for(int i=int(s_num/2.01); i<int(s_num-s_num/2.01);  i++)
+	//for(int i=int(s_num/2.01); i<int(s_num-s_num/2.01);  i++)
 	//for(int i=0; i<int(s_num);  i++)
 	{
 		/*float t = triangleIntersection(l, vertexPos, 
 			vec3(5*16,5*16,-10),
 			vec3(5*16+10,5*16,-10),
 			vec3(5*16,5*16,10));*/
-		float t = triangleIntersection(l, vertexPos, 
+		/*float t = triangleIntersection(l, vertexPos, 
 			vec3(solids[i].vertices[0]), 
 			vec3(solids[i].vertices[1]),
-			vec3(solids[i].vertices[2]));
+			vec3(solids[i].vertices[2]));*/
 		//float t = sphereIntersection(l, vertexPos, vec3(solids[i].vertices[2]), 2);
 
 		//if(vertexPos.z > 2)
-		if(t>0.01 && t < length(lum-vertexPos))
+		//if(t>0.01 && t < length(lum-vertexPos))
 		{
-			outColor = vec4(t/100,0,0,0);
+			//outColor = vec4(t/100,0,0,0);
 		}
 	}
+	outColor = (solids[0].vertices[0]);
+	outColor = vec4(0.5,-0.5,0.5,0);
   //outColor = solids[0].vertices[0];
   //outColor = vec4(s_num);
 
