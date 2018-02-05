@@ -47,7 +47,7 @@ uniform sampler2D text;
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
-uniform vec3 lum = vec3(80,70,0.1);//A unique light position
+uniform vec3 lum = vec3(80,70,1);//A unique light position
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
@@ -139,35 +139,37 @@ float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 
 void main()
 {
-  vec3 l = vec3(lum-vertexPos);
-  if(length(l)>0)
-  	l = normalize(l);
-  vec3 c = vec3(texture(text,abs(texture_coord)));
-  vec3 n = normalize(normal);
-  vec3 e = cameraPos-vertexPos;
-  e = normalize(e);
-  vec3 h = normalize(e+l);
+	vec3 l = vec3(lum-vertexPos);
+	if(length(l)>0)
+		l = normalize(l);
+	vec3 c = vec3(texture(text,abs(texture_coord)));
+	vec3 n = normalize(normal);
+	vec3 e = cameraPos-vertexPos;
+	e = normalize(e);
+	vec3 h = normalize(e+l);
 
-  outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
+	outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
- // for(int i=195000; i<s_num-195000;  i++)
-  //{
-    /*float t = triangleIntersection(lum, vertexPos, 
-      cameraPos+vec3(10,20,0),
-      cameraPos+vec3(0,-30,0),
-      cameraPos+vec3(20,-20,0));*/
-      /*float t = triangleIntersection(l, vertexPos, 
-        vec3(solids[0].vertices[0]), 
-        vec3(solids[0].vertices[1]),
-        vec3(solids[0].vertices[2]));*/
-  	float t = sphereIntersection(vec3(80,70,0.3)-vertexPos, vertexPos, vec3(80,80,0), 1);
-
-    //if(vertexPos.z > 2)
-    if(t>0.01)
+		
+	for(int i=int(s_num/2.01); i<int(s_num-s_num/2.01);  i++)
+	//for(int i=0; i<int(s_num);  i++)
 	{
-      outColor = vec4(t/100,0,0,0);
+		/*float t = triangleIntersection(l, vertexPos, 
+			vec3(5*16,5*16,-10),
+			vec3(5*16+10,5*16,-10),
+			vec3(5*16,5*16,10));*/
+		float t = triangleIntersection(l, vertexPos, 
+			vec3(solids[i].vertices[0]), 
+			vec3(solids[i].vertices[1]),
+			vec3(solids[i].vertices[2]));
+		//float t = sphereIntersection(l, vertexPos, vec3(solids[i].vertices[2]), 2);
+
+		//if(vertexPos.z > 2)
+		if(t>0.01 && t < length(lum-vertexPos))
+		{
+			outColor = vec4(t/100,0,0,0);
+		}
 	}
-  //}
   //outColor = solids[0].vertices[0];
   //outColor = vec4(s_num);
 

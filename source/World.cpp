@@ -148,8 +148,8 @@ void Chunk::create_cubes(vec3 offset)
     //offset represents the position of the chunk in the world
     for(int i=0; i<CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS; i++)
     {
-        double height = 0; /*20.d*noise_2D((double)(i/(CHUNK_DIMS*CHUNK_DIMS)) + offset[0], 
-            (double)((i/CHUNK_DIMS)%CHUNK_DIMS + offset[1]));*/
+        double height = 20.d*noise_2D((double)(i/(CHUNK_DIMS*CHUNK_DIMS)) + offset[0], 
+            (double)((i/CHUNK_DIMS)%CHUNK_DIMS + offset[1]));
         
         if(chunk_cubes[i]==NULL)
             chunk_cubes[i] = 
@@ -519,7 +519,7 @@ void World::loadShadingData()
     vector<Silhouette> holder;
 
     holder = loaded_silhouettes[0];
-    Silhouette s;
+   /* Silhouette s;
     holder.clear();
    // for(uint i=0; i<temp.size()/3; i++)
     {
@@ -530,7 +530,7 @@ void World::loadShadingData()
     //s.transparency = 7;
     //s.reflectiveness = 7;
 
-    holder.push_back(s);
+    holder.push_back(s);*/
 
 
     glUseProgram(Rendering_Handler->current_program);
@@ -544,12 +544,12 @@ void World::loadShadingData()
 	}
     glUniform1i(loc,holder.size());
 
-    for(uint i=0; i<holder.size(); i++)
+   /* for(uint i=0; i<holder.size(); i++)
     {
         cout << holder[i].vertices[0] << endl;
         cout << holder[i].vertices[1] << endl;
         cout << holder[i].vertices[2] << endl;
-    }
+    }*/
     
     cout << holder.size() << endl << endl;
     
