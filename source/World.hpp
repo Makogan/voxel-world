@@ -100,7 +100,7 @@ class World
 
     public:
         vector<GLuint> VBOs;
-        int h_radius = 8;
+        int h_radius = 7;
         int v_radius = 4;
         
         ivec3 origin = ivec3(0);
@@ -111,7 +111,7 @@ class World
         void center_frame(ivec3 offset);
         void send_render_data(Renderer*);        
 
-        void addSilhouette(Mesh*, float, float);
+        void addSilhouette(Mesh*,vec3, float, float);
         void clearSilhouettes();
 
         void loadShadingData();

@@ -148,8 +148,8 @@ void Chunk::create_cubes(vec3 offset)
     //offset represents the position of the chunk in the world
     for(int i=0; i<CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS; i++)
     {
-        double height = 20.d*noise_2D((double)(i/(CHUNK_DIMS*CHUNK_DIMS)) + offset[0], 
-            (double)((i/CHUNK_DIMS)%CHUNK_DIMS + offset[1]));
+        double height = 0; /*20.d*noise_2D((double)(i/(CHUNK_DIMS*CHUNK_DIMS)) + offset[0], 
+            (double)((i/CHUNK_DIMS)%CHUNK_DIMS + offset[1]));*/
         
         if(chunk_cubes[i]==NULL)
             chunk_cubes[i] = 
@@ -236,7 +236,7 @@ void Chunk::update_visible_faces()
                 {
                     Mesh m = current->getMesh(); 
                     faces_info.push_back(vec4(current->position,0));
-                    world->addSilhouette(&m,0,0);
+                        world->addSilhouette(&m,current->position,0,0);
                 }
             }
         }
@@ -419,7 +419,7 @@ void World::center_frame(ivec3 position)
     ivec3 distance = 
         position - origin - ivec3(h_radius/2, h_radius/2, v_radius/2)*CHUNK_DIMS;
     if(abs(distance.x) >= CHUNK_DIMS || abs(distance.y) >= CHUNK_DIMS 
-        || abs(distance.z) >= CHUNK_DIMS)
+        || -(distance.z) >= CHUNK_DIMS)
     {
         clearSilhouettes();
         origin+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
@@ -477,12 +477,12 @@ void World::send_render_data(Renderer* handler)
     handler->busy_queue.unlock();
 }
 
-void World::addSilhouette(Mesh* mesh, float trans, float ref)
+void World::addSilhouette(Mesh* mesh, vec3 offset, float trans, float ref)
 {
     if(mesh==NULL)
         cerr << "Attempted to add null mesh" << endl;
     //cout << mesh->indices.size() << endl;
-    for(int i=0; i<mesh->indices.size()/3; i++)
+    for(int i=0; i<mesh->indices.size(); i+=3)
     {
         int x,y,z;
         vec3 pos = (*mesh).vertices[(*mesh).indices[i]];
@@ -495,13 +495,13 @@ void World::addSilhouette(Mesh* mesh, float trans, float ref)
         {
             Silhouette s;
 
-            vec4 point = vec4((*mesh).vertices[(*mesh).indices[i]],0);
-            s.vertices[j] = point;
+            vec4 point = vec4((*mesh).vertices[(*mesh).indices[i+j]],0);
+            s.vertices[j] = point+vec4(offset,0);//vec4(offset,0);
+            //cout << point.x << " " << point.y << " " << point.z <<  endl;
             //s.transparency = trans;
             //s.reflectiveness = ref;
 
             loaded_silhouettes[0].push_back(s);
-
         }
     }
 }
@@ -519,23 +519,19 @@ void World::loadShadingData()
     vector<Silhouette> holder;
 
     holder = loaded_silhouettes[0];
-
-    /*holder.clear();
-    Silhouette s; */
-
-    /*s.vertices[0] = vec4(700,100,100,0);
-    s.vertices[1] = vec4(0,-800,100,0);
-    s.vertices[2] = vec4(500,-1000,100,0);*/
-
-    /*vec3 cameraPos = Rendering_Handler->cam->getPosition();
-    s.vertices[0] = vec4(cameraPos,0)+vec4(10,20,0,0);
-    s.vertices[1] = vec4(cameraPos,0)+vec4(0,-30,0,0);
-    s.vertices[2] = vec4(cameraPos,0)+vec4(20,-20,0,0);*/
-    
+    Silhouette s;
+    holder.clear();
+   // for(uint i=0; i<temp.size()/3; i++)
+    {
+        s.vertices[0] = vec4(5*16,5*16,0,0);
+        s.vertices[1] = vec4(5*16+10,5*16,0,0);
+        s.vertices[2] = vec4(5*16,5*16,10,0);
+    }
     //s.transparency = 7;
     //s.reflectiveness = 7;
 
-    //holder.push_back(s);
+    holder.push_back(s);
+
 
     glUseProgram(Rendering_Handler->current_program);
     glBindVertexArray(VAO);  
@@ -547,8 +543,15 @@ void World::loadShadingData()
 		return;
 	}
     glUniform1i(loc,holder.size());
+
+    for(uint i=0; i<holder.size(); i++)
+    {
+        cout << holder[i].vertices[0] << endl;
+        cout << holder[i].vertices[1] << endl;
+        cout << holder[i].vertices[2] << endl;
+    }
     
-    cout << holder.size() << endl;
+    cout << holder.size() << endl << endl;
     
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, VBOs[0]);
     glBufferData(GL_SHADER_STORAGE_BUFFER, holder.size()*sizeof(Silhouette), 

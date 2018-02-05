@@ -256,17 +256,37 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     else if(key == GLFW_KEY_F12 && action == GLFW_PRESS)
     	cout << glfwGetVersionString() << endl;
 
-    else if(key == GLFW_KEY_W)
-    	Rendering_Handler->cam->move(normalize(Rendering_Handler->cam->getForward()));
+	else if(key == GLFW_KEY_W)
+	{
+		vec3 dir = Rendering_Handler->cam->getForward();
+		dir[2] = 0;
+		dir =normalize(dir);
+		Rendering_Handler->cam->move(dir);
+	}
 
     else if(key == GLFW_KEY_S)
-    	Rendering_Handler->cam->move(-normalize(Rendering_Handler->cam->getForward()));
+	{
+		vec3 dir = Rendering_Handler->cam->getForward();
+		dir[2] = 0;
+		dir =normalize(dir);
+		Rendering_Handler->cam->move(-dir);
+	}
 
     else if(key == GLFW_KEY_A)
-    	Rendering_Handler->cam->move(-normalize(Rendering_Handler->cam->getSide()));
+	{
+		vec3 dir = Rendering_Handler->cam->getSide();
+		dir[2] = 0;
+		dir =normalize(dir);
+		Rendering_Handler->cam->move(-dir);
+	}
 
     else if(key == GLFW_KEY_D)
-		Rendering_Handler->cam->move(normalize(Rendering_Handler->cam->getSide()));
+	{
+		vec3 dir = Rendering_Handler->cam->getSide();
+		dir[2] = 0;
+		dir = normalize(dir);
+		Rendering_Handler->cam->move(dir);
+	}
 
     else if(key == GLFW_KEY_Q)
 		Rendering_Handler->cam->move(normalize(Rendering_Handler->cam->getUp()));

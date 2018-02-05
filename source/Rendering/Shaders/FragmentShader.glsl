@@ -10,7 +10,6 @@
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #version 450
-#extension GL_NV_shader_buffer_load : enable
 
 struct Light
 {
@@ -48,7 +47,7 @@ uniform sampler2D text;
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
-uniform vec3 lum = vec3(0,0,2);//A unique light position
+uniform vec3 lum = vec3(80,70,0.1);//A unique light position
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
@@ -89,7 +88,7 @@ float sphereIntersection(vec3 ray, vec3 origin, vec3 center, float radius)
 
 float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 {
-  vec3 s = origin - p0;
+  /*vec3 s = origin - p0;
 	vec3 e1 = p1-p0;
 	vec3 e2 = p2-p0;
 	
@@ -107,9 +106,9 @@ float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 		return t;
 	}
 
-  return -1;
+  return -1;*/
 
-	/*vec3 s = origin - p0;
+	vec3 s = origin - p0;
 	vec3 e1 = p1-p0;
 	vec3 e2 = p2-p0;
 	
@@ -118,12 +117,12 @@ float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 	mat3 mv = mat3(-ray, e1, s);
 	mat3 md = mat3(-ray,e1,e2);
 
-  float d = determinant(md);
+	float d = determinant(md);
 
-  if(isinf(d) || isnan(d))
-  {
-    return -1;
-  }
+	if(isinf(d) || isnan(d))
+	{
+		return -1;
+	}
 
 	float t = determinant(mt)/d;
 	float u = determinant(mu)/d;
@@ -134,14 +133,15 @@ float triangleIntersection(vec3 ray, vec3 origin, vec3 p0, vec3 p1, vec3 p2)
 		return t;
 	}
 
-	return -1;*/
+	return -1;
 
 }
 
 void main()
 {
   vec3 l = vec3(lum-vertexPos);
-  l = normalize(l);
+  if(length(l)>0)
+  	l = normalize(l);
   vec3 c = vec3(texture(text,abs(texture_coord)));
   vec3 n = normalize(normal);
   vec3 e = cameraPos-vertexPos;
@@ -150,28 +150,24 @@ void main()
 
   outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
-  for(int i=0; i<s_num/1000;  i++)
-  {
+ // for(int i=195000; i<s_num-195000;  i++)
+  //{
     /*float t = triangleIntersection(lum, vertexPos, 
       cameraPos+vec3(10,20,0),
       cameraPos+vec3(0,-30,0),
       cameraPos+vec3(20,-20,0));*/
-      float t = triangleIntersection(lum, vertexPos, 
-        vec3(solids[i].vertices[0]), 
-        vec3(solids[i].vertices[1]),
-        vec3(solids[i].vertices[2]));
-      /*vec3(10,10,50),
-      vec3(0,-10,50),
-      vec3(10,-10,50));*/
-
-      /*vec4(700,100,100,0);
-    s.vertices[1] = vec4(0,-800,100,0);
-    s.vertices[2] = vec4(500,-1000,100,0);*/
+      /*float t = triangleIntersection(l, vertexPos, 
+        vec3(solids[0].vertices[0]), 
+        vec3(solids[0].vertices[1]),
+        vec3(solids[0].vertices[2]));*/
+  	float t = sphereIntersection(vec3(80,70,0.3)-vertexPos, vertexPos, vec3(80,80,0), 1);
 
     //if(vertexPos.z > 2)
-    if(t>0.00)
-      outColor = vec4(1,0,0,0);
-  }
+    if(t>0.01)
+	{
+      outColor = vec4(t/100,0,0,0);
+	}
+  //}
   //outColor = solids[0].vertices[0];
   //outColor = vec4(s_num);
 
