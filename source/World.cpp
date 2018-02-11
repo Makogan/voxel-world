@@ -236,7 +236,6 @@ void Chunk::update_visible_faces()
                 {
                     Mesh m = current->getMesh(); 
                     faces_info.push_back(vec4(current->position,0));
-                        world->addSilhouette(&m,current->position,0,0);
                 }
             }
         }
@@ -358,8 +357,7 @@ void Chunk_Holder::shift(ivec3 offset)
         }
     }
 }
-//########################################################################################
-
+//################################################################a
 //========================================================================================
 /*
 *	World Class implementation:
@@ -373,8 +371,6 @@ World::World()
 {    
     //TODO: this should not be here
     vec_field_init();
-
-    loaded_silhouettes = vector<vector<Silhouette>>(h_radius*h_radius*v_radius);
 
     loaded_chunks = new Chunk_Holder(h_radius, h_radius, v_radius, this);
 
@@ -421,10 +417,8 @@ void World::center_frame(ivec3 position)
     if(abs(distance.x) >= CHUNK_DIMS || abs(distance.y) >= CHUNK_DIMS 
         || -(distance.z) >= CHUNK_DIMS)
     {
-        clearSilhouettes();
         origin+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
         loaded_chunks->shift(distance/CHUNK_DIMS);
-        loadShadingData();
     }
 }
 
@@ -477,87 +471,4 @@ void World::send_render_data(Renderer* handler)
     handler->busy_queue.unlock();
 }
 
-void World::addSilhouette(Mesh* mesh, vec3 offset, float trans, float ref)
-{
-    if(mesh==NULL)
-        cerr << "Attempted to add null mesh" << endl;
-    //cout << mesh->indices.size() << endl;
-    for(int i=0; i<mesh->indices.size(); i+=3)
-    {
-        int x,y,z;
-        vec3 pos = (*mesh).vertices[(*mesh).indices[i]];
-        x = pos.x/CHUNK_DIMS, y=pos.y/CHUNK_DIMS, z=pos.z/CHUNK_DIMS;
-        x-=origin.x/CHUNK_DIMS, y-=origin.y/CHUNK_DIMS, z-=origin.z/CHUNK_DIMS;
-        x = (x%h_radius+h_radius)%h_radius, y=(y%h_radius+h_radius)%h_radius, 
-        z=(z%v_radius+v_radius)%v_radius;
-
-        for(uint j=0; j<3; j++)
-        {
-            Silhouette s;
-
-            vec4 point = vec4((*mesh).vertices[(*mesh).indices[i+j]],0);
-            s.vertices[j] = point+vec4(offset,0);//vec4(offset,0);
-            cout << s.vertices[j]<<  endl;
-            //s.transparency = trans;
-            //s.reflectiveness = ref;
-
-            loaded_silhouettes[0].push_back(s);
-        }
-        cout << endl;
-    }
-}
-
-void World::clearSilhouettes()
-{
-    for(uint i=0; i<loaded_silhouettes.size(); i++)
-    {
-        loaded_silhouettes[i].clear();
-    }
-}
-
-void World::loadShadingData()
-{
-    vector<Silhouette> holder;
-
-    holder = loaded_silhouettes[0];
-   /* Silhouette s;
-    holder.clear();
-   // for(uint i=0; i<temp.size()/3; i++)
-    {
-        s.vertices[0] = vec4(5*16,5*16,0,0);
-        s.vertices[1] = vec4(5*16+10,5*16,0,0);
-        s.vertices[2] = vec4(5*16,5*16,10,0);
-    }
-    //s.transparency = 7;
-    //s.reflectiveness = 7;
-
-    holder.push_back(s);*/
-
-
-    glUseProgram(Rendering_Handler->current_program);
-    glBindVertexArray(VAO);  
-    GLint loc = glGetUniformLocation(Rendering_Handler->current_program, "s_num");
-	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
-	{
-		cerr << "Error returned when trying to find s_num uniform."
-			<< endl;
-		return;
-	}
-    glUniform1i(loc,holder.size());
-
-   /* for(uint i=0; i<holder.size(); i++)
-    {
-        cout << holder[i].vertices[0] << endl;
-        cout << holder[i].vertices[1] << endl;
-        cout << holder[i].vertices[2] << endl;
-    }*/
-    
-    cout << holder.size() << endl << endl;
-    
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, VBOs[0]);
-    glBufferData(GL_SHADER_STORAGE_BUFFER, holder.size()*sizeof(Silhouette), 
-        holder.data(), GL_DYNAMIC_COPY);
-    glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, VBOs[0]);
-    glFinish();
-}
 //########################################################################################

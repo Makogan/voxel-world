@@ -38,14 +38,6 @@ struct Light
   double intensity;
 };
 
-struct Silhouette
-{
-    vec4 vertices[3];
-
-    //float transparency;
-    //float reflectiveness;
-};
-
 class Chunk
 {
     private:
@@ -96,7 +88,6 @@ class World
 
         GLuint VAO;
         vector<Light> loaded_lights;
-        vector<vector<Silhouette>> loaded_silhouettes;
 
     public:
         vector<GLuint> VBOs;
@@ -110,11 +101,6 @@ class World
         Cube* operator()(int x, int y, int z);
         void center_frame(ivec3 offset);
         void send_render_data(Renderer*);        
-
-        void addSilhouette(Mesh*,vec3, float, float);
-        void clearSilhouettes();
-
-        void loadShadingData();
 };
 
 extern World* the_world;
