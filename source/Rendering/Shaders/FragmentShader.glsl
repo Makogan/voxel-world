@@ -27,7 +27,6 @@ out vec4 outColor;//Final color of the pixel
 
 uniform sampler2D text;
 
-
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
 uniform vec3 lum = vec3(80,70,1);//A unique light position

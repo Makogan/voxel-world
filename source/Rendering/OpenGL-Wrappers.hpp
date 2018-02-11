@@ -37,22 +37,28 @@ enum Data_Type {Undefined=0, Uint, Int,  Float};
 
 //TODO: verify the following data structures, maybe program shoud be a list to allow
 //  for multiple programs
-struct Shader
+class Shader
 {
+public:
 	string fileName;    //name of file
 	GLuint shaderID;    //generated OpenGL shader ID
 	GLuint type;        //shader type
-	//GLuint program;     //Associated OpenGL shading program
+    
+    Shader();
+    Shader(string file, GLenum type);
+    //~Shader();
 };
 
-struct Texture
+class Texture
 {
+public:
 	GLuint textureID;   //OpenGL generated ID for the texture
     GLuint target;      //OpenGL target (Usuallly 2D texture or rectangle) check OpenGL doc
 
     //Dimensions of the texture
 	int width;         
-	int height;
+    int height;
+    
 };
 
 struct Mesh

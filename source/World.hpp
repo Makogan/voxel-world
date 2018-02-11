@@ -85,12 +85,9 @@ class World
 {
     private:
         Chunk_Holder *loaded_chunks;
-
-        GLuint VAO;
         vector<Light> loaded_lights;
 
     public:
-        vector<GLuint> VBOs;
         int h_radius = 7;
         int v_radius = 4;
         

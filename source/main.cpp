@@ -56,91 +56,6 @@ void update_loop(GLFWwindow*, GLFWwindow*);
 //**************************************************************************************\\
 //--------------------------------------------------------------------------------------\\
 
-GLuint DEVAO;
-
-
-/* SCOTT ERROR */
-
-/*#define lcase(X)	case(X): cout << #X << endl; break;
-
-void check_glerror(){
-	GLenum error = (glGetError());
-	switch (error){
-		case(GL_NO_ERROR) :
-		default :
-//			cout << GL_NO_ERROR << ":" << error << endl;
-			return;
-		case(GL_INVALID_ENUM):
-			cout << "GL_INVALID_ENUM" << endl;
-			break;
-		case(GL_INVALID_VALUE):
-			cout << "GL_INVALID_VALUE" << endl;
-			break;
-		case(GL_INVALID_OPERATION):
-			cout << "GL_INVALID_OPERATION" << endl;
-			break;
-		case(GL_INVALID_FRAMEBUFFER_OPERATION):
-			cout << "GL_INVALID_FRAMEBUFFER_OPERATION" << endl;
-			break;
-		case(GL_OUT_OF_MEMORY):
-			cout << "GL_OUT_OF_MEMORY" << endl;
-			break;
-		case(GL_STACK_UNDERFLOW):
-			cout << "GL_STACK_UNDERFLOW" << endl;
-			break;
-		case(GL_STACK_OVERFLOW):
-			cout << "GL_STACK_OVERFLOW" <<endl;
-			break;
-	}
-}
-
-void GL_error_callback(GLenum source, GLenum type, GLuint id,
-   GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-	{
-	if( true && severity != GL_DEBUG_SEVERITY_NOTIFICATION){
-
-	cout << "GL ERROR CALLBACK: " << endl;
-	cout << "Source: " << source << " : ";
-	switch (source){
-		lcase(GL_DEBUG_SOURCE_API)
-		lcase(GL_DEBUG_SOURCE_WINDOW_SYSTEM)
-		lcase(GL_DEBUG_SOURCE_SHADER_COMPILER)
-		lcase(GL_DEBUG_SOURCE_THIRD_PARTY)
-		lcase(GL_DEBUG_SOURCE_APPLICATION)
-		lcase(GL_DEBUG_SOURCE_OTHER)				//THESE ARN'T DEFINED?
-	}  
-
-	cout << "Type: " <<  type << " : ";
-	switch (type){
-		lcase(GL_DEBUG_TYPE_ERROR)
-		lcase(GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR)
-		lcase(GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR)
-		lcase(GL_DEBUG_TYPE_PORTABILITY)
-		lcase(GL_DEBUG_TYPE_PERFORMANCE)
-		lcase(GL_DEBUG_TYPE_MARKER)
-		lcase(GL_DEBUG_TYPE_PUSH_GROUP)
-		lcase(GL_DEBUG_TYPE_POP_GROUP)
-		lcase(GL_DEBUG_TYPE_OTHER)
-	}
-		
-	cout << "ID: " << id << endl;
-	cout << "Serverity: " << severity << " : ";
-	switch (severity){
-		lcase(GL_DEBUG_SEVERITY_HIGH)
-		lcase(GL_DEBUG_SEVERITY_MEDIUM)
-		lcase(GL_DEBUG_SEVERITY_LOW)
-		lcase(GL_DEBUG_SEVERITY_NOTIFICATION)
-	}
-	cout << "Length: " << length << endl;
-	cout << "Message: " << message << endl;
-	cout << "UserParam: " << userParam << endl;
-	cout << "END: GL ERROR CALLBACK: " << endl;
-
-	}
-}*/
-
-
-
 int main(int argc, char **argv)
 {
 	//Init OpenGL contexts
@@ -151,20 +66,13 @@ int main(int argc, char **argv)
 	glfwGetWindowSize(window, &width, &height);
 	glfwMakeContextCurrent(window);
 
-	//glDebugMessageCallback(	GL_error_callback, NULL);
-	glEnable(GL_DEBUG_OUTPUT);								//DEBUG :D
-	glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS);
-
 	Rendering_Handler = new Renderer();
 
 	Rendering_Handler->set_camera(new Camera(mat3(1), 
 		vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,2*CHUNK_DIMS), width, height));
 
-	glGenVertexArrays(1, &DEVAO);
-
 	the_world = new World();
 
-	glBindVertexArray(DEVAO);
 	thread world_thread(update_loop, window, o_window);
 
 	//Render loop
@@ -191,7 +99,6 @@ int main(int argc, char **argv)
 * The following functions are not final at all, if modifications can be done, do them
 */
 //main render loop
-GLuint DEVBO;
 void render_loop(GLFWwindow* window)
 {
 	//Set default OpenGL values for rendering
@@ -200,7 +107,6 @@ void render_loop(GLFWwindow* window)
 	glDepthRange(0, 10000);
     glEnable(GL_DEPTH_TEST);
 	glPointSize(10.f);
-	glFinish();
 	
 	double prevTime = 0, currentTime=0;
 	//TODO: this is temporary, implement this correctly
@@ -213,7 +119,6 @@ void render_loop(GLFWwindow* window)
 
 		currentTime=glfwGetTime();
 		double elapsed = currentTime-prevTime;
-		DEVBO = the_world->VBOs[0];
 		Rendering_Handler->render();
 		prevTime=currentTime;
 

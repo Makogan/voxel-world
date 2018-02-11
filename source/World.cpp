@@ -45,15 +45,12 @@ Chunk::Chunk() : Chunk(vec3(0)){}
 
 Chunk::Chunk(vec3 offset) : Chunk(offset, NULL){}
 
-extern GLuint DEVAO;
-
 Chunk::Chunk(vec3 offset, World* w) 
 {
     position = offset;
     world = w;
 
     render_data = new Render_Info();
-    //render_data->info_lock.lock();
 
     this->create_cubes(offset);
 
@@ -62,11 +59,9 @@ Chunk::Chunk(vec3 offset, World* w)
 
     //Create and initialize OpenGL rendering structures
     render_data->VBOs = vector<GLuint>(render_data->types.size());
-    //glGenVertexArrays(1, &(render_data->VAO));
-    render_data->VAO = DEVAO;
+    glGenVertexArrays(1, &(render_data->VAO));
     
     glGenBuffers(5,(render_data->VBOs.data()));
-    
 
     glBindVertexArray(render_data->VAO);
 
@@ -97,7 +92,6 @@ void Chunk::update_render_info()
     glBindBuffer(GL_SHADER_STORAGE_BUFFER, (render_data->VBOs[3]));
     glBufferData(GL_SHADER_STORAGE_BUFFER, faces_info.size()*sizeof(vec4), 
         faces_info.data(), GL_DYNAMIC_COPY);
-    //glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, (render_data->VBOs)[3]);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices.size()*sizeof(uint),
@@ -181,7 +175,7 @@ void Chunk::update()
 */
 void Chunk::send_render_data(Renderer* handler)
 {
-    render_data->layouts = 9;//render_data->types.size()-1;
+    render_data->layouts = render_data->types.size()-1;
     render_data->render_instances=faces_info.size();
     render_data->geometry = MESH;
 
@@ -385,19 +379,6 @@ World::World()
             }
         }
     }
-
-    VBOs = vector<GLuint>(2);
-    //glGenVertexArrays(1, &VAO);
-    VAO = DEVAO;
-    /*
-    glBindVertexArray(VAO);
-    for (int i =0; i < 2; i++){
-        GLuint tmp;
-        glGenBuffers(1, &tmp);
-        std::cout << tmp << std::endl;
-        VBOs.push_back(tmp);
-    }*/
-    glGenBuffers(2,VBOs.data());
 }
 
 /*

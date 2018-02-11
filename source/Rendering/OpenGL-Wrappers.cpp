@@ -49,12 +49,40 @@ Renderer *Rendering_Handler;
 *		file: the file path (relative or absolute) where the shader program is defined 
 *		type: the type of shader (e.g vertex,fragment, tesselation...)
 */
-void createShader(Shader &s, string file, GLenum type)
+Shader::Shader(){}
+
+Shader::Shader(string file, GLenum type)
 {
-	s.fileName = file;
-	compileShader(s.shaderID, file, type);
-	s.type = GL_VERTEX_SHADER;
-	//s.program = 0;
+	fileName = file;
+	string source = loadSourceFile(fileName);
+	const GLchar* s_ptr = source.c_str();//get raw c string (char array)
+
+	shaderID = glCreateShader(type);//create shader on GPU
+	glShaderSource(shaderID, 1, &s_ptr, NULL);//set shader program source
+
+	glCompileShader(shaderID);
+	openGLerror();
+
+	//verify compilation
+	GLint status;
+	glGetShaderiv(shaderID, GL_COMPILE_STATUS, &status);
+	if(status!=GL_TRUE)
+	{
+		cout << "Shader compilation error. Could not compile: "
+		<< fileName << "\nShader type: "
+		<< type
+		<<endl;
+
+		GLint length;
+		glGetShaderiv(shaderID, GL_INFO_LOG_LENGTH, &length);
+
+		string log(length, ' ');
+		glGetShaderInfoLog(shaderID, log.length(), &length, &log[0]);
+
+		cerr<< endl << source <<endl;
+		cerr << endl << log <<endl;
+	}
+	type = GL_VERTEX_SHADER;
 }
 
 /*
@@ -78,37 +106,6 @@ void deleteShader(Shader &s)
 *		filename: file path to the glsl program definition
 *		type: the type of shader (e.g vertex,fragment, tesselation...)
 */
-void compileShader(GLuint &shader, string &filename, GLenum shaderType)
-{
-	string source = loadSourceFile(filename);
-	const GLchar* s_ptr = source.c_str();//get raw c string (char array)
-
-	shader = glCreateShader(shaderType);//create shader on GPU
-	glShaderSource(shader, 1, &s_ptr, NULL);//set shader program source
-
-	glCompileShader(shader);
-	openGLerror();
-
-	//verify compilation
-	GLint status;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
-	if(status!=GL_TRUE)
-	{
-		cout << "Shader compilation error. Could not compile: "
-		<< filename << "\nShader type: "
-		<< shaderType
-		<<endl;
-
-		GLint length;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-
-		string log(length, ' ');
-		glGetShaderInfoLog(shader, log.length(), &length, &log[0]);
-
-		cerr<< endl << source <<endl;
-		cerr << endl << log <<endl;
-	}
-}
 
 /*
 * Copy a string from a file into a a string
@@ -251,12 +248,12 @@ Renderer::Renderer()
 {
 	render_queue.reserve(4096);
 	//Create cube rendering shader
-	vertex_shaders.push_back(Shader());
-	createShader(vertex_shaders[0],"./Shaders/CubeFaceVertexShader.glsl", GL_VERTEX_SHADER);
+	vertex_shaders.resize(1);
+	vertex_shaders[0] =  Shader("./Shaders/CubeFaceVertexShader.glsl", GL_VERTEX_SHADER);
 	openGLerror();
 	//create fragment shader
-	fragment_shaders.push_back(Shader());
-	createShader(fragment_shaders[0], "./Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
+	fragment_shaders.resize(1);
+	fragment_shaders[0] = Shader("./Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
 	openGLerror();
 	//Initialize and create the first rendering program
 	shading_programs.push_back(glCreateProgram());
@@ -293,7 +290,6 @@ Renderer::~Renderer()
 * 	index_num is the number of indices in the mesh (for drawing elements)
 *	layout_num is the number of layouts to enable (always 0 to layou_num-1)
 */
-extern GLuint DEVBO;
 void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs, 
 	vector<GLuint> *buffer_types, GLuint layout_num, 
 	GLuint index_num, GLuint instances)
@@ -322,10 +318,6 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, i, (*VBOs)[i]);
 		}
 	}
-
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, DEVBO);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, DEVBO);
-
 	//Draw call
 	glDrawElementsInstanced(GL_TRIANGLES, index_num, GL_UNSIGNED_INT, (void*)0, instances);
 }
