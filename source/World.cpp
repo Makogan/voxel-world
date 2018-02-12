@@ -50,53 +50,9 @@ Chunk::Chunk(vec3 offset, World* w)
     position = offset;
     world = w;
 
-    render_data = new Render_Info();
+    render_data = new Object_3D(MESH);
 
     this->create_cubes(offset);
-
-    render_data->types={GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
-        GL_SHADER_STORAGE_BUFFER, GL_ELEMENT_ARRAY_BUFFER};
-
-    //Create and initialize OpenGL rendering structures
-    render_data->VBOs = vector<GLuint>(render_data->types.size());
-    glGenVertexArrays(1, &(render_data->VAO));
-    
-    glGenBuffers(5,(render_data->VBOs.data()));
-
-    glBindVertexArray(render_data->VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, MESH->vertices.size()*sizeof(vec3), 
-    MESH->vertices.data(), GL_DYNAMIC_DRAW);
-
-    glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[1]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, MESH->normals.size()*sizeof(vec3),
-    MESH->normals.data(), GL_DYNAMIC_DRAW);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, render_data->VBOs[2]);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, MESH->uvs.size()*sizeof(vec2),
-        MESH->uvs.data(), GL_DYNAMIC_DRAW);
-}
-
-/*
-*   Update chunk OpenGL rendering information
-*/
-void Chunk::update_render_info()
-{
-    Rendering_Handler->busy_queue.lock();
-    glBindVertexArray(render_data->VAO);
-
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, (render_data->VBOs[3]));
-    glBufferData(GL_SHADER_STORAGE_BUFFER, faces_info.size()*sizeof(vec4), 
-        faces_info.data(), GL_DYNAMIC_COPY);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (render_data->VBOs)[4]);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, MESH->indices.size()*sizeof(uint),
-        MESH->indices.data(), GL_DYNAMIC_DRAW);
-    Rendering_Handler->busy_queue.unlock();
 }
 
 /*
@@ -165,25 +121,21 @@ void Chunk::create_cubes(vec3 offset)
 */
 void Chunk::update()
 {
-    faces_info.clear();
+    cubes_info.clear();
     update_visible_faces();
-    update_render_info();
+    render_data->set_instance_data(Rendering_Handler, cubes_info);
 }
 
 /*
-*   Send rendering informationto the rendering handler
+*   Send rendering information to the rendering handler
 */
-void Chunk::send_render_data(Renderer* handler)
+void inline Chunk::send_render_data(Renderer* handler)
 {
-    render_data->layouts = render_data->types.size()-1;
-    render_data->render_instances=faces_info.size();
-    render_data->geometry = MESH;
-
     handler->add_data(render_data);
 }
 
 //correctly updates the visible faces info
-inline bool Chunk::check_neighbour(Cube *c, Cube *n, Face f) 
+inline bool Chunk::check_neighbour(Cube *c, Cube *n) 
 {
     if(n==NULL || n->transparent)
         return true;
@@ -192,7 +144,7 @@ inline bool Chunk::check_neighbour(Cube *c, Cube *n, Face f)
 }
 
 /*
-*   Set the face_info array with the data of the currently visible faces
+*   Set the cubes_info array with the data of the currently visible faces
 */
 void Chunk::update_visible_faces()
 {       
@@ -214,22 +166,22 @@ void Chunk::update_visible_faces()
                 bool visible = false;
                 //fetch all 6 neighbours and update accordingly
                 Cube* neighbour = (*world)(c_x-1,c_y,c_z);
-                visible = visible || check_neighbour(current, neighbour, Left);
+                visible = visible || check_neighbour(current, neighbour);
                 neighbour = (*world)(c_x+1,c_y,c_z);
-                visible = visible || check_neighbour(current, neighbour, Right);
+                visible = visible || check_neighbour(current, neighbour);
                 neighbour = (*world)(c_x,c_y+1,c_z);
-                visible = visible || check_neighbour(current, neighbour, Front);
+                visible = visible || check_neighbour(current, neighbour);
                 neighbour = (*world)(c_x,c_y-1,c_z);
-                visible = visible || check_neighbour(current, neighbour, Back);
+                visible = visible || check_neighbour(current, neighbour);
                 neighbour = (*world)(c_x,c_y,c_z+1);
-                visible = visible || check_neighbour(current, neighbour, Top);
+                visible = visible || check_neighbour(current, neighbour);
                 neighbour = (*world)(c_x,c_y,c_z-1);
-                visible = visible || check_neighbour(current, neighbour, Bottom);
+                visible = visible || check_neighbour(current, neighbour);
 
                 if(visible)
                 {
                     Mesh m = current->getMesh(); 
-                    faces_info.push_back(vec4(current->position,0));
+                    cubes_info.push_back(vec4(current->position,0));
                 }
             }
         }
@@ -351,7 +303,7 @@ void Chunk_Holder::shift(ivec3 offset)
         }
     }
 }
-//################################################################a
+//########################################################################################
 //========================================================================================
 /*
 *	World Class implementation:

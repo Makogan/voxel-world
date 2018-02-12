@@ -1,0 +1,198 @@
+\hypertarget{classRenderer}{}\section{Renderer Class Reference}
+\label{classRenderer}\index{Renderer@{Renderer}}
+
+
+{\ttfamily \#include $<$Open\+G\+L-\/\+Wrappers.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classRenderer_a7ebf46f54dab9905f79b80f7fddb76a6}{Renderer}} ()
+\item 
+\mbox{\hyperlink{classRenderer_af72dee9cedcc9e481dd3d313bac11b62}{Renderer}} (int width, int height)
+\item 
+\mbox{\hyperlink{classRenderer_afeee408862d5bd6255a6882d47e6d5cd}{$\sim$\+Renderer}} ()
+\item 
+\mbox{\hyperlink{classShader}{Shader}} $\ast$ \mbox{\hyperlink{classRenderer_a77793f47d57b7b07f0f1ad7c4cad809e}{find\+\_\+shader}} (string shader\+\_\+name)
+\item 
+void \mbox{\hyperlink{classRenderer_a34ac63c7fe0611ece146dc504aecb815}{update}} (G\+L\+F\+Wwindow $\ast$window)
+\item 
+void \mbox{\hyperlink{classRenderer_ad8ac6bc8ebf20e8973bd0defb7f93cdb}{add\+\_\+\+Shader}} (string shader, G\+Luint type)
+\item 
+void \mbox{\hyperlink{classRenderer_a25a35d48716bd7c096f90cc5eabc2fc6}{make\+\_\+program}} (vector$<$ uint $>$ $\ast$shaders)
+\item 
+void \mbox{\hyperlink{classRenderer_a6d8650dd5617e17865aaab8ce409642b}{set\+\_\+camera}} (\mbox{\hyperlink{classCamera}{Camera}} $\ast$new\+\_\+cam)
+\item 
+void \mbox{\hyperlink{classRenderer_aa0941d2b58991dabe9231ee2c657c36f}{multi\+\_\+render}} (G\+Luint V\+AO, vector$<$ G\+Luint $>$ $\ast$V\+B\+Os, vector$<$ G\+Luint $>$ $\ast$buffer\+\_\+types, G\+Luint layout\+\_\+num, G\+Luint index\+\_\+num, G\+Luint instances)
+\item 
+void \mbox{\hyperlink{classRenderer_a8006d28ad24998ab34e740aa6479e86f}{change\+\_\+active\+\_\+program}} (G\+Luint new\+Program)
+\item 
+void \mbox{\hyperlink{classRenderer_acdc6907bf1aaf90fe7e11e29f3b6de20}{add\+\_\+data}} (\mbox{\hyperlink{classObject__3D}{Object\+\_\+3D}} $\ast$)
+\item 
+void \mbox{\hyperlink{classRenderer_af7e5f8f68742f198e315fb4683a605a4}{render}} ()
+\item 
+void \mbox{\hyperlink{classRenderer_ac46720b3fc0dbb2fc37674766490a8c4}{clear}} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+mutex \mbox{\hyperlink{classRenderer_a044abbf0e0cbe0446bec0d0f00b2d060}{busy\+\_\+queue}}
+\item 
+\mbox{\hyperlink{classCamera}{Camera}} $\ast$ \mbox{\hyperlink{classRenderer_a83cc09617ebb267932620bce0a69c540}{cam}}
+\item 
+G\+Luint \mbox{\hyperlink{classRenderer_a1012d49fe5c011d92d8997c448b2e7ea}{current\+\_\+program}}
+\end{DoxyCompactItemize}
+\subsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+vector$<$ G\+Luint $>$ \mbox{\hyperlink{classRenderer_af6f381484978dd5e3b32f1bf18b37c25}{shading\+\_\+programs}}
+\item 
+vector$<$ \mbox{\hyperlink{classShader}{Shader}} $>$ \mbox{\hyperlink{classRenderer_a5b8247d261a919a58711df232bf272c5}{vertex\+\_\+shaders}}
+\item 
+vector$<$ \mbox{\hyperlink{classShader}{Shader}} $>$ \mbox{\hyperlink{classRenderer_a7dd27df94abb2368cb00db0f76ff0c66}{fragment\+\_\+shaders}}
+\item 
+vector$<$ \mbox{\hyperlink{classShader}{Shader}} $>$ \mbox{\hyperlink{classRenderer_a6d0795a107f8fd1b3ca9af990e5a0928}{tessellation\+\_\+shaders}}
+\item 
+vector$<$ \mbox{\hyperlink{classObject__3D}{Object\+\_\+3D}} $\ast$ $>$ \mbox{\hyperlink{classRenderer_a87229d10b904562ac9bc629cb576ca5b}{render\+\_\+queue}}
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classRenderer_a7ebf46f54dab9905f79b80f7fddb76a6}\label{classRenderer_a7ebf46f54dab9905f79b80f7fddb76a6}} 
+\index{Renderer@{Renderer}!Renderer@{Renderer}}
+\index{Renderer@{Renderer}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{Renderer()}{Renderer()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Renderer\+::\+Renderer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_af72dee9cedcc9e481dd3d313bac11b62}\label{classRenderer_af72dee9cedcc9e481dd3d313bac11b62}} 
+\index{Renderer@{Renderer}!Renderer@{Renderer}}
+\index{Renderer@{Renderer}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{Renderer()}{Renderer()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Renderer\+::\+Renderer (\begin{DoxyParamCaption}\item[{int}]{width,  }\item[{int}]{height }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_afeee408862d5bd6255a6882d47e6d5cd}\label{classRenderer_afeee408862d5bd6255a6882d47e6d5cd}} 
+\index{Renderer@{Renderer}!````~Renderer@{$\sim$\+Renderer}}
+\index{````~Renderer@{$\sim$\+Renderer}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{$\sim$\+Renderer()}{~Renderer()}}
+{\footnotesize\ttfamily Renderer\+::$\sim$\+Renderer (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classRenderer_acdc6907bf1aaf90fe7e11e29f3b6de20}\label{classRenderer_acdc6907bf1aaf90fe7e11e29f3b6de20}} 
+\index{Renderer@{Renderer}!add\+\_\+data@{add\+\_\+data}}
+\index{add\+\_\+data@{add\+\_\+data}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{add\+\_\+data()}{add\_data()}}
+{\footnotesize\ttfamily void Renderer\+::add\+\_\+data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classObject__3D}{Object\+\_\+3D}} $\ast$}]{data }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_ad8ac6bc8ebf20e8973bd0defb7f93cdb}\label{classRenderer_ad8ac6bc8ebf20e8973bd0defb7f93cdb}} 
+\index{Renderer@{Renderer}!add\+\_\+\+Shader@{add\+\_\+\+Shader}}
+\index{add\+\_\+\+Shader@{add\+\_\+\+Shader}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{add\+\_\+\+Shader()}{add\_Shader()}}
+{\footnotesize\ttfamily void Renderer\+::add\+\_\+\+Shader (\begin{DoxyParamCaption}\item[{string}]{shader,  }\item[{G\+Luint}]{type }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_a8006d28ad24998ab34e740aa6479e86f}\label{classRenderer_a8006d28ad24998ab34e740aa6479e86f}} 
+\index{Renderer@{Renderer}!change\+\_\+active\+\_\+program@{change\+\_\+active\+\_\+program}}
+\index{change\+\_\+active\+\_\+program@{change\+\_\+active\+\_\+program}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{change\+\_\+active\+\_\+program()}{change\_active\_program()}}
+{\footnotesize\ttfamily void Renderer\+::change\+\_\+active\+\_\+program (\begin{DoxyParamCaption}\item[{G\+Luint}]{new\+Program }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_ac46720b3fc0dbb2fc37674766490a8c4}\label{classRenderer_ac46720b3fc0dbb2fc37674766490a8c4}} 
+\index{Renderer@{Renderer}!clear@{clear}}
+\index{clear@{clear}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void Renderer\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_a77793f47d57b7b07f0f1ad7c4cad809e}\label{classRenderer_a77793f47d57b7b07f0f1ad7c4cad809e}} 
+\index{Renderer@{Renderer}!find\+\_\+shader@{find\+\_\+shader}}
+\index{find\+\_\+shader@{find\+\_\+shader}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{find\+\_\+shader()}{find\_shader()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classShader}{Shader}} $\ast$ Renderer\+::find\+\_\+shader (\begin{DoxyParamCaption}\item[{string}]{shader\+\_\+name }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_a25a35d48716bd7c096f90cc5eabc2fc6}\label{classRenderer_a25a35d48716bd7c096f90cc5eabc2fc6}} 
+\index{Renderer@{Renderer}!make\+\_\+program@{make\+\_\+program}}
+\index{make\+\_\+program@{make\+\_\+program}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{make\+\_\+program()}{make\_program()}}
+{\footnotesize\ttfamily void Renderer\+::make\+\_\+program (\begin{DoxyParamCaption}\item[{vector$<$ uint $>$ $\ast$}]{shaders }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_aa0941d2b58991dabe9231ee2c657c36f}\label{classRenderer_aa0941d2b58991dabe9231ee2c657c36f}} 
+\index{Renderer@{Renderer}!multi\+\_\+render@{multi\+\_\+render}}
+\index{multi\+\_\+render@{multi\+\_\+render}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{multi\+\_\+render()}{multi\_render()}}
+{\footnotesize\ttfamily void Renderer\+::multi\+\_\+render (\begin{DoxyParamCaption}\item[{G\+Luint}]{V\+AO,  }\item[{vector$<$ G\+Luint $>$ $\ast$}]{V\+B\+Os,  }\item[{vector$<$ G\+Luint $>$ $\ast$}]{buffer\+\_\+types,  }\item[{G\+Luint}]{layout\+\_\+num,  }\item[{G\+Luint}]{index\+\_\+num,  }\item[{G\+Luint}]{instances }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_af7e5f8f68742f198e315fb4683a605a4}\label{classRenderer_af7e5f8f68742f198e315fb4683a605a4}} 
+\index{Renderer@{Renderer}!render@{render}}
+\index{render@{render}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{render()}{render()}}
+{\footnotesize\ttfamily void Renderer\+::render (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_a6d8650dd5617e17865aaab8ce409642b}\label{classRenderer_a6d8650dd5617e17865aaab8ce409642b}} 
+\index{Renderer@{Renderer}!set\+\_\+camera@{set\+\_\+camera}}
+\index{set\+\_\+camera@{set\+\_\+camera}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{set\+\_\+camera()}{set\_camera()}}
+{\footnotesize\ttfamily void Renderer\+::set\+\_\+camera (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classCamera}{Camera}} $\ast$}]{new\+\_\+cam }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{classRenderer_a34ac63c7fe0611ece146dc504aecb815}\label{classRenderer_a34ac63c7fe0611ece146dc504aecb815}} 
+\index{Renderer@{Renderer}!update@{update}}
+\index{update@{update}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily void Renderer\+::update (\begin{DoxyParamCaption}\item[{G\+L\+F\+Wwindow $\ast$}]{window }\end{DoxyParamCaption})}
+
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classRenderer_a044abbf0e0cbe0446bec0d0f00b2d060}\label{classRenderer_a044abbf0e0cbe0446bec0d0f00b2d060}} 
+\index{Renderer@{Renderer}!busy\+\_\+queue@{busy\+\_\+queue}}
+\index{busy\+\_\+queue@{busy\+\_\+queue}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{busy\+\_\+queue}{busy\_queue}}
+{\footnotesize\ttfamily mutex Renderer\+::busy\+\_\+queue}
+
+\mbox{\Hypertarget{classRenderer_a83cc09617ebb267932620bce0a69c540}\label{classRenderer_a83cc09617ebb267932620bce0a69c540}} 
+\index{Renderer@{Renderer}!cam@{cam}}
+\index{cam@{cam}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{cam}{cam}}
+{\footnotesize\ttfamily \mbox{\hyperlink{classCamera}{Camera}}$\ast$ Renderer\+::cam}
+
+\mbox{\Hypertarget{classRenderer_a1012d49fe5c011d92d8997c448b2e7ea}\label{classRenderer_a1012d49fe5c011d92d8997c448b2e7ea}} 
+\index{Renderer@{Renderer}!current\+\_\+program@{current\+\_\+program}}
+\index{current\+\_\+program@{current\+\_\+program}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{current\+\_\+program}{current\_program}}
+{\footnotesize\ttfamily G\+Luint Renderer\+::current\+\_\+program}
+
+\mbox{\Hypertarget{classRenderer_a7dd27df94abb2368cb00db0f76ff0c66}\label{classRenderer_a7dd27df94abb2368cb00db0f76ff0c66}} 
+\index{Renderer@{Renderer}!fragment\+\_\+shaders@{fragment\+\_\+shaders}}
+\index{fragment\+\_\+shaders@{fragment\+\_\+shaders}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{fragment\+\_\+shaders}{fragment\_shaders}}
+{\footnotesize\ttfamily vector$<$\mbox{\hyperlink{classShader}{Shader}}$>$ Renderer\+::fragment\+\_\+shaders\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classRenderer_a87229d10b904562ac9bc629cb576ca5b}\label{classRenderer_a87229d10b904562ac9bc629cb576ca5b}} 
+\index{Renderer@{Renderer}!render\+\_\+queue@{render\+\_\+queue}}
+\index{render\+\_\+queue@{render\+\_\+queue}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{render\+\_\+queue}{render\_queue}}
+{\footnotesize\ttfamily vector$<$\mbox{\hyperlink{classObject__3D}{Object\+\_\+3D}}$\ast$$>$ Renderer\+::render\+\_\+queue\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classRenderer_af6f381484978dd5e3b32f1bf18b37c25}\label{classRenderer_af6f381484978dd5e3b32f1bf18b37c25}} 
+\index{Renderer@{Renderer}!shading\+\_\+programs@{shading\+\_\+programs}}
+\index{shading\+\_\+programs@{shading\+\_\+programs}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{shading\+\_\+programs}{shading\_programs}}
+{\footnotesize\ttfamily vector$<$G\+Luint$>$ Renderer\+::shading\+\_\+programs\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classRenderer_a6d0795a107f8fd1b3ca9af990e5a0928}\label{classRenderer_a6d0795a107f8fd1b3ca9af990e5a0928}} 
+\index{Renderer@{Renderer}!tessellation\+\_\+shaders@{tessellation\+\_\+shaders}}
+\index{tessellation\+\_\+shaders@{tessellation\+\_\+shaders}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{tessellation\+\_\+shaders}{tessellation\_shaders}}
+{\footnotesize\ttfamily vector$<$\mbox{\hyperlink{classShader}{Shader}}$>$ Renderer\+::tessellation\+\_\+shaders\hspace{0.3cm}{\ttfamily [private]}}
+
+\mbox{\Hypertarget{classRenderer_a5b8247d261a919a58711df232bf272c5}\label{classRenderer_a5b8247d261a919a58711df232bf272c5}} 
+\index{Renderer@{Renderer}!vertex\+\_\+shaders@{vertex\+\_\+shaders}}
+\index{vertex\+\_\+shaders@{vertex\+\_\+shaders}!Renderer@{Renderer}}
+\subsubsection{\texorpdfstring{vertex\+\_\+shaders}{vertex\_shaders}}
+{\footnotesize\ttfamily vector$<$\mbox{\hyperlink{classShader}{Shader}}$>$ Renderer\+::vertex\+\_\+shaders\hspace{0.3cm}{\ttfamily [private]}}
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Rendering/\mbox{\hyperlink{OpenGL-Wrappers_8hpp}{Open\+G\+L-\/\+Wrappers.\+hpp}}\item 
+Rendering/\mbox{\hyperlink{OpenGL-Wrappers_8cpp}{Open\+G\+L-\/\+Wrappers.\+cpp}}\end{DoxyCompactItemize}

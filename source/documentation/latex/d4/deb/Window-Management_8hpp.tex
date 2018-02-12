@@ -1,0 +1,74 @@
+\hypertarget{Window-Management_8hpp}{}\section{Rendering/\+Window-\/\+Management.hpp File Reference}
+\label{Window-Management_8hpp}\index{Rendering/\+Window-\/\+Management.\+hpp@{Rendering/\+Window-\/\+Management.\+hpp}}
+{\ttfamily \#include \char`\"{}system-\/libraries.\+hpp\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}Open\+G\+L-\/\+Wrappers.\+hpp\char`\"{}}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{Window-Management_8hpp_a4ee391c8bab624943c822faafb2c320e}{error\+\_\+callback}} (int error, const char $\ast$description)
+\item 
+void \mbox{\hyperlink{Window-Management_8hpp_a286930f4e8ede059b83ff6eafa2ff718}{key\+\_\+callback}} (G\+L\+F\+Wwindow $\ast$window, int key, int scancode, int action, int mods)
+\item 
+void \mbox{\hyperlink{Window-Management_8hpp_a5515d805e76ce6728de3c0dc5e187c86}{mouse\+\_\+button\+\_\+callback}} (G\+L\+F\+Wwindow $\ast$window, int button, int action, int mods)
+\item 
+void \mbox{\hyperlink{Window-Management_8hpp_ab9a970cff09c5a4031b814242706b4f6}{cursor\+\_\+pos\+\_\+callback}} (G\+L\+F\+Wwindow $\ast$window, double xpos, double ypos)
+\item 
+void \mbox{\hyperlink{Window-Management_8hpp_a49a5ff4f2fc2d79e62443424b32433ec}{call\+Back\+Init}} (G\+L\+F\+Wwindow $\ast$window)
+\item 
+double \mbox{\hyperlink{Window-Management_8hpp_aa684abe4ed14277927421e1926ab67eb}{calculate\+F\+PS}} (double prev\+Time, double current\+Time)
+\item 
+G\+L\+F\+Wwindow $\ast$ \mbox{\hyperlink{Window-Management_8hpp_a9877855b1f20b67790eeace6c28ec048}{create\+Window}} (G\+L\+F\+Wwindow $\ast$other\+\_\+window, bool)
+\item 
+G\+L\+F\+Wwindow $\ast$ \mbox{\hyperlink{Window-Management_8hpp_a556d3732df6c5c8329942c50599a0f0f}{create\+\_\+context}} (G\+L\+F\+Wwindow $\ast$other\+\_\+window, bool)
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{Window-Management_8hpp_aa684abe4ed14277927421e1926ab67eb}\label{Window-Management_8hpp_aa684abe4ed14277927421e1926ab67eb}} 
+\index{Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}!calculate\+F\+PS@{calculate\+F\+PS}}
+\index{calculate\+F\+PS@{calculate\+F\+PS}!Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}}
+\subsubsection{\texorpdfstring{calculate\+F\+P\+S()}{calculateFPS()}}
+{\footnotesize\ttfamily double calculate\+F\+PS (\begin{DoxyParamCaption}\item[{double}]{prev\+Time,  }\item[{double}]{current\+Time }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{Window-Management_8hpp_a49a5ff4f2fc2d79e62443424b32433ec}\label{Window-Management_8hpp_a49a5ff4f2fc2d79e62443424b32433ec}} 
+\index{Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}!call\+Back\+Init@{call\+Back\+Init}}
+\index{call\+Back\+Init@{call\+Back\+Init}!Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}}
+\subsubsection{\texorpdfstring{call\+Back\+Init()}{callBackInit()}}
+{\footnotesize\ttfamily void call\+Back\+Init (\begin{DoxyParamCaption}\item[{G\+L\+F\+Wwindow $\ast$}]{window }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{Window-Management_8hpp_a556d3732df6c5c8329942c50599a0f0f}\label{Window-Management_8hpp_a556d3732df6c5c8329942c50599a0f0f}} 
+\index{Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}!create\+\_\+context@{create\+\_\+context}}
+\index{create\+\_\+context@{create\+\_\+context}!Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}}
+\subsubsection{\texorpdfstring{create\+\_\+context()}{create\_context()}}
+{\footnotesize\ttfamily G\+L\+F\+Wwindow$\ast$ create\+\_\+context (\begin{DoxyParamCaption}\item[{G\+L\+F\+Wwindow $\ast$}]{other\+\_\+window,  }\item[{bool}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{Window-Management_8hpp_a9877855b1f20b67790eeace6c28ec048}\label{Window-Management_8hpp_a9877855b1f20b67790eeace6c28ec048}} 
+\index{Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}!create\+Window@{create\+Window}}
+\index{create\+Window@{create\+Window}!Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}}
+\subsubsection{\texorpdfstring{create\+Window()}{createWindow()}}
+{\footnotesize\ttfamily G\+L\+F\+Wwindow$\ast$ create\+Window (\begin{DoxyParamCaption}\item[{G\+L\+F\+Wwindow $\ast$}]{other\+\_\+window,  }\item[{bool}]{ }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{Window-Management_8hpp_ab9a970cff09c5a4031b814242706b4f6}\label{Window-Management_8hpp_ab9a970cff09c5a4031b814242706b4f6}} 
+\index{Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}!cursor\+\_\+pos\+\_\+callback@{cursor\+\_\+pos\+\_\+callback}}
+\index{cursor\+\_\+pos\+\_\+callback@{cursor\+\_\+pos\+\_\+callback}!Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}}
+\subsubsection{\texorpdfstring{cursor\+\_\+pos\+\_\+callback()}{cursor\_pos\_callback()}}
+{\footnotesize\ttfamily void cursor\+\_\+pos\+\_\+callback (\begin{DoxyParamCaption}\item[{G\+L\+F\+Wwindow $\ast$}]{window,  }\item[{double}]{xpos,  }\item[{double}]{ypos }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{Window-Management_8hpp_a4ee391c8bab624943c822faafb2c320e}\label{Window-Management_8hpp_a4ee391c8bab624943c822faafb2c320e}} 
+\index{Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}!error\+\_\+callback@{error\+\_\+callback}}
+\index{error\+\_\+callback@{error\+\_\+callback}!Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}}
+\subsubsection{\texorpdfstring{error\+\_\+callback()}{error\_callback()}}
+{\footnotesize\ttfamily void error\+\_\+callback (\begin{DoxyParamCaption}\item[{int}]{error,  }\item[{const char $\ast$}]{description }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{Window-Management_8hpp_a286930f4e8ede059b83ff6eafa2ff718}\label{Window-Management_8hpp_a286930f4e8ede059b83ff6eafa2ff718}} 
+\index{Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}!key\+\_\+callback@{key\+\_\+callback}}
+\index{key\+\_\+callback@{key\+\_\+callback}!Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}}
+\subsubsection{\texorpdfstring{key\+\_\+callback()}{key\_callback()}}
+{\footnotesize\ttfamily void key\+\_\+callback (\begin{DoxyParamCaption}\item[{G\+L\+F\+Wwindow $\ast$}]{window,  }\item[{int}]{key,  }\item[{int}]{scancode,  }\item[{int}]{action,  }\item[{int}]{mods }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{Window-Management_8hpp_a5515d805e76ce6728de3c0dc5e187c86}\label{Window-Management_8hpp_a5515d805e76ce6728de3c0dc5e187c86}} 
+\index{Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}!mouse\+\_\+button\+\_\+callback@{mouse\+\_\+button\+\_\+callback}}
+\index{mouse\+\_\+button\+\_\+callback@{mouse\+\_\+button\+\_\+callback}!Window-\/\+Management.\+hpp@{Window-\/\+Management.\+hpp}}
+\subsubsection{\texorpdfstring{mouse\+\_\+button\+\_\+callback()}{mouse\_button\_callback()}}
+{\footnotesize\ttfamily void mouse\+\_\+button\+\_\+callback (\begin{DoxyParamCaption}\item[{G\+L\+F\+Wwindow $\ast$}]{window,  }\item[{int}]{button,  }\item[{int}]{action,  }\item[{int}]{mods }\end{DoxyParamCaption})}
+

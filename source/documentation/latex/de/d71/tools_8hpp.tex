@@ -1,0 +1,31 @@
+\hypertarget{tools_8hpp}{}\section{Helpers/tools.hpp File Reference}
+\label{tools_8hpp}\index{Helpers/tools.\+hpp@{Helpers/tools.\+hpp}}
+{\ttfamily \#include \char`\"{}system-\/libraries.\+hpp\char`\"{}}\newline
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \mbox{\hyperlink{classcirArray}{cir\+Array$<$ T $>$}}
+\end{DoxyCompactItemize}
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+double \mbox{\hyperlink{tools_8hpp_a5e9c9810d982aebf85d272d5a952c3c9}{noise\+\_\+2D}} (double x, double y)
+\item 
+void \mbox{\hyperlink{tools_8hpp_aecdb2436a672c15fff56c1b37b6bedb3}{vec\+\_\+field\+\_\+init}} ()
+\end{DoxyCompactItemize}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{tools_8hpp_a5e9c9810d982aebf85d272d5a952c3c9}\label{tools_8hpp_a5e9c9810d982aebf85d272d5a952c3c9}} 
+\index{tools.\+hpp@{tools.\+hpp}!noise\+\_\+2D@{noise\+\_\+2D}}
+\index{noise\+\_\+2D@{noise\+\_\+2D}!tools.\+hpp@{tools.\+hpp}}
+\subsubsection{\texorpdfstring{noise\+\_\+2\+D()}{noise\_2D()}}
+{\footnotesize\ttfamily double noise\+\_\+2D (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})}
+
+Composite 2D noise function. Combines multiple iterations of Perlin noise at different sampling rates and amplitudes and merges them using octaves to create more complex noise functions \mbox{\Hypertarget{tools_8hpp_aecdb2436a672c15fff56c1b37b6bedb3}\label{tools_8hpp_aecdb2436a672c15fff56c1b37b6bedb3}} 
+\index{tools.\+hpp@{tools.\+hpp}!vec\+\_\+field\+\_\+init@{vec\+\_\+field\+\_\+init}}
+\index{vec\+\_\+field\+\_\+init@{vec\+\_\+field\+\_\+init}!tools.\+hpp@{tools.\+hpp}}
+\subsubsection{\texorpdfstring{vec\+\_\+field\+\_\+init()}{vec\_field\_init()}}
+{\footnotesize\ttfamily void vec\+\_\+field\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Initialize the perlin noise grid. We basically rotate a 2D vector 2\+PI units in the counter clockwise direction and assign a random location to it in a lookup table 

@@ -1,11 +1,12 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
+/**
+*   @file       system-libraries.hpp
+*	@author 	Camilo Talero
 *
 *
 *	Version: 0.0.2
 *
-*	Header for the definition of a generic cube object
+*	@brief General header for system libraries. 
 */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -16,10 +17,12 @@
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #pragma once
 
+//Glew
 #define GLEW_DYNAMIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+//STD
 #include <string>
 #include <iostream>
 #include <vector>
@@ -34,12 +37,13 @@
 #include <chrono>         
 #include <ctime>     
 
-
+//GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+//Freetype
 #include <ft2build.h>
 #include FT_FREETYPE_H
 

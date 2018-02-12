@@ -32,21 +32,22 @@ Todo:
     ☐ Improve documentation and comments @medium  
     ☐ If Doxygen is suitable, modify documentation to fit Doxygen @low 
   Refactoring:
+    ✔ Wrap all OpenGL operations and make structs into classes @done(18-02-11 19:51)
     ☐ Evaluate and fix race condition @low 
       (There is technically a race condition between the world thread and the render 
-      thread)
+      thread, what was it? is it still there?)
     ✔ Move all general headers to a single header @medium @done(18-01-13 21:37)
-    ☐ Move Perlin noise and similar functions to library @medium 
-    ☐ Delete the black face code @high 
+    ✔ Move Perlin noise and similar functions to library @medium @done(18-02-11 19:53)
+    ✔ Delete the black face code @high @done(18-02-11 19:49)
     ✔ Fix all modulus arithmetic @done(17-11-15 23:00)
       (you can reduce ((x+i)%n+n)%n to simply (x+i+n)%n)
-    ☐ Try to move all rendering info (VBO's, SSBO's) to the rendering handler @low 
+    ✔ Try to move all rendering info (VBO's, SSBO's) to the rendering handler @low @done(18-02-11 19:49)
       (or at least as much as possible, this should make multithreading easier)
-    ☐ Cube faces are currently using 4 normals, revise decision @low 
+    ✔ Cube faces are currently using 4 normals, revise decision @low @done(18-02-11 19:49)
       (If smoothing or similar techniques are used, this is justified, else change to 1)
     ✔ Attempt to make cube fetching chunk agnostic @low @done(17-11-11 23:34)
       (Ideally chunks and cubes should be fetched without information of the world array)
-    ☐ Embrace C++ and make all relevant functions into class member functions @high 
+    ✔ Embrace C++ and make all relevant functions into class member functions @high @done(18-02-11 19:49)
       (Instead of stand alone functions, OOP is good, why not fully embrace it?)
     ✔ Minimize overhead to the maximum @medium @done(18-01-13 19:45)
       (Revise current version and edit all structures and functions to minimize overhead)

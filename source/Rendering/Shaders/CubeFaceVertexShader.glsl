@@ -19,7 +19,7 @@ layout(location = 2) in vec2 texture_coordinate; // texture coordinates
 
 layout(std430, binding = 3) buffer face_buffer
 {
-    vec4 face_info[];//first 3 values are position of face, final value is face type 
+    vec4 cubes_info[];//first 3 values are position of face, final value is face type 
 };
 
 out float visible;
@@ -32,20 +32,8 @@ uniform mat4 proj = mat4(1); //the projection parameters (FOV, viewport dimensio
 
 void main()
 {
-    texture_coord = texture_coordinate;// + vec2((face_info[gl_InstanceID][3])*(1/6.f),0);
-    gl_Position = proj*view*(vec4(position, 1.0) + vec4(vec3(face_info[gl_InstanceID]),0));
+    texture_coord = texture_coordinate;// + vec2((cubes_info[gl_InstanceID][3])*(1/6.f),0);
+    gl_Position = proj*view*(vec4(position, 1.0) + vec4(vec3(cubes_info[gl_InstanceID]),0));
     normal = normalize(norm);
-    vertexPos = vec3(vec4(position+vec3(face_info[gl_InstanceID]), 1.0)); //calculate the transformed pos
-
-    //lights = w_lights;   
-    //solids = w_solids;
-
-   /* fun = vec4(w_solids[0].vertices[0]);
-    for(int i = 0; i < 3; i++){
-        solids[0].vertices[i] = w_solids[0].vertices[i];
-        
-    }
-    */
-
-    //fun = vec4(1);
+    vertexPos = vec3(vec4(position+vec3(cubes_info[gl_InstanceID]), 1.0)); //calculate the transformed pos
 }

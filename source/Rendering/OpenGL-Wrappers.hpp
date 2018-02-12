@@ -26,7 +26,19 @@
 using namespace std;
 using namespace glm;
 
-enum Data_Type {Undefined=0, Uint, Int,  Float};
+enum PROGRAM {};
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*
+*	Structures
+*/
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+class Shader;
+class Texture;
+class Mesh;
+class Renderer;
+class Object_3D;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -46,7 +58,10 @@ public:
     
     Shader();
     Shader(string file, GLenum type);
-    //~Shader();
+    ~Shader();
+
+    string load_from_file(string&);
+    void clear();
 };
 
 class Texture
@@ -55,10 +70,17 @@ public:
 	GLuint textureID;   //OpenGL generated ID for the texture
     GLuint target;      //OpenGL target (Usuallly 2D texture or rectangle) check OpenGL doc
 
+    string texture;
+
     //Dimensions of the texture
 	int width;         
     int height;
-    
+
+    Texture(const char* filename, GLuint target = GL_TEXTURE_2D);
+    ~Texture();
+
+    void load_to_GPU(GLuint);
+    void clear();
 };
 
 struct Mesh
@@ -72,16 +94,6 @@ struct Mesh
     ~Mesh();
 };
 
-struct Render_Info
-{
-    GLuint VAO;             //Vertex Array Object
-    vector<GLuint> VBOs;    //array of VBO Ids
-    vector<GLuint> types;   //Array of VBO types 
-    uint layouts;           //The number of layouts to activate
-    uint render_instances;  //Number of instances to render current object
-    Mesh* geometry;         //Mesh to render
-};
-
 //TODO: many things in here should be memeber functions of the respective structures
 /*
 * General rendering manager class
@@ -93,7 +105,7 @@ class Renderer
         vector<Shader> vertex_shaders;          //Vertex shader IDs
         vector<Shader> fragment_shaders;        //Fragment shader IDs
         vector<Shader> tessellation_shaders;    //Tessellation shader IDs
-        vector<Render_Info*> render_queue;      //Queue of objects to render 
+        vector<Object_3D*> render_queue;        //Queue of objects to render 
                                                 //in the current frame
     
     public:
@@ -101,8 +113,9 @@ class Renderer
         Camera *cam;                //main (player) camera object
         GLuint current_program;     //Current shading program (program used to render)
 
-        Renderer();                 //Constructor
-        ~Renderer();                //Destructor
+        Renderer();                         //Default Constructor
+        Renderer(int width, int height);    //Parametrized Constructor
+        ~Renderer();                        //Destructor
 
         Shader* find_shader(string shader_name);        //Find a shader by user defiend name
 
@@ -115,21 +128,43 @@ class Renderer
             vector<GLuint> *buffer_types, GLuint layout_num, 
             GLuint index_num, GLuint instances);
         void change_active_program(GLuint newProgram);      //Change the current shading program
-        void add_data(Render_Info*);                        //Add rendering info to the render queue
+        void add_data(Object_3D*);                        //Add rendering info to the render queue
         void render();                                      //render
         void clear();                                       //clear render queue
 };
 
 extern Renderer *Rendering_Handler;
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-/*
-*	Global Values
-*/
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+class Object_3D
+{
+public:
+    GLuint VAO;             //Vertex Array Object
+    vector<GLuint> VBOs;    //array of VBO Ids
+    vector<GLuint> types;   //Array of VBO types 
+    uint layouts;           //The number of layouts to activate
+    uint render_instances;  //Number of instances to render current object
+    uint mesh_indices;      //Indices for index rendering, if any
 
+    Object_3D(Mesh*);
+    /*~Object_3D();*/
 
+    template <class T>
+    void set_instance_data(Renderer*, vector<T>);
+};
+
+template <class T>
+void Object_3D::set_instance_data(Renderer* handler, vector<T> info)
+{
+	handler->busy_queue.lock();
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, (VBOs[3]));
+    glBufferData(GL_SHADER_STORAGE_BUFFER, info.size()*sizeof(T), 
+		info.data(), GL_DYNAMIC_COPY);
+    handler->busy_queue.unlock();
+    
+    render_instances = info.size();
+}
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -140,19 +175,5 @@ extern Renderer *Rendering_Handler;
 
 //Check for OpenGL errors
 int openGLerror();
-
-void loadTexture(GLuint program, Texture &t);
-
-void compileShader(GLuint &shader, string &filepath, GLenum shaderType);
-void createShader(Shader &s, string file, GLenum type);
-void deleteShader(Shader &s);
-
-bool createTexture(Texture &texture, const char* filename, GLuint target = GL_TEXTURE_2D);
-void loadTexture(GLuint program, Texture &t);
-void DestroyTexture(Texture &texture);
-
-string loadSourceFile(string &filepath);
-
-GLuint createShadingProgram(GLuint vertexShader, GLuint fragmentShader);
 
 //########################################################################################

@@ -54,7 +54,7 @@ Shader::Shader(){}
 Shader::Shader(string file, GLenum type)
 {
 	fileName = file;
-	string source = loadSourceFile(fileName);
+	string source = load_from_file(fileName);
 	const GLchar* s_ptr = source.c_str();//get raw c string (char array)
 
 	shaderID = glCreateShader(type);//create shader on GPU
@@ -87,38 +87,20 @@ Shader::Shader(string file, GLenum type)
 
 /*
 * Delete a shader struct
-*	
-*	Params: 
-*		s: the shader struct to delete
 */
-void deleteShader(Shader &s)
-{
-	glUseProgram(0);
-	glDeleteShader(s.shaderID);
-	//s.program = 0;
-}
+Shader::~Shader(){}
 
 /*
-* Compile a glsl file and generate an OpenGL shading program on the GPU
-*
-*	Params:	
-*		shader: where the shader ID will be returned
-*		filename: file path to the glsl program definition
-*		type: the type of shader (e.g vertex,fragment, tesselation...)
-*/
-
-/*
-* Copy a string from a file into a a string
+* Copy a file into a a string
 *	
 *	Params:
 *		filepath: path to the file
 *
 *	Return: a string that is the copy of the source file
 */
-string loadSourceFile(string &filepath)
+string Shader::load_from_file(string &filepath)
 {
 	string source;
-
 	ifstream input(filepath.c_str());
 	if (input) {
 		copy(istreambuf_iterator<char>(input),
@@ -131,8 +113,13 @@ string loadSourceFile(string &filepath)
 		cerr << "ERROR: Could not load shader source from file: "
 			<< filepath << endl;
 	}
-
 	return source;
+}
+
+void Shader::clear()
+{
+	glUseProgram(0);
+	glDeleteShader(shaderID);
 }
 //########################################################################################
 
@@ -143,13 +130,7 @@ string loadSourceFile(string &filepath)
 */
 //========================================================================================
 
-Mesh::~Mesh()
-{
-	/*delete(vertices);
-	delete(normals);
-	delete(indices);
-	delete(uvs);*/
-}
+Mesh::~Mesh(){}
 
 //########################################################################################
 
@@ -169,58 +150,48 @@ Mesh::~Mesh()
 *
 *	Return: a boolean value indicating whether an error ocurred (true means no error)
 */
-bool createTexture(Texture &texture, const char* filename, GLuint target)
+Texture::Texture(const char* filename, GLuint targ)
 {
 	int numComponents;
 	stbi_set_flip_vertically_on_load(true);
-	void *data = stbi_load(filename, &texture.width, &texture.height, &numComponents, 0);
+	void *data = stbi_load(filename, &width, &height, &numComponents, 0);
 	if (data != nullptr)
 	{
-		texture.target = target;
-		glGenTextures(1, &texture.textureID);
-		glBindTexture(texture.target, texture.textureID);
+		target = targ;
+		glGenTextures(1, &textureID);
+		glBindTexture(target, textureID);
 		GLuint format = numComponents == 3 ? GL_RGB : GL_RGBA;
 		//cout << numComponents << endl;
-		glTexImage2D(texture.target, 0, format, texture.width, texture.height, 0, format, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(target, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
 
 		// Note: Only wrapping modes supported for GL_TEXTURE_RECTANGLE when defining
 		// GL_TEXTURE_WRAP are GL_CLAMP_TO_EDGE or GL_CLAMP_TO_BORDER
-		glTexParameteri(texture.target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(texture.target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(texture.target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(texture.target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(target, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(target, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 		// Clean up
-		glBindTexture(texture.target, 0);
+		glBindTexture(target, 0);
 		stbi_image_free(data);
-
-		return true;
 	}
 	else
 	{
 		cerr << "Problem when loading texture" << endl;
 	}
-	return false; //error
 }
 
 /*
 * Delete a texture struct
-*	
-*	Params: 
-*		texture: the texture struct to delete
 */
-void DestroyTexture(Texture &texture)
-{
-	glBindTexture(texture.target, 0);
-	glDeleteTextures(1, &texture.textureID);
-}
+Texture::~Texture(){}
 
-void loadTexture(GLuint program, Texture &t)
+void Texture::load_to_GPU(GLuint program)
 {
 	glUseProgram(program);
 	glActiveTexture(GL_TEXTURE0);
 
-	glBindTexture(GL_TEXTURE_2D, t.textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
 	GLint loc = glGetUniformLocation(program, "text");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{
@@ -233,6 +204,59 @@ void loadTexture(GLuint program, Texture &t)
 	
 	glUniform1i(loc,0);
 }
+
+void Texture::clear()
+{
+	glBindTexture(target, 0);
+	glDeleteTextures(1, &textureID);
+}
+//########################################################################################
+
+//========================================================================================
+/*
+*	Object_3D Class implementation:
+*/
+//========================================================================================
+
+Object_3D::Object_3D(Mesh *mesh)
+{
+	//In order:
+	//Local Position: vec3; Normal: vec3; Texture Coordinate: vec2; 
+	//Global Position, as SSBO: vec3; Index: uint
+	types={GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, GL_ARRAY_BUFFER, 
+		GL_SHADER_STORAGE_BUFFER, GL_ELEMENT_ARRAY_BUFFER};
+		
+	layouts = types.size()-1;
+
+    //Create and initialize OpenGL rendering structures
+    VBOs = vector<GLuint>(types.size());
+    glGenVertexArrays(1, &(VAO));
+    
+    glGenBuffers(types.size(),(VBOs.data()));
+
+    glBindVertexArray(VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size()*sizeof(vec3), 
+    mesh->vertices.data(), GL_DYNAMIC_DRAW);
+
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, mesh->normals.size()*sizeof(vec3),
+    mesh->normals.data(), GL_DYNAMIC_DRAW);
+    
+    glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
+    glBufferData(GL_ARRAY_BUFFER, mesh->uvs.size()*sizeof(vec2),
+		mesh->uvs.data(), GL_DYNAMIC_DRAW);
+		
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (VBOs)[4]);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size()*sizeof(uint),
+		mesh->indices.data(), GL_DYNAMIC_DRAW);
+
+	mesh_indices = mesh->indices.size();
+}
 //########################################################################################
 
 //========================================================================================
@@ -244,7 +268,9 @@ void loadTexture(GLuint program, Texture &t)
 /*
 *	Default constructor for the Renderer Class
 */
-Renderer::Renderer()
+Renderer::Renderer(){}
+
+Renderer::Renderer(int width, int height)
 {
 	render_queue.reserve(4096);
 	//Create cube rendering shader
@@ -266,6 +292,9 @@ Renderer::Renderer()
 	openGLerror();
 	current_program = shading_programs[0];
 	glUseProgram(current_program);
+
+	set_camera(new Camera(mat3(1), 
+	vec3(0,0,10), width, height));
 	
 	openGLerror();
 }
@@ -276,13 +305,14 @@ Renderer::Renderer()
 Renderer::~Renderer()
 {
 	for(Shader s: vertex_shaders)
-		deleteShader(s);
+		s.clear();
 	for(Shader s: fragment_shaders)
-		deleteShader(s);
+		s.clear();
 	for(Shader s: tessellation_shaders)
-		deleteShader(s);
+		s.clear();
 	for(GLuint p: shading_programs)
 		glDeleteProgram(p);
+
 }
 
 /*
@@ -438,7 +468,7 @@ Shader* Renderer::find_shader(string shader_name)
 }
 
 
-void Renderer::add_data(Render_Info* data)
+void Renderer::add_data(Object_3D* data)
 {
 	render_queue.push_back(data);
 }
@@ -449,10 +479,10 @@ void Renderer::render()
 
 	for(uint i=0; i<render_queue.size(); i++)
 	{
-		Render_Info *render_data = render_queue[i]; 
+		Object_3D *render_data = render_queue[i]; 
 		multi_render(render_data->VAO, &(render_data->VBOs), 
 			&(render_data->types), render_data->layouts, 
-			render_data->geometry->indices.size(), render_data->render_instances);
+			render_data->mesh_indices, render_data->render_instances);
 	}
 
 	busy_queue.unlock();

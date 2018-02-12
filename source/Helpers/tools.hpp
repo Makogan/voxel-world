@@ -1,12 +1,13 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.2
-*
-*	Header for the definition of a generic chunk object
-*/
+/**
+ *   @file       tools,hpp
+ *	@author 	Camilo Talero
+ *
+ *
+ *	Version: 0.0.2
+ *
+ *	Header for the definition of a generic chunk object
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -29,6 +30,9 @@ using namespace std;
 */
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+/**
+ *   A generic circular array class, can be considered a ciircular vector 
+ */
 template <typename T> class cirArray
 {
     private:
@@ -54,8 +58,14 @@ template <typename T> class cirArray
 */
 //========================================================================================
 
+/**
+ * Default constructor of the class 
+ */
 template <typename T> cirArray<T>::cirArray() : cirArray(0){}
 
+/**
+ * Parametrized constructor of the class, creates a circular array of  \a size \a elements
+ */
 template <typename T> cirArray<T>::cirArray(uint size)
 {
     array = vector<T>(size);
@@ -63,18 +73,27 @@ template <typename T> cirArray<T>::cirArray(uint size)
     start=0;
 }
 
+/**
+ * [] operator, returns the element at index \a i \a 
+ */
 template <typename T> T& cirArray<T>::operator[](int i)
 {
     int n = array.size();
     return array[(start + i+n)%n];
 }
 
+/**
+ * shift the circular array by \a i \a units
+ */ 
 template <typename T> void cirArray<T>::shift(int i)
 {
     int n = array.size();
     start = (start+i+n)%n;
 }
 
+/**
+ * Returns the current size (number of elements) of the circular array 
+ */
 template <typename T> uint cirArray<T>::size()
 {
     return array.size();

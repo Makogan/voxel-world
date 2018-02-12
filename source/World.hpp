@@ -43,13 +43,12 @@ class Chunk
     private:
         World* world;
         Cube *chunk_cubes[CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS] = {};
-        Render_Info *render_data;  
-        vector<vec4> faces_info;
+        Object_3D *render_data;  
+        vector<vec4> cubes_info;
         
         void update_visible_faces();
-        void update_render_info();
 
-        inline bool check_neighbour(Cube *c, Cube *n, Face f);
+        inline bool check_neighbour(Cube *c, Cube *n);
 
     public:
         vec3 position;
@@ -63,7 +62,7 @@ class Chunk
 
         void create_cubes(vec3);
         void update();
-        void send_render_data(Renderer*);
+        void inline send_render_data(Renderer*);
 };
 
 class Chunk_Holder

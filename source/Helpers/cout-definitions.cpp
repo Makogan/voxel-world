@@ -1,11 +1,12 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
+/**
+*   @file       cout-definitions.hpp
+*	@author 	Camilo Talero
 *
 *
 *	Version: 0.0.2
 *
-*	Implementation of the output functions for I/O debugging
+*	@brief Implementation of the output functions for I/O debugging
 */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -25,7 +26,7 @@
 */
 //========================================================================================
 
-/*
+/**
 * Print a vec2
 */
 ostream &operator<<(ostream &os, vec2 &v)
@@ -33,7 +34,7 @@ ostream &operator<<(ostream &os, vec2 &v)
     return os << "(" << v.x <<", "<< v.y << ")";
 }
 
-/*
+/**
 * Print a vec3
 */
 ostream &operator<<(ostream &os, vec3 &v)
@@ -41,7 +42,7 @@ ostream &operator<<(ostream &os, vec3 &v)
     return os << "(" << v.x <<", "<< v.y << ", "<< v.z <<")";
 }
 
-/*
+/**
 * Print a vec4
 */
 ostream &operator<<(ostream &os, vec4 &v)
@@ -49,7 +50,7 @@ ostream &operator<<(ostream &os, vec4 &v)
     return os << "(" << v.x <<", "<< v.y << ", "<< v.z << ", " << v.w << ")";
 }
 
-/*
+/**
 * Print a vector of floats
 */
 ostream &operator<<(ostream &os, vector<float> &v)

@@ -47,6 +47,5 @@ void main()
 	outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + 
 		vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
-	outColor = vec4(length(vertexPos-cameraPos))/100;
   
 }

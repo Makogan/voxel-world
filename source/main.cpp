@@ -66,13 +66,12 @@ int main(int argc, char **argv)
 	glfwGetWindowSize(window, &width, &height);
 	glfwMakeContextCurrent(window);
 
-	Rendering_Handler = new Renderer();
+	Rendering_Handler = new Renderer(width, height);
 
-	Rendering_Handler->set_camera(new Camera(mat3(1), 
-		vec3(5*CHUNK_DIMS,5*CHUNK_DIMS,2*CHUNK_DIMS), width, height));
+	Cube::initialize();
 
+	//World thread
 	the_world = new World();
-
 	thread world_thread(update_loop, window, o_window);
 
 	//Render loop
@@ -109,8 +108,6 @@ void render_loop(GLFWwindow* window)
 	glPointSize(10.f);
 	
 	double prevTime = 0, currentTime=0;
-	//TODO: this is temporary, implement this correctly
-	loadTexture(Rendering_Handler->current_program, *(Cube::textures[0]));
 	
     while (!glfwWindowShouldClose(window))
 	{

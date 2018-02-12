@@ -78,6 +78,9 @@ Camera::~Camera()
 
 }
 
+/*
+* Get functions
+*/
 vec3 Camera::getPosition()
 {
 	return position;

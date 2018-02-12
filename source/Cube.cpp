@@ -19,7 +19,6 @@
 #include "Cube.hpp"
 #include "cout-definitions.hpp"
 
-#define MESH Cube::meshes[cube_type]
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================
@@ -28,12 +27,12 @@
 */
 //========================================================================================
 //Default texture for a cube object
-string Cube::Default_Texture = "Assets/Textures/white_cube.png";
+//string Cube::Default_Texture = "Assets/Textures/white_cube.png";
 
 //Global arrays for the cube class, used to store mesh and texture information of future
 //cube classes that inherit this class
-vector<Mesh*> Cube::meshes = vector<Mesh*>(10);
-vector<Texture*> Cube::textures = vector<Texture*>(10);
+vector<Mesh*> Cube::meshes;
+vector<Texture*> Cube::textures;
 //########################################################################################
 
 //========================================================================================
@@ -41,6 +40,29 @@ vector<Texture*> Cube::textures = vector<Texture*>(10);
 *	Class implementation:
 */
 //========================================================================================
+vector<string> texture_source_files = {"Assets/Textures/white_cube.png"};
+vector<string> obj_source_files = {"Assets/Objs/cube.obj"};
+
+//TODO document
+void Cube::initialize()
+{
+    for(uint i=0; i<cube_types; i++)
+    {
+        textures.push_back(new Texture(texture_source_files[i].c_str(), GL_TEXTURE_2D));
+
+        meshes.push_back(new Mesh());
+
+        load_obj("Assets/Objs/cube.obj", (vector<float>*)&meshes[i]->vertices, 
+        (vector<float>*)&meshes[i]->normals, (vector<float>*)&meshes[i]->uvs);
+
+        meshes[i]->indices = vector<uint>();
+
+        for(uint j=0; j<meshes[i]->vertices.size(); j++)
+            meshes[i]->indices.push_back(j);
+    }
+    //TODO: turn this into a list of textures
+    textures[0]->load_to_GPU(Rendering_Handler->current_program);
+}
 
 /*
 *   Free memory used by the cube class
@@ -48,7 +70,7 @@ vector<Texture*> Cube::textures = vector<Texture*>(10);
 void Cube::cleanup()
 {
     for(Texture * t: Cube::textures)
-       if(t!=NULL) {DestroyTexture(*t);delete(t);}
+       if(t!=NULL) {t->clear(); delete(t);}
     for(Mesh * m: Cube::meshes)
         if(m!=NULL) {delete(m);}
 }
@@ -57,33 +79,16 @@ void Cube::cleanup()
 *   Parametrized constructor of the cube class
 *   Type refers to a cube ID 
 */
-Cube::Cube(vec3 p, uint type)
+Cube::Cube(vec3 p, CubeID type)
 {
-    //Create class texture if needed
-    if(textures[cube_type] == NULL)
-    {
-        textures[cube_type] = new Texture();
-        createTexture(*(textures[cube_type]), (Default_Texture.c_str()), GL_TEXTURE_2D);
-    }
-    //Create rendring information of the class
-    if(meshes[cube_type] == NULL)
-    {
-        meshes[cube_type] = new Mesh();
+    cube_type = type;
 
-        load_obj("Assets/Objs/cube.obj", (vector<float>*)&MESH->vertices, 
-        (vector<float>*)&MESH->normals, (vector<float>*)&MESH->uvs);
-
-        MESH->indices = vector<uint>();
-
-        for(uint i=0; i<MESH->vertices.size(); i++)
-            MESH->indices.push_back(i);
-    }
     //set world offset
     position = p;
 }
 
 //List initializers
-Cube::Cube(vec3 p) : Cube(p,0){}
+Cube::Cube(vec3 p) : Cube(p,DEFAULT){}
 
 Cube::Cube() : Cube(vec3(0)){}
 
@@ -97,6 +102,6 @@ void Cube::update(vec3 offset)
 
 Mesh Cube::getMesh()
 {
-    return *MESH;
+    return *meshes[cube_type];
 }
 //########################################################################################

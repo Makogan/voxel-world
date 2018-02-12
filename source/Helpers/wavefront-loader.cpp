@@ -26,7 +26,7 @@ using namespace std;
 */
 //========================================================================================
 
-/*
+/**
 * Function to load the mesh information from a .obj file, it assumes triangular 
 * meshes only. All return arrays must be cleared before using the function, else 
 * information will be returned at the end of the arrays.
