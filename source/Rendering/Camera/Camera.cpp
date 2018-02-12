@@ -1,12 +1,13 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.2
-*
-*	Implementation of the camera header. Defines the behaviour for a generic camera.
-*/
+/**
+ *  @file 		Camera.cpp
+ *	@author 	Camilo Talero
+ *
+ *
+ *	Version: 0.0.2
+ *
+ *	@brief Implementation of the camera header. Defines the behaviour for a generic camera.
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -24,7 +25,7 @@
 */
 //========================================================================================
 
-/*
+/**
 *	Parameter constructor
 */
 Camera::Camera(mat3 frame, vec3 pos, float w, float h)
@@ -46,7 +47,7 @@ Camera::Camera(mat3 frame, vec3 pos, float w, float h)
 	zFar = 2000;
 }
 
-/*
+/**
 *	Default constructor
 */
 Camera::Camera()
@@ -70,7 +71,7 @@ Camera::Camera()
 }
 
 
-/*
+/**
 *	Destructor
 */
 Camera::~Camera()
@@ -78,91 +79,106 @@ Camera::~Camera()
 
 }
 
-/*
-* Get functions
+/**
+* Return the global camera position
 */
 vec3 Camera::getPosition()
 {
 	return position;
 }
 
+/**
+ * Return the diriection in which teh camera is looking
+ */
 vec3 Camera::getForward()
 {
 	return forward;
 }
 
+/**
+ * Return the up direction of the camera
+ */
 vec3 Camera::getUp()
 {
 	return up;	
 }
 
+/**
+ * Return the side direction of the camera
+ */
 vec3 Camera::getSide()
 {
 	return side;
 }
 
+/**
+ * Return the field of view of the camera 
+ */
 float Camera::getFov()
 {
 	return fov;
 }
 
-/*
-*	Get the view matrix of the camera
-*/
+/**
+ *	Get the view matrix of the camera
+ */
 mat4 Camera::getViewMatrix()
 {
 	return lookAt(position, position+forward, up);
 }
 
-/*
-*	Get the perspective matrix of the camera
-*/
+/**
+ *	Get the perspective matrix of the camera
+ */
 mat4 Camera::getPerspectiveMatrix()
 {
 	return perspective(fov, width/height, zNear, zFar);
 }
 
-/*
-*	Orient the camera
-*/
+/**
+ *	Orient the camera so that it looks in the direction of \a v \a
+ */
 void Camera::setLookDirection(vec3 v)
 {
 	forward = normalize(v);
 	side = cross(forward, up);
 }
 
-/*
-*	Move the camera by an offset
-*/
+/**
+ *	Move the camera by an offset \a v \a
+ */
 void Camera::move(vec3 v)
 {
 	position += v;
 }
 
-/*
-*	Place the camera at specified position
-*/
+/**
+ *	Place the camera at specified position \a p \a
+ */
 void Camera::setPosition(vec3 p)
 {
 	position = p;
 }
 
-/*
-*	Orientation functions. Used to change the orientation of the camera around it's axis
-*/
+/**
+ *	Rotate the camera around it's \a up \a direction
+ */
 void Camera::turnH(float angle)
 {
 	mat4 rotation(1);
-	rotation = rotate(rotation, angle, vec3(0,0,1));
+	rotation = rotate(rotation, angle, up);
 	vec4 newForward = vec4(forward, 1);
 
 	newForward = rotation*newForward;
 
 	forward = vec3(newForward);
 	forward = normalize(forward);
-	side = normalize(cross(forward,vec3(0,0,1)));
+	side = normalize(cross(forward, up));
 }
 
+/**
+ * Rotate the camera around it's \a side \a direction 
+ */
 void Camera::turnV(float angle)
 {
 	mat4 rotation;
@@ -171,16 +187,17 @@ void Camera::turnV(float angle)
 		rotation = rotate(rotation, angle, side);
 
 		vec4 newForward = vec4(forward, 1);
-		//vec4 newUp = vec4(up, 1);
 
 		newForward = rotation*newForward;
-		//newUp = rotation*newUp;
 
 		forward = normalize(vec3(newForward));
-		//up = vec3(newUp);
 	}
 }
 
+//TODO: the following may need to be removed
+/**
+ * Rotate the camera around it's forward direction 
+ */
 void Camera::incline(float angle)
 {
 	mat4 rotation;
@@ -194,6 +211,10 @@ void Camera::incline(float angle)
 	side = cross(forward, up);
 }
 
+
+/**
+ * Orient the camera to it's default looking direction and orientation
+ */
 void Camera::resetView()
 {
 	side = orig_side;
@@ -201,6 +222,9 @@ void Camera::resetView()
 	up = orig_up;
 }
 
+/**
+ * Hard reset all camera values to defaults
+ */
 void Camera::resetCamera()
 {
 	resetView();

@@ -15,17 +15,17 @@
 \begin{DoxyCompactItemize}
 \item 
 G\+Luint \mbox{\hyperlink{classObject__3D_a88a13ab6c05c3d5b9368ca03cb03c021}{V\+AO}}
-\item 
+\begin{DoxyCompactList}\small\item\em Vertex Array Object. \end{DoxyCompactList}\item 
 vector$<$ G\+Luint $>$ \mbox{\hyperlink{classObject__3D_acfd04c0df55218879d7d66ee91a22ea5}{V\+B\+Os}}
-\item 
+\begin{DoxyCompactList}\small\item\em array of V\+BO Ids \end{DoxyCompactList}\item 
 vector$<$ G\+Luint $>$ \mbox{\hyperlink{classObject__3D_a8615002b3e455ab32f57e91651c30c6a}{types}}
-\item 
+\begin{DoxyCompactList}\small\item\em Array of V\+BO types. \end{DoxyCompactList}\item 
 uint \mbox{\hyperlink{classObject__3D_a8d3d45ffb70d9725a4907d23d0f73d62}{layouts}}
-\item 
+\begin{DoxyCompactList}\small\item\em The number of layouts to activate. \end{DoxyCompactList}\item 
 uint \mbox{\hyperlink{classObject__3D_a60fe95e517a5446abd13634a005f08bb}{render\+\_\+instances}}
-\item 
+\begin{DoxyCompactList}\small\item\em Number of instances to render current object. \end{DoxyCompactList}\item 
 uint \mbox{\hyperlink{classObject__3D_a2240360a2257365eb86666b4a25bb307}{mesh\+\_\+indices}}
-\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Indices for index rendering, if any. \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \subsection{Constructor \& Destructor Documentation}
@@ -35,7 +35,7 @@ uint \mbox{\hyperlink{classObject__3D_a2240360a2257365eb86666b4a25bb307}{mesh\+\
 \subsubsection{\texorpdfstring{Object\+\_\+3\+D()}{Object\_3D()}}
 {\footnotesize\ttfamily Object\+\_\+3\+D\+::\+Object\+\_\+3D (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{structMesh}{Mesh}} $\ast$}]{mesh }\end{DoxyParamCaption})}
 
-
+Create a 3D rendereable object from a mesh 
 
 \subsection{Member Function Documentation}
 \mbox{\Hypertarget{classObject__3D_acde5ca17a5d5806291c8235e20302733}\label{classObject__3D_acde5ca17a5d5806291c8235e20302733}} 
@@ -45,7 +45,7 @@ uint \mbox{\hyperlink{classObject__3D_a2240360a2257365eb86666b4a25bb307}{mesh\+\
 {\footnotesize\ttfamily template$<$class T $>$ \\
 void Object\+\_\+3\+D\+::set\+\_\+instance\+\_\+data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{classRenderer}{Renderer}} $\ast$}]{handler,  }\item[{vector$<$ T $>$}]{info }\end{DoxyParamCaption})}
 
-
+Set the visual data for the current 3D object (S\+S\+BO data) 
 
 \subsection{Member Data Documentation}
 \mbox{\Hypertarget{classObject__3D_a8d3d45ffb70d9725a4907d23d0f73d62}\label{classObject__3D_a8d3d45ffb70d9725a4907d23d0f73d62}} 
@@ -54,11 +54,19 @@ void Object\+\_\+3\+D\+::set\+\_\+instance\+\_\+data (\begin{DoxyParamCaption}\i
 \subsubsection{\texorpdfstring{layouts}{layouts}}
 {\footnotesize\ttfamily uint Object\+\_\+3\+D\+::layouts}
 
+
+
+The number of layouts to activate. 
+
 \mbox{\Hypertarget{classObject__3D_a2240360a2257365eb86666b4a25bb307}\label{classObject__3D_a2240360a2257365eb86666b4a25bb307}} 
 \index{Object\+\_\+3D@{Object\+\_\+3D}!mesh\+\_\+indices@{mesh\+\_\+indices}}
 \index{mesh\+\_\+indices@{mesh\+\_\+indices}!Object\+\_\+3D@{Object\+\_\+3D}}
 \subsubsection{\texorpdfstring{mesh\+\_\+indices}{mesh\_indices}}
 {\footnotesize\ttfamily uint Object\+\_\+3\+D\+::mesh\+\_\+indices}
+
+
+
+Indices for index rendering, if any. 
 
 \mbox{\Hypertarget{classObject__3D_a60fe95e517a5446abd13634a005f08bb}\label{classObject__3D_a60fe95e517a5446abd13634a005f08bb}} 
 \index{Object\+\_\+3D@{Object\+\_\+3D}!render\+\_\+instances@{render\+\_\+instances}}
@@ -66,11 +74,19 @@ void Object\+\_\+3\+D\+::set\+\_\+instance\+\_\+data (\begin{DoxyParamCaption}\i
 \subsubsection{\texorpdfstring{render\+\_\+instances}{render\_instances}}
 {\footnotesize\ttfamily uint Object\+\_\+3\+D\+::render\+\_\+instances}
 
+
+
+Number of instances to render current object. 
+
 \mbox{\Hypertarget{classObject__3D_a8615002b3e455ab32f57e91651c30c6a}\label{classObject__3D_a8615002b3e455ab32f57e91651c30c6a}} 
 \index{Object\+\_\+3D@{Object\+\_\+3D}!types@{types}}
 \index{types@{types}!Object\+\_\+3D@{Object\+\_\+3D}}
 \subsubsection{\texorpdfstring{types}{types}}
 {\footnotesize\ttfamily vector$<$G\+Luint$>$ Object\+\_\+3\+D\+::types}
+
+
+
+Array of V\+BO types. 
 
 \mbox{\Hypertarget{classObject__3D_a88a13ab6c05c3d5b9368ca03cb03c021}\label{classObject__3D_a88a13ab6c05c3d5b9368ca03cb03c021}} 
 \index{Object\+\_\+3D@{Object\+\_\+3D}!V\+AO@{V\+AO}}
@@ -78,11 +94,19 @@ void Object\+\_\+3\+D\+::set\+\_\+instance\+\_\+data (\begin{DoxyParamCaption}\i
 \subsubsection{\texorpdfstring{V\+AO}{VAO}}
 {\footnotesize\ttfamily G\+Luint Object\+\_\+3\+D\+::\+V\+AO}
 
+
+
+Vertex Array Object. 
+
 \mbox{\Hypertarget{classObject__3D_acfd04c0df55218879d7d66ee91a22ea5}\label{classObject__3D_acfd04c0df55218879d7d66ee91a22ea5}} 
 \index{Object\+\_\+3D@{Object\+\_\+3D}!V\+B\+Os@{V\+B\+Os}}
 \index{V\+B\+Os@{V\+B\+Os}!Object\+\_\+3D@{Object\+\_\+3D}}
 \subsubsection{\texorpdfstring{V\+B\+Os}{VBOs}}
 {\footnotesize\ttfamily vector$<$G\+Luint$>$ Object\+\_\+3\+D\+::\+V\+B\+Os}
+
+
+
+array of V\+BO Ids 
 
 
 

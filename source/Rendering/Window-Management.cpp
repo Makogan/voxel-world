@@ -1,13 +1,14 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.2
-*
-*	File defining all relevant OpenGL and GLFW related functions needed to create an 
-*	OpenGL context and GLFW window.
-*/
+/**
+ *  @file 		Window-Management.cpp
+ *	@author		Camilo Talero
+ *
+ *
+ *	Version: 0.0.2
+ *
+ *	@brief File defining all relevant OpenGL and GLFW related functions needed to create an 
+ *	OpenGL context and GLFW window.
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -36,15 +37,15 @@
 
 //TODO: fix documentation
 
-/*
-* Function to create the OpenGL context.
-* 
-* return GLFWwindow*: the pointer to the GLFW window containing the current context.
-*/
+/**
+ * Function to create the OpenGL context.
+ * 
+ * @return The pointer to the GLFW window containing the current context.
+ */
 GLFWwindow* create_context(GLFWwindow* other_window, bool visible)
 {
-	GLFWwindow* window;
-		window = createWindow(other_window, visible);
+	//Create a GLFW window
+	GLFWwindow* window = createWindow(other_window, visible);
 
 	if(window==NULL)
 	{
@@ -69,13 +70,14 @@ GLFWwindow* create_context(GLFWwindow* other_window, bool visible)
 */
 //========================================================================================
 
-/*
-* Check for OpenGL errors and print the appropriate error message if needed.
-*
-* return int: the number of the generated error.
-*/
+/**
+ * Check for OpenGL errors and print the appropriate error message if needed.
+ *
+ * @return The number of the generated error.
+ */
 int openGLerror()
 {
+	//Check all possible error codes
 	GLenum errorNum = glGetError();
 	switch(errorNum)
 	{
@@ -114,7 +116,10 @@ int openGLerror()
 *	Initialization:
 */
 //========================================================================================
-//Initialize GLFW callBack Functions
+
+/**
+ * Initialize GLFW callBack Functions
+ */
 void callBackInit(GLFWwindow* window)
 {
 	//Set GLFW callback functions
@@ -125,11 +130,11 @@ void callBackInit(GLFWwindow* window)
 
 }
 
-/*
-* Method to create a GLFW window, window will be maximized and decorated.
-*
-* return GLFWwindow*: a pointer to teh created window.
-*/
+/**
+ * Method to create a GLFW window, window will be maximized and decorated.
+ *
+ * @return A pointer to the created window.
+ */
 GLFWwindow* createWindow(GLFWwindow* other_window, bool visible)
 {
 	//Initialize GLFW
@@ -174,9 +179,9 @@ GLFWwindow* createWindow(GLFWwindow* other_window, bool visible)
 */
 //========================================================================================
 
-int cursorSelectNode(GLFWwindow *window)
+/*int cursorSelectNode(GLFWwindow *window)
 {
-	/*double xpos, ypos;
+	double xpos, ypos;
 	glfwGetCursorPos(window, &xpos, &ypos);
 
 	mat4 view= cam.getViewMatrix();
@@ -189,9 +194,9 @@ int cursorSelectNode(GLFWwindow *window)
 	vec3 screenPos;
 	vec3 pos;
 	float depth;
-	vec3 projCursor;*/
+	vec3 projCursor;
 	return 0;
-}
+}*/
 //########################################################################################
 
 //========================================================================================
@@ -205,22 +210,36 @@ int cursorSelectNode(GLFWwindow *window)
 * More information at http://www.glfw.org/docs/latest/input_guide.html
 */
 
+/**
+ * Print out GLFW errpr information
+ */
 void error_callback(int error, const char* description)
 {
     cout << "Error: " << description << endl;
 }
 
+/**
+ * GLFW cursor position function
+ */
 void cursor_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	
 }
 
+/**
+ * GLFW Mouse button function
+ */
 void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
 {
 
 }
 
 #define CAM_SPEED 0.3f
+/**
+ * GLFW keys function
+ * 
+ * Called when a key is pressed and handles the event for each implemented key
+ */
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
@@ -256,6 +275,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     else if(key == GLFW_KEY_F12 && action == GLFW_PRESS)
     	cout << glfwGetVersionString() << endl;
 
+	//move forward
 	else if(key == GLFW_KEY_W)
 	{
 		vec3 dir = Rendering_Handler->cam->getForward();
@@ -264,6 +284,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		Rendering_Handler->cam->move(dir);
 	}
 
+	//move backward
     else if(key == GLFW_KEY_S)
 	{
 		vec3 dir = Rendering_Handler->cam->getForward();
@@ -272,6 +293,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		Rendering_Handler->cam->move(-dir);
 	}
 
+	//move left
     else if(key == GLFW_KEY_A)
 	{
 		vec3 dir = Rendering_Handler->cam->getSide();
@@ -280,6 +302,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		Rendering_Handler->cam->move(-dir);
 	}
 
+	//move right
     else if(key == GLFW_KEY_D)
 	{
 		vec3 dir = Rendering_Handler->cam->getSide();

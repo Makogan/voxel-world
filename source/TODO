@@ -1,71 +1,67 @@
 
-Version 0.0.2
-First stage
+Version 0.0.3
+Third stage
 Todo:
   General:
-    ✔ Research noise functions @high , @done(17-11-09 23:37)
-    ✔ Research how to improve noise @done(17-11-11 21:58)
+    ☐ Revise all TODOS @low 
+    ☐ Add shadows through shadow mapping @high 
+    ☐ Improve world generation @medium 
       (Need continents and oceans, also river and lake generation would be nice)
     ☐ Research river and biome generation @high 
-    ☐ Look into Doxygen for automatic documentation @low 
   Coding:
-    ☐ Smooth cube edges to create less blocky feeling @medium 
-    ✔ Optimize chunk update @medium @done(18-01-13 19:34)
-      (Marked for revision, it's impossible to reduce asymptotic time, maybe not needed) 
-    ✔ Code world loading @critical @done(17-11-19 15:02)
-    ✔ Multithread @medium, @done(18-01-13 19:34)
-      (1 thread for the player, 1 for rendering, 1 for world events, 1 for entitites)
+    ☐ Create more shaders and create the code to select them appropriately
+    ☐ Modify shaders to have multiple textures and potentially mesh information @medium 
+    ☐ Smooth cube edges to create less blocky feeling @medium  
     ☐ Implement pre-visualization of world generation @low 
     ☐ Create more cube types @high 
-    ✔ Create world generation @critical @done(17-11-14 22:17)
-      (merge noise generation with chunks)
-      ☐ Improve world generation @medium 
     ☐ Implement Physics @low 
     ☐ Implement Menu and GUI @low 
   Debuging:
-    ✔ Gaps are created over time when moving around @critical @done(17-11-19 15:02)
+    ☐ Figure out why there are parts of the world loading when moving world box @medium 
     ☐ Fix problem with world generation involving negative x,y coordinates @medium 
       (Currently fixed through absolute value, but this creates mirroring)
-    ✔ Shifitng the world by more than 1 creates gaps @medium @done(17-11-15 22:58)
   Documentation:
-    ☐ Add missing documentation @medium 
     ☐ Improve documentation and comments @medium  
-    ☐ If Doxygen is suitable, modify documentation to fit Doxygen @low 
   Refactoring:
-    ✔ Wrap all OpenGL operations and make structs into classes @done(18-02-11 19:51)
-    ☐ Evaluate and fix race condition @low 
+    ✘ Evaluate and fix race condition @low @cancelled(18-02-12 01:07)
       (There is technically a race condition between the world thread and the render 
       thread, what was it? is it still there?)
-    ✔ Move all general headers to a single header @medium @done(18-01-13 21:37)
-    ✔ Move Perlin noise and similar functions to library @medium @done(18-02-11 19:53)
-    ✔ Delete the black face code @high @done(18-02-11 19:49)
-    ✔ Fix all modulus arithmetic @done(17-11-15 23:00)
-      (you can reduce ((x+i)%n+n)%n to simply (x+i+n)%n)
-    ✔ Try to move all rendering info (VBO's, SSBO's) to the rendering handler @low @done(18-02-11 19:49)
-      (or at least as much as possible, this should make multithreading easier)
-    ✔ Cube faces are currently using 4 normals, revise decision @low @done(18-02-11 19:49)
-      (If smoothing or similar techniques are used, this is justified, else change to 1)
-    ✔ Attempt to make cube fetching chunk agnostic @low @done(17-11-11 23:34)
-      (Ideally chunks and cubes should be fetched without information of the world array)
-    ✔ Embrace C++ and make all relevant functions into class member functions @high @done(18-02-11 19:49)
-      (Instead of stand alone functions, OOP is good, why not fully embrace it?)
-    ✔ Minimize overhead to the maximum @medium @done(18-01-13 19:45)
-      (Revise current version and edit all structures and functions to minimize overhead)
 
 Archive:
+ver 0.0.2 @done(12-2-2018)
+  ✔ Look into Doxygen for automatic documentation @low @done(18-02-12 00:58)                              @ver:0.0.2 
+  ✔ Add missing documentation @medium @done(18-02-12 00:58)                                               @ver:0.0.2 
+  ✔ If Doxygen is suitable, modify documentation to fit Doxygen @low @done(18-02-12 00:58)                @ver:0.0.2 
+  ✔ Research noise functions @high , @done(17-11-09 23:37)                                                @ver:0.0.2 
+  ✔ Research how to improve noise @done(17-11-11 21:58)                                                   @ver:0.0.2 
+  ✔ Optimize chunk update @medium @done(18-01-13 19:34)                                                   @ver:0.0.2 
+  ✔ Code world loading @critical @done(17-11-19 15:02)                                                    @ver:0.0.2 
+  ✔ Multithread @medium, @done(18-01-13 19:34)                                                            @ver:0.0.2 
+  ✔ Create world generation @critical @done(17-11-14 22:17)                                               @ver:0.0.2 
+  ✔ Gaps are created over time when moving around @critical @done(17-11-19 15:02)                         @ver:0.0.2 
+  ✔ Shifitng the world by more than 1 creates gaps @medium @done(17-11-15 22:58)                          @ver:0.0.2 
+  ✔ Wrap all OpenGL operations and make structs into classes @done(18-02-11 19:51)                        @ver:0.0.2 
+  ✔ Move all general headers to a single header @medium @done(18-01-13 21:37)                             @ver:0.0.2 
+  ✔ Move Perlin noise and similar functions to library @medium @done(18-02-11 19:53)                      @ver:0.0.2 
+  ✔ Delete the black face code @high @done(18-02-11 19:49)                                                @ver:0.0.2 
+  ✔ Fix all modulus arithmetic @done(17-11-15 23:00)                                                      @ver:0.0.2 
+  ✔ Try to move all rendering info (VBO's, SSBO's) to the rendering handler @low @done(18-02-11 19:49)    @ver:0.0.2 
+  ✔ Cube faces are currently using 4 normals, revise decision @low @done(18-02-11 19:49)                  @ver:0.0.2 
+  ✔ Attempt to make cube fetching chunk agnostic @low @done(17-11-11 23:34)                               @ver:0.0.2 
+  ✔ Embrace C++ and make all relevant functions into class member functions @high @done(18-02-11 19:49)   @ver:0.0.2 
+  ✔ Minimize overhead to the maximum @medium @done(18-01-13 19:45)                                        @ver:0.0.2 
   ver 0.0.1 @done(03-11-2017)
-  ✔ Create Basic template Code and Data structures                                        @ver:0.0.1 
-  ✔ Design basic world Data Structures                                                    @ver:0.0.1 
-  ✔ Make a shading program that renders multiple meshes at a time                         @ver:0.0.1 
-  ✔ Once there is a voxel world, test and modify rendering for optimization               @ver:0.0.1     
-  ✔ Figure out how blender maps the texture coordinates and get it to work                @ver:0.0.1 
-  ✔ Refactor and comment everything                                                       @ver:0.0.1 
-  ✔ Optimize "Mega Chunks" and chunk rendering                                            @ver:0.0.1 
-  ✔ Add missing comments and revise all "TODO's"                                          @ver:0.0.1 
-  ✘ Design basic physics (moved to future version)                                        @ver:0.0.1 
-  ✘ Create Menu rendering (or use library, experiment) (moved to future version)          @ver:0.0.1 
-  ✘ Document (look into automatic documentation) (moved to future version)                @ver:0.0.1 
-  ✘ Look into Doxygen (moved to future version)                                           @ver:0.0.1 
-  ✘ If Doxygen is suitable, change comments to fit Doxygen (moved to future version)      @ver:0.0.1 
-  ✘ Change loadCamera() and loadViewProjMatrix() headers                                  @ver:0.0.1 
-    to be consistend with the "Load" API (cancelled)"
+  ✔ Create Basic template Code and Data structures                                                        @ver:0.0.1 
+  ✔ Design basic world Data Structures                                                                    @ver:0.0.1 
+  ✔ Make a shading program that renders multiple meshes at a time                                         @ver:0.0.1 
+  ✔ Once there is a voxel world, test and modify rendering for optimization                               @ver:0.0.1     
+  ✔ Figure out how blender maps the texture coordinates and get it to work                                @ver:0.0.1 
+  ✔ Refactor and comment everything                                                                       @ver:0.0.1 
+  ✔ Optimize "Mega Chunks" and chunk rendering                                                            @ver:0.0.1 
+  ✔ Add missing comments and revise all "TODO's"                                                          @ver:0.0.1 
+  ✘ Design basic physics (moved to future version)                                                        @ver:0.0.1 
+  ✘ Create Menu rendering (or use library, experiment) (moved to future version)                          @ver:0.0.1 
+  ✘ Document (look into automatic documentation) (moved to future version)                                @ver:0.0.1 
+  ✘ Look into Doxygen (moved to future version)                                                           @ver:0.0.1 
+  ✘ If Doxygen is suitable, change comments to fit Doxygen (moved to future version)                      @ver:0.0.1 
+  ✘ Change loadCamera() and loadViewProjMatrix() headers                                                  @ver:0.0.1 

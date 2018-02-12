@@ -1,13 +1,14 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.2
-*
-*	Header for the context creation implementation. Exposes functions and defines needed 
-*   included files.
-*/
+/**
+ *  @file       Window-Management.hpp
+ *	@author 	Camilo Talero
+ *
+ *
+ *	Version: 0.0.2
+ *
+ *	 @brief Header for the context creation implementation. Exposes functions and defines 
+ *   needed included files.
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

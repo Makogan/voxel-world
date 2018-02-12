@@ -1,12 +1,13 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.2
-*
-*	Header for the definition of a generic chunk object
-*/
+/**
+ *  @file       World.hpp
+ *	@author	    Camilo Talero
+ *
+ *
+ *	Version: 0.0.2
+ *
+ *	@brief Header for the definition of a generic chunk object
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -33,25 +34,25 @@ class World;
 //TODO: document this section
 struct Light
 {
-  vec3 position;
-  vec4 color;
-  double intensity;
+  vec3 position;        //< Global position of the light
+  vec4 color;           //< Color of the light
+  double intensity;     //< Intensity of the light
 };
 
 class Chunk
 {
     private:
-        World* world;
-        Cube *chunk_cubes[CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS] = {};
-        Object_3D *render_data;  
-        vector<vec4> cubes_info;
+        World* world;                                               //< World conaitning the chunk
+        Cube *chunk_cubes[CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS] = {};   //< Array of all cubes in the chunk
+        Object_3D *render_data;                                     //< Rendereable 3D object of chunk outline
+        vector<vec4> cubes_info;                                    //< Instance information of the chunk 
         
-        void update_visible_faces();
+        void update_visible_cubes();
 
         inline bool check_neighbour(Cube *c, Cube *n);
 
     public:
-        vec3 position;
+        vec3 position;                      //< Global Position of the chunk
 
         Cube* operator()(int, int, int);
 
@@ -68,8 +69,8 @@ class Chunk
 class Chunk_Holder
 {
     private:
-        cirArray<cirArray<cirArray<Chunk*>>> chunkBox;
-        World* world;
+        cirArray<cirArray<cirArray<Chunk*>>> chunkBox;  //< Triple circular array of chunks
+        World* world;                                   //< World where this holder exists
 
     public:
         Chunk_Holder();
@@ -83,14 +84,13 @@ class Chunk_Holder
 class World
 {
     private:
-        Chunk_Holder *loaded_chunks;
-        vector<Light> loaded_lights;
+        Chunk_Holder *loaded_chunks;    //< holder for all chunks, effectively world box
 
     public:
-        int h_radius = 7;
-        int v_radius = 4;
+        int h_radius = 7;   //< horizontal size of the world in the x and y directions
+        int v_radius = 4;   //< veritcal size of the world in the z direction
         
-        ivec3 origin = ivec3(0);
+        ivec3 origin = ivec3(0);    //< upper left most corner of the world
         World();
         ~World();
 
@@ -99,5 +99,5 @@ class World
         void send_render_data(Renderer*);        
 };
 
-extern World* the_world;
+extern World* the_world; //< global pointer to the world object
 //########################################################################################

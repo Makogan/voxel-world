@@ -1,12 +1,13 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.2
-*
-*   Wrapper structures to abstract OpenGL function calls
-*/
+/**
+ *  @file 		OpenGL-Wrappers.cpp
+ *	@author		Camilo Talero
+ *
+ *
+ *	Version: 0.0.2
+ *
+ *   @brief Wrapper structures to abstract OpenGL function calls
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -30,7 +31,7 @@
 *	Global Values
 */
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+//! The global render handler
 Renderer *Rendering_Handler;
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -41,16 +42,17 @@ Renderer *Rendering_Handler;
 */
 //========================================================================================
 
-/*
-*	Initialize the fields of a shader object using a glsl shader file
-*
-*	Params:
-*		s: the shader struct into which the info will be loaded
-*		file: the file path (relative or absolute) where the shader program is defined 
-*		type: the type of shader (e.g vertex,fragment, tesselation...)
-*/
+/**
+ * Default Constructor
+ */ 
 Shader::Shader(){}
 
+/**
+ *	Initialize the fields of a shader object using a glsl shader file
+ *
+ *		@param file the file path (relative or absolute) where the shader program is defined 
+ *		@param type the type of shader (e.g vertex,fragment, tesselation...)
+ */
 Shader::Shader(string file, GLenum type)
 {
 	fileName = file;
@@ -85,19 +87,17 @@ Shader::Shader(string file, GLenum type)
 	type = GL_VERTEX_SHADER;
 }
 
-/*
-* Delete a shader struct
-*/
+/**
+ * Destructor of a shader struct
+ */
 Shader::~Shader(){}
 
-/*
-* Copy a file into a a string
-*	
-*	Params:
-*		filepath: path to the file
-*
-*	Return: a string that is the copy of the source file
-*/
+/**
+ * Copy a file into a a string
+ *	
+ *		@param filepath path to the file
+ *		@return A string that is the copy of the source file
+ */
 string Shader::load_from_file(string &filepath)
 {
 	string source;
@@ -116,6 +116,9 @@ string Shader::load_from_file(string &filepath)
 	return source;
 }
 
+/**
+ * Cleanup the shader OpenGL information
+ */ 
 void Shader::clear()
 {
 	glUseProgram(0);
@@ -130,6 +133,9 @@ void Shader::clear()
 */
 //========================================================================================
 
+/**
+ * Class destructor
+ */
 Mesh::~Mesh(){}
 
 //########################################################################################
@@ -140,16 +146,13 @@ Mesh::~Mesh(){}
 */
 //========================================================================================
 
-/*
-*	Initialize the fields of a texture object using arrays
-*
-*	Params:
-*		texture: a pointer to a texture struct into which the info will be loaded
-*		filename: the filepath to the texture file
-*		target: the OpenGL texture target (e.g 2D, rectangle...)
-*
-*	Return: a boolean value indicating whether an error ocurred (true means no error)
-*/
+/**
+ *	Initialize the fields of a texture object using arrays
+ *
+ *		@param filename the filepath to the texture file
+ *		@param targ the OpenGL texture target (e.g 2D, rectangle...)
+ *		@return Boolean value indicating whether an error ocurred (true means no error)
+ */
 Texture::Texture(const char* filename, GLuint targ)
 {
 	int numComponents;
@@ -181,9 +184,9 @@ Texture::Texture(const char* filename, GLuint targ)
 	}
 }
 
-/*
-* Delete a texture struct
-*/
+/**
+ * Destructor of a texture struct
+ */
 Texture::~Texture(){}
 
 void Texture::load_to_GPU(GLuint program)
@@ -205,6 +208,9 @@ void Texture::load_to_GPU(GLuint program)
 	glUniform1i(loc,0);
 }
 
+/**
+ * Clear all OpenGL information of the texture object
+ */
 void Texture::clear()
 {
 	glBindTexture(target, 0);
@@ -218,6 +224,9 @@ void Texture::clear()
 */
 //========================================================================================
 
+/**
+ * Create a 3D rendereable object from a mesh
+ */
 Object_3D::Object_3D(Mesh *mesh)
 {
 	//In order:
@@ -231,26 +240,32 @@ Object_3D::Object_3D(Mesh *mesh)
     //Create and initialize OpenGL rendering structures
     VBOs = vector<GLuint>(types.size());
     glGenVertexArrays(1, &(VAO));
-    
+	
+	//generate vertex buffer objects
     glGenBuffers(types.size(),(VBOs.data()));
 
+	//Bind the vertex array object
     glBindVertexArray(VAO);
 
+	//Initialize vertex data
     glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size()*sizeof(vec3), 
     mesh->vertices.data(), GL_DYNAMIC_DRAW);
 
+	//Initialize normal data
     glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, mesh->normals.size()*sizeof(vec3),
     mesh->normals.data(), GL_DYNAMIC_DRAW);
-    
+	
+	//Initialize texture coordinates data
     glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
     glBufferData(GL_ARRAY_BUFFER, mesh->uvs.size()*sizeof(vec2),
 		mesh->uvs.data(), GL_DYNAMIC_DRAW);
 		
+	//Initialize index data
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (VBOs)[4]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size()*sizeof(uint),
 		mesh->indices.data(), GL_DYNAMIC_DRAW);
@@ -265,11 +280,16 @@ Object_3D::Object_3D(Mesh *mesh)
 */
 //========================================================================================
 
-/*
-*	Default constructor for the Renderer Class
-*/
+/**
+ *	Default constructor for the Renderer Class
+ */
 Renderer::Renderer(){}
 
+/**
+ * Contructor for the Renderer class. Creates a renderer object that handles all render
+ * calls. It's intended to be unique but has not been implemented as a singleton
+ * be weary!
+ */
 Renderer::Renderer(int width, int height)
 {
 	render_queue.reserve(4096);
@@ -293,15 +313,16 @@ Renderer::Renderer(int width, int height)
 	current_program = shading_programs[0];
 	glUseProgram(current_program);
 
+	//create the camera
 	set_camera(new Camera(mat3(1), 
 	vec3(0,0,10), width, height));
 	
 	openGLerror();
 }
 
-/*
-*	Class destructor
-*/
+/**
+ *	Class destructor
+ */
 Renderer::~Renderer()
 {
 	for(Shader s: vertex_shaders)
@@ -315,11 +336,11 @@ Renderer::~Renderer()
 
 }
 
-/*
-*	Function to render multiple instances of the same mesh
-* 	index_num is the number of indices in the mesh (for drawing elements)
-*	layout_num is the number of layouts to enable (always 0 to layou_num-1)
-*/
+/**
+ *	Function to render multiple instances of the same mesh
+ * 	index_num is the number of indices in the mesh (for drawing elements)
+ *	layout_num is the number of layouts to enable (always 0 to layou_num-1)
+ */
 void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs, 
 	vector<GLuint> *buffer_types, GLuint layout_num, 
 	GLuint index_num, GLuint instances)
@@ -352,16 +373,16 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 	glDrawElementsInstanced(GL_TRIANGLES, index_num, GL_UNSIGNED_INT, (void*)0, instances);
 }
 
-/* 
-* 	Update general rendering values
-*/
-//TODO: Camera update may need to be changed to all programs
+/** 
+ * 	Update general rendering values
+ */
 void Renderer::update(GLFWwindow* window)
 {
 	//GLFW updtae functions
 	glfwPollEvents();
 	glfwSwapBuffers(window);
 
+	//clear the screen
 	glClearColor(0, 0.7f, 1.f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -397,6 +418,7 @@ void Renderer::update(GLFWwindow* window)
 	vec3 camPos = cam->getPosition();
 	glUniform3fv(loc, 1, (GLfloat*)&(camPos));
 
+	//Pass the looking direction of teh camera to the shader
 	loc = glGetUniformLocation(current_program, "cameraDir");
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{
@@ -410,9 +432,9 @@ void Renderer::update(GLFWwindow* window)
 	glUseProgram(0);
 }
 
-/*
-*	Initialize the main rendering camera
-*/
+/**
+ *	Initialize the main rendering camera
+ */
 void Renderer::set_camera(Camera *new_cam)
 {
 	if(new_cam==NULL)
@@ -424,11 +446,12 @@ void Renderer::set_camera(Camera *new_cam)
 	cam=new_cam;
 }
 
-/*
-*	Add a new shader to the set of all shaders
-*/
+/**
+ *	Add a new shader to the set of all shaders
+ */
 void Renderer::add_Shader(string shader, GLuint type)
 {
+	//select the shader type
 	switch(type)
 	{
 		case (GL_VERTEX_SHADER):
@@ -450,6 +473,10 @@ void Renderer::add_Shader(string shader, GLuint type)
 }
 
 //TODO: check only base file name somehow
+//TODO: give shaders an enumerator identifier
+/**
+ * Find a shader through a string
+ */
 Shader* Renderer::find_shader(string shader_name)
 {
 	for(uint i=0; i<vertex_shaders.size(); i++)
@@ -467,27 +494,38 @@ Shader* Renderer::find_shader(string shader_name)
 	return NULL;
 }
 
-
+/**
+ * Add a rendereable 3D object to the current render queue
+ */ 
 void Renderer::add_data(Object_3D* data)
 {
 	render_queue.push_back(data);
 }
 
+/**
+ * Render all elements in the current render queue
+ */
 void Renderer::render()
 {
+	//prevent other threads from writing to the queue
 	busy_queue.lock();
 
 	for(uint i=0; i<render_queue.size(); i++)
 	{
 		Object_3D *render_data = render_queue[i]; 
+		//Render multiple instances of the current object
 		multi_render(render_data->VAO, &(render_data->VBOs), 
 			&(render_data->types), render_data->layouts, 
 			render_data->mesh_indices, render_data->render_instances);
 	}
 
+	//Allow other threads to write to the queue
 	busy_queue.unlock();
 }
 
+/**
+ * Clear all objects in the render queue
+ */
 void Renderer::clear()
 {
 	render_queue.clear();

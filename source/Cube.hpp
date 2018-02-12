@@ -1,12 +1,13 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.2
-*
-*	Header for the definition of a generic cube object
-*/
+/**
+ *  @file       Cube.hpp
+ *	@author 	Camilo Talero
+ *
+ *
+ *	Version: 0.0.2
+ *
+ *	@brief Header for the definition of a generic cube object
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -34,21 +35,21 @@ const uint cube_types = 1;
 */
 //========================================================================================
 
-/*
-*   Cube class definition
-*/
+/**
+ *   Cube class definition
+ */
 class Cube
 {
     public:
-        static vector<Mesh*> meshes;
-        static vector<Texture*> textures;
+        static vector<Mesh*> meshes;        //!< meshes of all cube subclasses
+        static vector<Texture*> textures;   //!< textures of all cube subclasses
         
         static void initialize();
         static void cleanup();
 
-        vec3 position;
-        CubeID cube_type = DEFAULT;
-        bool transparent = false;
+        vec3 position;                      //!< global position of the cube
+        CubeID cube_type = DEFAULT;         //!< unique ID representing the cube
+        bool transparent = false;           //!< is the block transparent?
 
         void update(vec3 offset);
         

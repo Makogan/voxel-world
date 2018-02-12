@@ -1,6 +1,6 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 /**
-*   @file       cout-definitions.hpp
+*   @file       cout-definitions.cpp
 *	@author 	Camilo Talero
 *
 *

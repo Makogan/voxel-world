@@ -1,12 +1,12 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 /**
- *   @file       tools,hpp
+ *  @file       tools.hpp
  *	@author 	Camilo Talero
  *
  *
  *	Version: 0.0.2
  *
- *	Header for the definition of a generic chunk object
+ *	@brief Header for the definition of a generic chunk object
  */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

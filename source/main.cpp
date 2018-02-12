@@ -1,18 +1,20 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.2
-*
-*	References:
-*	https://open.gl
-*	http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
-*	http://www.glfw.org/docs/latest/
-*
-*	Note: Based on the Boiler Plate written by Dr. Sonny Chan, University of Calgary,
-*		Alberta Canada.
-*/
+/**
+ *  @file 		main.cpp
+ *	@author		Camilo Talero
+ *
+ *
+ *	Version: 0.0.2
+ *
+ *	@brief main file. Thread and global loop definitoins go here, as well as 
+ *	initialization
+ *
+ *  References:
+ *	https://open.gl
+ *	http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
+ *	http://www.glfw.org/docs/latest/
+ *	http://eastfarthing.com/blog/2015-04-21-noise/
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

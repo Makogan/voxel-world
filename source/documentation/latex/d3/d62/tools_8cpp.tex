@@ -1,5 +1,10 @@
 \hypertarget{tools_8cpp}{}\section{Helpers/tools.cpp File Reference}
 \label{tools_8cpp}\index{Helpers/tools.\+cpp@{Helpers/tools.\+cpp}}
+
+
+Implementation of miscellaneous helping functions and structures.  
+
+
 {\ttfamily \#include \char`\"{}tools.\+hpp\char`\"{}}\newline
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
@@ -31,6 +36,16 @@ float \mbox{\hyperlink{tools_8cpp_a953a5d9f1638be41272b12f834971fc7}{vec\+\_\+fi
 \end{DoxyCompactItemize}
 
 
+\subsection{Detailed Description}
+Implementation of miscellaneous helping functions and structures. 
+
+\begin{DoxyAuthor}{Author}
+Camilo Talero
+\end{DoxyAuthor}
+Version\+: 0.\+0.\+2
+
+Perlin noise implementation was done following the information at\+: \href{http://eastfarthing.com/blog/2015-04-21-noise/}{\tt http\+://eastfarthing.\+com/blog/2015-\/04-\/21-\/noise/} 
+
 \subsection{Function Documentation}
 \mbox{\Hypertarget{tools_8cpp_a15d1f42e1783e55c9c711d76bc297157}\label{tools_8cpp_a15d1f42e1783e55c9c711d76bc297157}} 
 \index{tools.\+cpp@{tools.\+cpp}!fade@{fade}}
@@ -38,7 +53,7 @@ float \mbox{\hyperlink{tools_8cpp_a953a5d9f1638be41272b12f834971fc7}{vec\+\_\+fi
 \subsubsection{\texorpdfstring{fade()}{fade()}}
 {\footnotesize\ttfamily double fade (\begin{DoxyParamCaption}\item[{double}]{d }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Function to smooth out the transition from each gridd cell to another f(x)=1-\/6$\ast$$\vert$x$\vert$$^\wedge$5-\/15$\vert$x$\vert$$^\wedge$4+10$\vert$x$\vert$$^\wedge$3 \mbox{\Hypertarget{tools_8cpp_a5ea4aedf643886f0b578ea9b36122459}\label{tools_8cpp_a5ea4aedf643886f0b578ea9b36122459}} 
+Function to smooth out the transition from each grid cell to another f(x)=1-\/6$\ast$$\vert$x$\vert$$^\wedge$5-\/15$\vert$x$\vert$$^\wedge$4+10$\vert$x$\vert$$^\wedge$3 \mbox{\Hypertarget{tools_8cpp_a5ea4aedf643886f0b578ea9b36122459}\label{tools_8cpp_a5ea4aedf643886f0b578ea9b36122459}} 
 \index{tools.\+cpp@{tools.\+cpp}!length@{length}}
 \index{length@{length}!tools.\+cpp@{tools.\+cpp}}
 \subsubsection{\texorpdfstring{length()}{length()}}

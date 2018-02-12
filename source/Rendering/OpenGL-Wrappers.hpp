@@ -1,13 +1,14 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.2
-*
-*	Header to define variables, structure definitoins, include libraries... 
-*   Shared among all rendering functions.
-*/
+/**
+ *  @file       OpenGL-Wrappers.hpp
+ *	@author	Camilo Talero
+ *
+ *
+ *	Version: 0.0.2
+ *
+ *	 @brief Header to define variables, structure definitoins, include libraries... 
+ *   Shared among all rendering functions.
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -52,9 +53,9 @@ class Object_3D;
 class Shader
 {
 public:
-	string fileName;    //name of file
-	GLuint shaderID;    //generated OpenGL shader ID
-	GLuint type;        //shader type
+	string fileName;    //!< source file
+	GLuint shaderID;    //!< generated OpenGL shader ID
+	GLuint type;        //!< shader type
     
     Shader();
     Shader(string file, GLenum type);
@@ -67,14 +68,14 @@ public:
 class Texture
 {
 public:
-	GLuint textureID;   //OpenGL generated ID for the texture
-    GLuint target;      //OpenGL target (Usuallly 2D texture or rectangle) check OpenGL doc
+	GLuint textureID;   //!< OpenGL generated ID for the texture
+    GLuint target;      //!< OpenGL target (Usuallly 2D texture or rectangle) check OpenGL doc
 
-    string texture;
+    string texture;     //!< Texture data
 
     //Dimensions of the texture
-	int width;         
-    int height;
+    int width;         //!< width of the texture
+    int height;        //!< height of the texture
 
     Texture(const char* filename, GLuint target = GL_TEXTURE_2D);
     ~Texture();
@@ -85,11 +86,11 @@ public:
 
 struct Mesh
 {
-    vector<vec3> vertices;  //Vertex data
-    vector<vec3> normals;   //Normal data
-	vector<uint> indices;   //Element data (sequence in which data will be read)
-    vector<vec2> uvs;       //Texture data for this geometry 
-                             //(the associated coordinates on the mesh)
+    vector<vec3> vertices;  //!< Vertex data
+    vector<vec3> normals;   //!< Normal data
+	vector<uint> indices;   //!< Element data (sequence in which data will be read)
+    vector<vec2> uvs;       //!< Texture data for this geometry 
+                            //!(the associated coordinates of the mesh)
 
     ~Mesh();
 };
@@ -101,17 +102,17 @@ struct Mesh
 class Renderer
 {
     private:
-        vector<GLuint> shading_programs;        //Shading programs IDs
-        vector<Shader> vertex_shaders;          //Vertex shader IDs
-        vector<Shader> fragment_shaders;        //Fragment shader IDs
-        vector<Shader> tessellation_shaders;    //Tessellation shader IDs
-        vector<Object_3D*> render_queue;        //Queue of objects to render 
-                                                //in the current frame
-    
+        vector<GLuint> shading_programs;        //!< Shading programs IDs
+        vector<Shader> vertex_shaders;          //!< Vertex shader IDs
+        vector<Shader> fragment_shaders;        //!< Fragment shader IDs
+        vector<Shader> tessellation_shaders;    //!< Tessellation shader IDs
+        vector<Object_3D*> render_queue;        //!< Queue of objects to render 
+                                                //!< in the current frame
+     
     public:
-        mutex busy_queue;           //Lock to synchronize queue W/R
-        Camera *cam;                //main (player) camera object
-        GLuint current_program;     //Current shading program (program used to render)
+        mutex busy_queue;           //!< Lock to synchronize queue W/R
+        Camera *cam;                //!< Main (player) camera object
+        GLuint current_program;     //!< Current shading program (program used to render)
 
         Renderer();                         //Default Constructor
         Renderer(int width, int height);    //Parametrized Constructor
@@ -138,12 +139,12 @@ extern Renderer *Rendering_Handler;
 class Object_3D
 {
 public:
-    GLuint VAO;             //Vertex Array Object
-    vector<GLuint> VBOs;    //array of VBO Ids
-    vector<GLuint> types;   //Array of VBO types 
-    uint layouts;           //The number of layouts to activate
-    uint render_instances;  //Number of instances to render current object
-    uint mesh_indices;      //Indices for index rendering, if any
+    GLuint VAO;             //!< Vertex Array Object
+    vector<GLuint> VBOs;    //!< array of VBO Ids
+    vector<GLuint> types;   //!< Array of VBO types 
+    uint layouts;           //!< The number of layouts to activate
+    uint render_instances;  //!< Number of instances to render current object
+    uint mesh_indices;      //!< Indices for index rendering, if any
 
     Object_3D(Mesh*);
     /*~Object_3D();*/
@@ -152,6 +153,9 @@ public:
     void set_instance_data(Renderer*, vector<T>);
 };
 
+/**
+ * Set the visual data for the current 3D object (SSBO data)
+ */ 
 template <class T>
 void Object_3D::set_instance_data(Renderer* handler, vector<T> info)
 {
