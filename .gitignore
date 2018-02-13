@@ -19,7 +19,7 @@ Makefile
 # Ignore doxygen files
 
 *documentation/latex*
-!documentation/refman.pdf
+!refman.pdf
 
 # Ignore executable
 
