@@ -16,6 +16,11 @@ Makefile
 
 !CMakeLists.txt
 
+# Ignore doxygen files
+
+*documentation*
+!refman.pdf
+
 # Ignore executable
 
 *voxel-world*
