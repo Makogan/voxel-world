@@ -1,0 +1,118 @@
+\hypertarget{tools_8cpp}{}\section{Helpers/tools.cpp File Reference}
+\label{tools_8cpp}\index{Helpers/tools.\+cpp@{Helpers/tools.\+cpp}}
+
+
+Implementation of miscellaneous helping functions and structures.  
+
+
+{\ttfamily \#include \char`\"{}tools.\+hpp\char`\"{}}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{tools_8cpp_aecdb2436a672c15fff56c1b37b6bedb3}{vec\+\_\+field\+\_\+init}} ()
+\item 
+double \mbox{\hyperlink{tools_8cpp_a15d1f42e1783e55c9c711d76bc297157}{fade}} (double d)
+\item 
+double \mbox{\hyperlink{tools_8cpp_a5ea4aedf643886f0b578ea9b36122459}{length}} (double x, double y)
+\item 
+double \mbox{\hyperlink{tools_8cpp_a5917e5806a608874270ace3e9420158a}{surflet}} (double x, double y, double grad\+\_\+x, double grad\+\_\+y)
+\item 
+double \mbox{\hyperlink{tools_8cpp_a5ac2a1115ff510cc8a1d22232bf050ea}{perlin\+\_\+noise}} (double x, double y)
+\item 
+double \mbox{\hyperlink{tools_8cpp_a5e9c9810d982aebf85d272d5a952c3c9}{noise\+\_\+2D}} (double x, double y)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+int const \mbox{\hyperlink{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}{size}} = 256
+\item 
+int const \mbox{\hyperlink{tools_8cpp_a145f6c409d9857c43d182344e51622ca}{mask}} = \mbox{\hyperlink{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}{size}}-\/1
+\item 
+int \mbox{\hyperlink{tools_8cpp_a255031017f776005614a681b4cb16d78}{perm}} \mbox{[}\mbox{\hyperlink{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}{size}}\mbox{]}
+\item 
+float \mbox{\hyperlink{tools_8cpp_a36e40d383f2ca946e1a752796fca6cc2}{vec\+\_\+field\+\_\+x}} \mbox{[}\mbox{\hyperlink{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}{size}}\mbox{]}
+\item 
+float \mbox{\hyperlink{tools_8cpp_a953a5d9f1638be41272b12f834971fc7}{vec\+\_\+field\+\_\+y}} \mbox{[}\mbox{\hyperlink{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}{size}}\mbox{]}
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Implementation of miscellaneous helping functions and structures. 
+
+\begin{DoxyAuthor}{Author}
+Camilo Talero
+\end{DoxyAuthor}
+Version\+: 0.\+0.\+3
+
+Perlin noise implementation was done following the information at\+: \href{http://eastfarthing.com/blog/2015-04-21-noise/}{\tt http\+://eastfarthing.\+com/blog/2015-\/04-\/21-\/noise/} 
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{tools_8cpp_a15d1f42e1783e55c9c711d76bc297157}\label{tools_8cpp_a15d1f42e1783e55c9c711d76bc297157}} 
+\index{tools.\+cpp@{tools.\+cpp}!fade@{fade}}
+\index{fade@{fade}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{fade()}{fade()}}
+{\footnotesize\ttfamily double fade (\begin{DoxyParamCaption}\item[{double}]{d }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Function to smooth out the transition from each grid cell to another f(x)=1-\/6$\ast$$\vert$x$\vert$$^\wedge$5-\/15$\vert$x$\vert$$^\wedge$4+10$\vert$x$\vert$$^\wedge$3 \mbox{\Hypertarget{tools_8cpp_a5ea4aedf643886f0b578ea9b36122459}\label{tools_8cpp_a5ea4aedf643886f0b578ea9b36122459}} 
+\index{tools.\+cpp@{tools.\+cpp}!length@{length}}
+\index{length@{length}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{length()}{length()}}
+{\footnotesize\ttfamily double length (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Return the length of the vector (x,y) for radial fading. \mbox{\Hypertarget{tools_8cpp_a5e9c9810d982aebf85d272d5a952c3c9}\label{tools_8cpp_a5e9c9810d982aebf85d272d5a952c3c9}} 
+\index{tools.\+cpp@{tools.\+cpp}!noise\+\_\+2D@{noise\+\_\+2D}}
+\index{noise\+\_\+2D@{noise\+\_\+2D}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{noise\+\_\+2\+D()}{noise\_2D()}}
+{\footnotesize\ttfamily double noise\+\_\+2D (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})}
+
+Composite 2D noise function. Combines multiple iterations of Perlin noise at different sampling rates and amplitudes and merges them using octaves to create more complex noise functions \mbox{\Hypertarget{tools_8cpp_a5ac2a1115ff510cc8a1d22232bf050ea}\label{tools_8cpp_a5ac2a1115ff510cc8a1d22232bf050ea}} 
+\index{tools.\+cpp@{tools.\+cpp}!perlin\+\_\+noise@{perlin\+\_\+noise}}
+\index{perlin\+\_\+noise@{perlin\+\_\+noise}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{perlin\+\_\+noise()}{perlin\_noise()}}
+{\footnotesize\ttfamily double perlin\+\_\+noise (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y }\end{DoxyParamCaption})}
+
+2D Perlin Noise funtion \mbox{\Hypertarget{tools_8cpp_a5917e5806a608874270ace3e9420158a}\label{tools_8cpp_a5917e5806a608874270ace3e9420158a}} 
+\index{tools.\+cpp@{tools.\+cpp}!surflet@{surflet}}
+\index{surflet@{surflet}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{surflet()}{surflet()}}
+{\footnotesize\ttfamily double surflet (\begin{DoxyParamCaption}\item[{double}]{x,  }\item[{double}]{y,  }\item[{double}]{grad\+\_\+x,  }\item[{double}]{grad\+\_\+y }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+2D convolution surflet function, returns a scalar based on the gradient at (x,y) \mbox{\Hypertarget{tools_8cpp_aecdb2436a672c15fff56c1b37b6bedb3}\label{tools_8cpp_aecdb2436a672c15fff56c1b37b6bedb3}} 
+\index{tools.\+cpp@{tools.\+cpp}!vec\+\_\+field\+\_\+init@{vec\+\_\+field\+\_\+init}}
+\index{vec\+\_\+field\+\_\+init@{vec\+\_\+field\+\_\+init}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{vec\+\_\+field\+\_\+init()}{vec\_field\_init()}}
+{\footnotesize\ttfamily void vec\+\_\+field\+\_\+init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Initialize the perlin noise grid. We basically rotate a 2D vector 2\+PI units in the counter clockwise direction and assign a random location to it in a lookup table 
+
+\subsection{Variable Documentation}
+\mbox{\Hypertarget{tools_8cpp_a145f6c409d9857c43d182344e51622ca}\label{tools_8cpp_a145f6c409d9857c43d182344e51622ca}} 
+\index{tools.\+cpp@{tools.\+cpp}!mask@{mask}}
+\index{mask@{mask}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{mask}{mask}}
+{\footnotesize\ttfamily int const mask = \mbox{\hyperlink{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}{size}}-\/1}
+
+\mbox{\Hypertarget{tools_8cpp_a255031017f776005614a681b4cb16d78}\label{tools_8cpp_a255031017f776005614a681b4cb16d78}} 
+\index{tools.\+cpp@{tools.\+cpp}!perm@{perm}}
+\index{perm@{perm}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{perm}{perm}}
+{\footnotesize\ttfamily int perm\mbox{[}\mbox{\hyperlink{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}{size}}\mbox{]}}
+
+\mbox{\Hypertarget{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}\label{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}} 
+\index{tools.\+cpp@{tools.\+cpp}!size@{size}}
+\index{size@{size}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{size}{size}}
+{\footnotesize\ttfamily int const size = 256}
+
+\mbox{\Hypertarget{tools_8cpp_a36e40d383f2ca946e1a752796fca6cc2}\label{tools_8cpp_a36e40d383f2ca946e1a752796fca6cc2}} 
+\index{tools.\+cpp@{tools.\+cpp}!vec\+\_\+field\+\_\+x@{vec\+\_\+field\+\_\+x}}
+\index{vec\+\_\+field\+\_\+x@{vec\+\_\+field\+\_\+x}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{vec\+\_\+field\+\_\+x}{vec\_field\_x}}
+{\footnotesize\ttfamily float vec\+\_\+field\+\_\+x\mbox{[}\mbox{\hyperlink{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}{size}}\mbox{]}}
+
+\mbox{\Hypertarget{tools_8cpp_a953a5d9f1638be41272b12f834971fc7}\label{tools_8cpp_a953a5d9f1638be41272b12f834971fc7}} 
+\index{tools.\+cpp@{tools.\+cpp}!vec\+\_\+field\+\_\+y@{vec\+\_\+field\+\_\+y}}
+\index{vec\+\_\+field\+\_\+y@{vec\+\_\+field\+\_\+y}!tools.\+cpp@{tools.\+cpp}}
+\subsubsection{\texorpdfstring{vec\+\_\+field\+\_\+y}{vec\_field\_y}}
+{\footnotesize\ttfamily float vec\+\_\+field\+\_\+y\mbox{[}\mbox{\hyperlink{tools_8cpp_a6ef9830384f137fbca20e332b26100a4}{size}}\mbox{]}}
+

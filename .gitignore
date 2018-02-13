@@ -18,6 +18,7 @@ Makefile
 
 # Ignore doxygen files
 
+*html/d*
 *documentation/latex*
 !refman.pdf
 
