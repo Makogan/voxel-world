@@ -4,7 +4,7 @@
 *	@author 	Camilo Talero
 *
 *
-*	Version: 0.0.2
+*	Version: 0.0.3
 *
 *	@brief Header defining some output methods to print structures to the terminal
 */
@@ -18,16 +18,7 @@
 
 #pragma once
 
-#include <iostream>
-#include <fstream>
-#include <cstdlib>
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#include <string>
-#include <vector>
-#include <unistd.h>
+#include "system-libraries.hpp"
 
 using namespace std;
 using namespace glm;

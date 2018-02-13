@@ -4,7 +4,7 @@
  *	@author		Camilo Talero
  *
  *
- *	Version: 0.0.2
+ *	Version: 0.0.3
  *
  *   @brief Wrapper structures to abstract OpenGL function calls
  */
@@ -225,6 +225,21 @@ void Texture::clear()
 //========================================================================================
 
 /**
+ * Method to initialize a basic Shader layout from a vector of data. Mainly use to make
+ * the code less verbose.
+ */ 
+template<class T>
+void inline init_buffer(vector<T> data, GLuint buffer, GLenum buffer_type, GLuint layout, 
+	GLboolean normalize, GLuint elements, GLenum data_type)
+{
+	glBindBuffer(buffer_type, buffer);
+    glBufferData(buffer_type, data.size()*sizeof(T), 
+		data.data(), GL_DYNAMIC_DRAW);
+	
+	glVertexAttribPointer(layout, elements, data_type, normalize, sizeof(T), (void*)0);
+}
+
+/**
  * Create a 3D rendereable object from a mesh
  */
 Object_3D::Object_3D(Mesh *mesh)
@@ -248,23 +263,12 @@ Object_3D::Object_3D(Mesh *mesh)
     glBindVertexArray(VAO);
 
 	//Initialize vertex data
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[0]);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vec3), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, mesh->vertices.size()*sizeof(vec3), 
-    mesh->vertices.data(), GL_DYNAMIC_DRAW);
-
+	init_buffer(mesh->vertices, VBOs[0], GL_ARRAY_BUFFER, 0, GL_FALSE, 3, GL_FLOAT);
 	//Initialize normal data
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[1]);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_TRUE, sizeof(vec3), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, mesh->normals.size()*sizeof(vec3),
-    mesh->normals.data(), GL_DYNAMIC_DRAW);
-	
+	init_buffer(mesh->normals, VBOs[1], GL_ARRAY_BUFFER, 1, GL_TRUE, 3, GL_FLOAT);
 	//Initialize texture coordinates data
-    glBindBuffer(GL_ARRAY_BUFFER, VBOs[2]);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vec2), (void*)0);
-    glBufferData(GL_ARRAY_BUFFER, mesh->uvs.size()*sizeof(vec2),
-		mesh->uvs.data(), GL_DYNAMIC_DRAW);
-		
+	init_buffer(mesh->uvs, VBOs[2], GL_ARRAY_BUFFER, 2, GL_FALSE, 2, GL_FLOAT);	
+
 	//Initialize index data
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, (VBOs)[4]);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, mesh->indices.size()*sizeof(uint),
@@ -373,6 +377,18 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 	glDrawElementsInstanced(GL_TRIANGLES, index_num, GL_UNSIGNED_INT, (void*)0, instances);
 }
 
+/**
+ * Error checking and message function for uniforms.
+ */ 
+void inline verify_uniform_location(GLint location, string error_message)
+{
+	if(location == GL_INVALID_VALUE || location==GL_INVALID_OPERATION)
+	{
+		cerr << error_message << endl;
+		return;
+	}
+}
+
 /** 
  * 	Update general rendering values
  */
@@ -389,43 +405,30 @@ void Renderer::update(GLFWwindow* window)
 	//Update general uniform values in the rendering program
 	glUseProgram(current_program);
 	GLint loc = glGetUniformLocation(current_program, "view");
-	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
-	{
-		cerr << "Error returned when trying to find view matrix."
-			<< endl;
-		return;
-	}
+	verify_uniform_location(loc, "Error returned when trying to find view matrix.");
+
 	//Pass the calculated view matrix onto the shader
 	glUniformMatrix4fv(loc, 1, GL_FALSE, value_ptr(cam->getViewMatrix()));
 
 	loc = glGetUniformLocation(current_program, "proj");
-	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
-	{
-		cerr << "Error returned when trying to find projection matrix."
-			<< endl;
-		return;
-	}
+	verify_uniform_location(loc, "Error returned when trying to find projection matrix.");
+
 	//Pass the calculated projection/perspective matrix onto the shader
 	glUniformMatrix4fv(loc, 1, GL_FALSE, value_ptr(cam->getPerspectiveMatrix()));
 
+	//Update the camera position in the shader
 	loc = glGetUniformLocation(current_program, "cameraPos");
-	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
-	{
-		cerr << "Error returned when trying to find camera position"
-			<< endl;
-		return;
-	}
+	verify_uniform_location(loc, "Error returned when trying to find camera position");
+
+	//load camera position into shader
 	vec3 camPos = cam->getPosition();
 	glUniform3fv(loc, 1, (GLfloat*)&(camPos));
 
-	//Pass the looking direction of teh camera to the shader
+	//Pass the looking direction of the camera to the shader
 	loc = glGetUniformLocation(current_program, "cameraDir");
-	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
-	{
-		cerr << "Error returned when trying to find camera direction"
-			<< endl;
-		return;
-	}
+	verify_uniform_location(loc, "Error returned when trying to find camera direction");
+	
+	//load camera direction into shader
 	vec3 camDir = normalize(cam->getForward());
 	glUniform3fv(loc, 1, (GLfloat*)&(camDir));
 

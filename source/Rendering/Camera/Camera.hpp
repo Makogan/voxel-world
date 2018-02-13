@@ -4,7 +4,7 @@
  *	@author		Camilo Talero
  *
  *
- *	Version: 0.0.2
+ *	Version: 0.0.3
  *
  *	@brief Header declaration of functions and memebers for a generic camera class
  */
@@ -18,9 +18,7 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtx/transform.hpp>
+#include "system-libraries.hpp"
 
 using namespace glm;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

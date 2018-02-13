@@ -4,7 +4,7 @@
  *	@author:	Camilo Talero
  *
  *
- *	Version: 0.0.2
+ *	Version: 0.0.3
  *
  *	@brief Header declaration of methods needed to load wavefront (.obj) meshes.
  */
@@ -17,12 +17,7 @@
 //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 #pragma once
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <stdlib.h> 
-#include <string>
+#include "system-libraries.hpp"
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //========================================================================================

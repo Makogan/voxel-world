@@ -4,7 +4,7 @@
  *	@author 	Camilo Talero
  *
  *
- *	Version: 0.0.2
+ *	Version: 0.0.3
  *
  *	 @brief Header for the context creation implementation. Exposes functions and defines 
  *   needed included files.

@@ -4,7 +4,7 @@
  *	@author 	Camilo Talero
  *
  *
- *	Version: 0.0.2
+ *	Version: 0.0.3
  *
  *	@brief Defines methods needed to load wavefront (.obj) meshes.
  */

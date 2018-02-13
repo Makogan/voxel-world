@@ -4,7 +4,7 @@
  *	@author 	Camilo Talero
  *
  *
- *	Version: 0.0.2
+ *	Version: 0.0.3
  *
  *	@brief Header for the definition of a generic chunk object
  */

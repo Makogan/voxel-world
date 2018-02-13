@@ -4,7 +4,7 @@
  *	@author		Camilo Talero
  *
  *
- *	Version: 0.0.2
+ *	Version: 0.0.3
  *
  *	@brief File defining all relevant OpenGL and GLFW related functions needed to create an 
  *	OpenGL context and GLFW window.

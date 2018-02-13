@@ -4,7 +4,7 @@
  *	@author		Camilo Talero
  *
  *
- *	Version: 0.0.2
+ *	Version: 0.0.3
  *
  *	@brief main file. Thread and global loop definitoins go here, as well as 
  *	initialization

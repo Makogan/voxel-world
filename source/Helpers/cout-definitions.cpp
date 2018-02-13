@@ -4,7 +4,7 @@
 *	@author 	Camilo Talero
 *
 *
-*	Version: 0.0.2
+*	Version: 0.0.3
 *
 *	@brief Implementation of the output functions for I/O debugging
 */
