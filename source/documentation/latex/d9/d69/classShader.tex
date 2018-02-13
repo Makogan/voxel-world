@@ -1,0 +1,122 @@
+\hypertarget{classShader}{}\section{Shader Class Reference}
+\label{classShader}\index{Shader@{Shader}}
+
+
+{\ttfamily \#include $<$Open\+G\+L-\/\+Wrappers.\+hpp$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classShader_a0d654ebaca4e0555197c0724c6d30610}{Shader}} ()
+\item 
+\mbox{\hyperlink{classShader_a7933b4a0a4d8446c8df9e3c6118a80bf}{Shader}} (string file, G\+Lenum \mbox{\hyperlink{classShader_a855410473ea5bf5ea56e37f6c09543da}{type}})
+\item 
+\mbox{\hyperlink{classShader_aff01df87e8a102f270b5b135a295e59d}{$\sim$\+Shader}} ()
+\item 
+string \mbox{\hyperlink{classShader_ad643b976d3d920e95bf6f9f4848e6049}{load\+\_\+from\+\_\+file}} (string \&)
+\item 
+void \mbox{\hyperlink{classShader_a59d3c7d6dcb0d0801e836b7a11d8095f}{clear}} ()
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+string \mbox{\hyperlink{classShader_a32243cdb8d63a829450d0a46686c629b}{file\+Name}}
+\begin{DoxyCompactList}\small\item\em source file \end{DoxyCompactList}\item 
+G\+Luint \mbox{\hyperlink{classShader_ae94be9c66b18fe70ed6ec0863b416bdf}{shader\+ID}}
+\begin{DoxyCompactList}\small\item\em generated Open\+GL shader ID \end{DoxyCompactList}\item 
+G\+Luint \mbox{\hyperlink{classShader_a855410473ea5bf5ea56e37f6c09543da}{type}}
+\begin{DoxyCompactList}\small\item\em shader type \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classShader_a0d654ebaca4e0555197c0724c6d30610}\label{classShader_a0d654ebaca4e0555197c0724c6d30610}} 
+\index{Shader@{Shader}!Shader@{Shader}}
+\index{Shader@{Shader}!Shader@{Shader}}
+\subsubsection{\texorpdfstring{Shader()}{Shader()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily Shader\+::\+Shader (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Default Constructor \mbox{\Hypertarget{classShader_a7933b4a0a4d8446c8df9e3c6118a80bf}\label{classShader_a7933b4a0a4d8446c8df9e3c6118a80bf}} 
+\index{Shader@{Shader}!Shader@{Shader}}
+\index{Shader@{Shader}!Shader@{Shader}}
+\subsubsection{\texorpdfstring{Shader()}{Shader()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily Shader\+::\+Shader (\begin{DoxyParamCaption}\item[{string}]{file,  }\item[{G\+Lenum}]{type }\end{DoxyParamCaption})}
+
+Initialize the fields of a shader object using a glsl shader file
+
+
+\begin{DoxyParams}{Parameters}
+{\em file} & the file path (relative or absolute) where the shader program is defined \\
+\hline
+{\em type} & the type of shader (e.\+g vertex,fragment, tesselation...) \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classShader_aff01df87e8a102f270b5b135a295e59d}\label{classShader_aff01df87e8a102f270b5b135a295e59d}} 
+\index{Shader@{Shader}!````~Shader@{$\sim$\+Shader}}
+\index{````~Shader@{$\sim$\+Shader}!Shader@{Shader}}
+\subsubsection{\texorpdfstring{$\sim$\+Shader()}{~Shader()}}
+{\footnotesize\ttfamily Shader\+::$\sim$\+Shader (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Destructor of a shader struct 
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{classShader_a59d3c7d6dcb0d0801e836b7a11d8095f}\label{classShader_a59d3c7d6dcb0d0801e836b7a11d8095f}} 
+\index{Shader@{Shader}!clear@{clear}}
+\index{clear@{clear}!Shader@{Shader}}
+\subsubsection{\texorpdfstring{clear()}{clear()}}
+{\footnotesize\ttfamily void Shader\+::clear (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Cleanup the shader Open\+GL information \mbox{\Hypertarget{classShader_ad643b976d3d920e95bf6f9f4848e6049}\label{classShader_ad643b976d3d920e95bf6f9f4848e6049}} 
+\index{Shader@{Shader}!load\+\_\+from\+\_\+file@{load\+\_\+from\+\_\+file}}
+\index{load\+\_\+from\+\_\+file@{load\+\_\+from\+\_\+file}!Shader@{Shader}}
+\subsubsection{\texorpdfstring{load\+\_\+from\+\_\+file()}{load\_from\_file()}}
+{\footnotesize\ttfamily string Shader\+::load\+\_\+from\+\_\+file (\begin{DoxyParamCaption}\item[{string \&}]{filepath }\end{DoxyParamCaption})}
+
+Copy a file into a a string
+
+
+\begin{DoxyParams}{Parameters}
+{\em filepath} & path to the file \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+A string that is the copy of the source file 
+\end{DoxyReturn}
+
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{classShader_a32243cdb8d63a829450d0a46686c629b}\label{classShader_a32243cdb8d63a829450d0a46686c629b}} 
+\index{Shader@{Shader}!file\+Name@{file\+Name}}
+\index{file\+Name@{file\+Name}!Shader@{Shader}}
+\subsubsection{\texorpdfstring{file\+Name}{fileName}}
+{\footnotesize\ttfamily string Shader\+::file\+Name}
+
+
+
+source file 
+
+\mbox{\Hypertarget{classShader_ae94be9c66b18fe70ed6ec0863b416bdf}\label{classShader_ae94be9c66b18fe70ed6ec0863b416bdf}} 
+\index{Shader@{Shader}!shader\+ID@{shader\+ID}}
+\index{shader\+ID@{shader\+ID}!Shader@{Shader}}
+\subsubsection{\texorpdfstring{shader\+ID}{shaderID}}
+{\footnotesize\ttfamily G\+Luint Shader\+::shader\+ID}
+
+
+
+generated Open\+GL shader ID 
+
+\mbox{\Hypertarget{classShader_a855410473ea5bf5ea56e37f6c09543da}\label{classShader_a855410473ea5bf5ea56e37f6c09543da}} 
+\index{Shader@{Shader}!type@{type}}
+\index{type@{type}!Shader@{Shader}}
+\subsubsection{\texorpdfstring{type}{type}}
+{\footnotesize\ttfamily G\+Luint Shader\+::type}
+
+
+
+shader type 
+
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+Rendering/\mbox{\hyperlink{OpenGL-Wrappers_8hpp}{Open\+G\+L-\/\+Wrappers.\+hpp}}\item 
+Rendering/\mbox{\hyperlink{OpenGL-Wrappers_8cpp}{Open\+G\+L-\/\+Wrappers.\+cpp}}\end{DoxyCompactItemize}
