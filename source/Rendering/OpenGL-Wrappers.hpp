@@ -65,6 +65,20 @@ public:
     void clear();
 };
 
+//TODO: implement this
+class Shading_Program
+{
+public:
+    GLuint programID;
+    Shader* vertex; 
+    Shader* geometry;
+    Shader* tesselation;
+    Shader* fragment;
+    Shader* compute;
+
+    Shading_Program();
+};
+
 class Texture
 {
 public:
@@ -95,7 +109,13 @@ struct Mesh
     ~Mesh();
 };
 
-//TODO: many things in here should be memeber functions of the respective structures
+struct Light
+{
+  vec3 position;        //< Global position of the light
+  vec4 color;           //< Color of the light
+  double intensity;     //< Intensity of the light
+};
+
 /*
 * General rendering manager class
 */
@@ -105,9 +125,11 @@ class Renderer
         vector<GLuint> shading_programs;        //!< Shading programs IDs
         vector<Shader> vertex_shaders;          //!< Vertex shader IDs
         vector<Shader> fragment_shaders;        //!< Fragment shader IDs
+        vector<Shader> geometry_shaders;
         vector<Shader> tessellation_shaders;    //!< Tessellation shader IDs
         vector<Object_3D*> render_queue;        //!< Queue of objects to render 
                                                 //!< in the current frame
+                                
      
     public:
         mutex busy_queue;           //!< Lock to synchronize queue W/R
@@ -117,19 +139,25 @@ class Renderer
         Renderer();                         //Default Constructor
         Renderer(int width, int height);    //Parametrized Constructor
         ~Renderer();                        //Destructor
-
-        Shader* find_shader(string shader_name);        //Find a shader by user defiend name
-
-        void update(GLFWwindow* window);                //Update window (swap buffers, poll events, clear)
-        void add_Shader(string shader, GLuint type);    //Add a shader (glsl) to the current list
-        void make_program(vector<uint> *shaders);       //Make a shading program
+        
         void set_camera(Camera *new_cam);               //Set the main camera
         
+        void add_Shader(string shader, GLuint type);        //Add a shader (glsl) to the current list
+        void add_data(Object_3D*);                          //Add rendering info to the render queue
+
+        void create_shadow_map();
+        void render_shadow_map();
+
         void multi_render(GLuint VAO, vector<GLuint> *VBOs, //Render mutliple instances of a mesh
             vector<GLuint> *buffer_types, GLuint layout_num, 
             GLuint index_num, GLuint instances);
+
+        void make_program(vector<uint> *shaders);           //Make a shading program
         void change_active_program(GLuint newProgram);      //Change the current shading program
-        void add_data(Object_3D*);                        //Add rendering info to the render queue
+        
+        Shader* find_shader(string shader_name);            //Find a shader by user defiend name
+
+        void update(GLFWwindow* window);                    //Update window (swap buffers, poll events, clear)
         void render();                                      //render
         void clear();                                       //clear render queue
 };

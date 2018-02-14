@@ -189,6 +189,7 @@ Texture::Texture(const char* filename, GLuint targ)
  */
 Texture::~Texture(){}
 
+//TODO: docuemnt
 void Texture::load_to_GPU(GLuint program)
 {
 	glUseProgram(program);
@@ -299,16 +300,22 @@ Renderer::Renderer(int width, int height)
 	render_queue.reserve(4096);
 	//Create cube rendering shader
 	vertex_shaders.resize(1);
-	vertex_shaders[0] =  Shader("./Shaders/CubeFaceVertexShader.glsl", GL_VERTEX_SHADER);
+	vertex_shaders[0] =  Shader("./Shaders/Vertex-Shader-Depth.glsl", GL_VERTEX_SHADER);
+	openGLerror();
+
+	geometry_shaders.resize(1);
+	geometry_shaders[0] =  Shader("./Shaders/Geometry-Shader-Depth.glsl", GL_GEOMETRY_SHADER);
 	openGLerror();
 	//create fragment shader
 	fragment_shaders.resize(1);
-	fragment_shaders[0] = Shader("./Shaders/FragmentShader.glsl", GL_FRAGMENT_SHADER);
+	fragment_shaders[0] = Shader("./Shaders/Fragment-Shader-Depth.glsl", GL_FRAGMENT_SHADER);
 	openGLerror();
 	//Initialize and create the first rendering program
 	shading_programs.push_back(glCreateProgram());
 	openGLerror();
 	glAttachShader(shading_programs[0], vertex_shaders[0].shaderID);
+	openGLerror();
+	glAttachShader(shading_programs[0], geometry_shaders[0].shaderID);
 	openGLerror();
 	glAttachShader(shading_programs[0], fragment_shaders[0].shaderID);
 	openGLerror();
@@ -455,7 +462,7 @@ void Renderer::set_camera(Camera *new_cam)
 void Renderer::add_Shader(string shader, GLuint type)
 {
 	//select the shader type
-	switch(type)
+	/*switch(type)
 	{
 		case (GL_VERTEX_SHADER):
 			vertex_shaders.push_back(Shader());
@@ -472,7 +479,94 @@ void Renderer::add_Shader(string shader, GLuint type)
 		default:
 			cerr << "No shader type found" << endl;
 			break;
+	}*/
+}
+
+GLuint depth_map;
+GLuint FramebufferName;
+bool once = true;
+void create_shadow_map()
+{
+	//TODO: change render program here
+
+	if(once)
+	{
+		FramebufferName = 0;
+		glGenFramebuffers(1, &FramebufferName);
 	}
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+
+	if(once)
+		glGenBuffers(1, &depth_map);
+
+		const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+		glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+		for (unsigned int i = 0; i < 6; ++i)
+				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, 
+							 SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); 
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);  
+							 
+						
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_map, 0);
+
+	glDrawBuffer(GL_NONE); // No color buffer is drawn to.
+	glReadBuffer(GL_NONE);
+
+	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+	{
+		cerr << "shadow map not ok" << endl;
+		exit(0);
+	}
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	once = false;
+}
+
+void setup_light_perspectives()
+{
+	vec3 lightPos = vec3(80,70,1000);;
+	float aspect = 1;
+	float near = 0.01f;
+	float far = 256.0f;
+	glm::mat4 shadowProj = glm::perspective(glm::radians(90.0f), aspect, near, far); 
+
+	std::vector<glm::mat4> shadowTransforms;
+	shadowTransforms.push_back(shadowProj * 
+		glm::lookAt(lightPos, lightPos + glm::vec3( 1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+
+	shadowTransforms.push_back(shadowProj * 
+		glm::lookAt(lightPos, lightPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+
+	shadowTransforms.push_back(shadowProj * 
+		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+
+	shadowTransforms.push_back(shadowProj * 
+		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0,-1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+
+	shadowTransforms.push_back(shadowProj * 
+		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 0.0, 1.0), glm::vec3(0.0,-1.0, 0.0)));
+
+	shadowTransforms.push_back(shadowProj * 
+		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 0.0,-1.0), glm::vec3(0.0,-1.0, 0.0)));
+}
+
+void Renderer::render_shadow_map()
+{
+	glViewport(0, 0, 1024, 1024);
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+	glClear(GL_DEPTH_BUFFER_BIT);
+	render();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	//maybe we need to do this like a uniform?
+	glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
 }
 
 //TODO: check only base file name somehow
@@ -482,7 +576,7 @@ void Renderer::add_Shader(string shader, GLuint type)
  */
 Shader* Renderer::find_shader(string shader_name)
 {
-	for(uint i=0; i<vertex_shaders.size(); i++)
+	/*for(uint i=0; i<vertex_shaders.size(); i++)
 		if(shader_name==vertex_shaders[i].fileName)
 			return &vertex_shaders[i];
 	
@@ -492,7 +586,7 @@ Shader* Renderer::find_shader(string shader_name)
 
 	for(uint i=0; i<tessellation_shaders.size(); i++)
 		if(shader_name==tessellation_shaders[i].fileName)
-			return &tessellation_shaders[i];
+			return &tessellation_shaders[i];*/
 	
 	return NULL;
 }

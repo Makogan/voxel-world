@@ -32,12 +32,6 @@ class World;
 */
 //========================================================================================
 //TODO: document this section
-struct Light
-{
-  vec3 position;        //< Global position of the light
-  vec4 color;           //< Color of the light
-  double intensity;     //< Intensity of the light
-};
 
 class Chunk
 {

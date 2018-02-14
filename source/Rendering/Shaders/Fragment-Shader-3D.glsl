@@ -1,12 +1,13 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-/*
-*	Author:	Camilo Talero
-*
-*
-*	Version: 0.0.3
-*
-*	Basic fragment shader
-*/
+/**
+ *	@file		Fragment-Shader-3D.glsl
+ *	@author		Camilo Talero
+ *
+ *
+ *	Version: 0.0.3
+ *
+ *	@brief Basic fragment shader
+ */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #version 450
@@ -18,7 +19,6 @@ struct Light
   double intensity;
 };
 
-in float visible;
 in vec3 normal;//Normal to the vertex
 in vec3 vertexPos;//True position of the vertex (i.e it's location in space)
 in vec2 texture_coord;
@@ -29,7 +29,7 @@ uniform sampler2D text;
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
-uniform vec3 lum = vec3(80,70,1);//A unique light position
+uniform vec3 lum = vec3(80,70,1000);//A unique light position
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 

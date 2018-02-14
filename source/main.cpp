@@ -105,11 +105,20 @@ void render_loop(GLFWwindow* window)
 	//Set default OpenGL values for rendering
 	//glClearDepth(0);
 	//glDepthFunc(GL_GREATER);
-	glDepthRange(0, 10000);
+	//glDepthRange(0, 10000);
     glEnable(GL_DEPTH_TEST);
 	glPointSize(10.f);
 	
 	double prevTime = 0, currentTime=0;
+
+	mat4 test = Rendering_Handler->cam->getViewMatrix();
+	test = Rendering_Handler->cam->getPerspectiveMatrix()*test;
+
+	vec4 temp = vec4(0,0,1,0);
+
+	temp = test*temp;
+
+	cout << temp << endl;
 	
     while (!glfwWindowShouldClose(window))
 	{
@@ -121,7 +130,7 @@ void render_loop(GLFWwindow* window)
 		Rendering_Handler->render();
 		prevTime=currentTime;
 
-		cout << 1.d/elapsed << endl;
+		//cout << 1.d/elapsed << endl;
 		auto end_time = start_time + frame_duration(1);
 		glFinish();
 		std::this_thread::sleep_until(end_time);

@@ -44,7 +44,7 @@ Camera::Camera(mat3 frame, vec3 pos, float w, float h)
 	width = w;
 	height = h;
 	zNear = 0.01;
-	zFar = 2000;
+	zFar = 256;
 }
 
 /**
@@ -124,7 +124,7 @@ float Camera::getFov()
  */
 mat4 Camera::getViewMatrix()
 {
-	return lookAt(position, position+forward, up);
+	return glm::lookAt(position, position+forward, up);
 }
 
 /**
@@ -132,7 +132,7 @@ mat4 Camera::getViewMatrix()
  */
 mat4 Camera::getPerspectiveMatrix()
 {
-	return perspective(fov, width/height, zNear, zFar);
+	return glm::perspective(fov, width/height, zNear, zFar);
 }
 
 /**
