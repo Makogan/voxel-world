@@ -126,6 +126,40 @@ void Shader::clear()
 }
 //########################################################################################
 
+//========================================================================================
+/*
+*	Shading_Program class definition:
+*/
+//========================================================================================
+Shading_Program::Shading_Program(string *vs, string *ts, string *gs, string *fs)
+{
+	vertex = new Shader(*vs, GL_VERTEX_SHADER);
+	fragment = new Shader(*fs, GL_FRAGMENT_SHADER);
+
+	if(ts!=NULL)
+		tesselation = new Shader(*ts, GL_TESS_EVALUATION_SHADER);
+	if(gs!=NULL)
+		geometry = new Shader(*gs, GL_GEOMETRY_SHADER);
+
+	openGLerror();
+	//Initialize and create the first rendering program
+	programID = glCreateProgram();
+	openGLerror();
+	glAttachShader(programID, vertex->shaderID);
+	openGLerror();
+	glAttachShader(programID, fragment->shaderID);
+	openGLerror();
+
+	if(tesselation!=NULL)
+		glAttachShader(programID, tesselation->shaderID);
+	if(geometry!=NULL)
+		glAttachShader(programID, geometry->shaderID);
+	openGLerror();
+
+	glLinkProgram(programID);
+	openGLerror();
+}
+//########################################################################################
 
 //========================================================================================
 /*
@@ -284,6 +318,7 @@ Object_3D::Object_3D(Mesh *mesh)
 *	Renderer Class implementation:
 */
 //========================================================================================
+enum Shader_type {SHADER_3D=0, SHADER_DEPTH};
 
 /**
  *	Default constructor for the Renderer Class
@@ -298,36 +333,34 @@ Renderer::Renderer(){}
 Renderer::Renderer(int width, int height)
 {
 	render_queue.reserve(4096);
-	//Create cube rendering shader
-	vertex_shaders.resize(1);
-	vertex_shaders[0] =  Shader("./Shaders/Vertex-Shader-Depth.glsl", GL_VERTEX_SHADER);
-	openGLerror();
 
-	geometry_shaders.resize(1);
-	geometry_shaders[0] =  Shader("./Shaders/Geometry-Shader-Depth.glsl", GL_GEOMETRY_SHADER);
-	openGLerror();
-	//create fragment shader
-	fragment_shaders.resize(1);
-	fragment_shaders[0] = Shader("./Shaders/Fragment-Shader-Depth.glsl", GL_FRAGMENT_SHADER);
-	openGLerror();
-	//Initialize and create the first rendering program
-	shading_programs.push_back(glCreateProgram());
-	openGLerror();
-	glAttachShader(shading_programs[0], vertex_shaders[0].shaderID);
-	openGLerror();
-	glAttachShader(shading_programs[0], geometry_shaders[0].shaderID);
-	openGLerror();
-	glAttachShader(shading_programs[0], fragment_shaders[0].shaderID);
-	openGLerror();
-	glLinkProgram(shading_programs[0]);
-	openGLerror();
-	current_program = shading_programs[0];
-	glUseProgram(current_program);
+	string s1, s2, s3;
+	s1 = "./Shaders/Vertex-Shader-3D.glsl";
+	s2 = "./Shaders/Fragment-Shader-3D.glsl";
+	shading_programs.push_back(Shading_Program(
+		&s1,
+		NULL,
+		NULL,
+		&s2
+	));
+
+	s1 = "./Shaders/Vertex-Shader-Depth.glsl";
+	s2 = "./Shaders/Geometry-Shader-Depth.glsl";
+	s3 = "./Shaders/Fragment-Shader-Depth.glsl";
+	shading_programs.push_back(Shading_Program(
+		&s1,
+		NULL,
+		&s2,
+		&s3
+	));
+
+	current_program = shading_programs[SHADER_3D].programID;
 
 	//create the camera
 	set_camera(new Camera(mat3(1), 
 	vec3(0,0,10), width, height));
-	
+	//TODO: refactor this
+	create_shadow_map();
 	openGLerror();
 }
 
@@ -336,14 +369,14 @@ Renderer::Renderer(int width, int height)
  */
 Renderer::~Renderer()
 {
-	for(Shader s: vertex_shaders)
+	/*for(Shader s: vertex_shaders)
 		s.clear();
 	for(Shader s: fragment_shaders)
 		s.clear();
 	for(Shader s: tessellation_shaders)
 		s.clear();
 	for(GLuint p: shading_programs)
-		glDeleteProgram(p);
+		glDeleteProgram(p);*/
 
 }
 
@@ -484,52 +517,50 @@ void Renderer::add_Shader(string shader, GLuint type)
 
 GLuint depth_map;
 GLuint FramebufferName;
-bool once = true;
-void create_shadow_map()
+void Renderer::create_shadow_map()
 {
 	//TODO: change render program here
+	glUseProgram(0);
+	FramebufferName = 0;
+	glGenFramebuffers(1, &FramebufferName);
 
-	if(once)
-	{
-		FramebufferName = 0;
-		glGenFramebuffers(1, &FramebufferName);
-	}
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 
-	if(once)
-		glGenBuffers(1, &depth_map);
+	glGenTextures(1, &depth_map);
 
-		const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-		glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
-		for (unsigned int i = 0; i < 6; ++i)
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, 
-							 SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); 
+	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+	glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+	for (unsigned int i = 0; i < 6; ++i)
+			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, 
+							SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); 
 
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);  
-							 
-						
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);  
+									 
+	openGLerror();
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_map, 0);
+	openGLerror();
 
 	glDrawBuffer(GL_NONE); // No color buffer is drawn to.
 	glReadBuffer(GL_NONE);
 
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 	{
-		cerr << "shadow map not ok" << endl;
+		if(glCheckFramebufferStatus(GL_FRAMEBUFFER)==GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT)
+			cerr << "shadow map not ok" << endl;
 		exit(0);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	once = false;
 }
 
-void setup_light_perspectives()
+void setup_light_perspectives(GLuint program)
 {
-	vec3 lightPos = vec3(80,70,1000);;
+	glUseProgram(program);
+	vec3 lightPos = vec3(80,70,10);
 	float aspect = 1;
 	float near = 0.01f;
 	float far = 256.0f;
@@ -537,10 +568,10 @@ void setup_light_perspectives()
 
 	std::vector<glm::mat4> shadowTransforms;
 	shadowTransforms.push_back(shadowProj * 
-		glm::lookAt(lightPos, lightPos + glm::vec3( 1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+		glm::lookAt(lightPos, lightPos + glm::vec3( 1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
 
 	shadowTransforms.push_back(shadowProj * 
-		glm::lookAt(lightPos, lightPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+		glm::lookAt(lightPos, lightPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
 
 	shadowTransforms.push_back(shadowProj * 
 		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
@@ -553,6 +584,10 @@ void setup_light_perspectives()
 
 	shadowTransforms.push_back(shadowProj * 
 		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 0.0,-1.0), glm::vec3(0.0,-1.0, 0.0)));
+
+	GLint loc = glGetUniformLocation(program, "shadowMatrices");
+	glUniformMatrix4fv(loc, shadowTransforms.size(), GL_FALSE, (GLfloat*)shadowTransforms.data());
+	openGLerror();
 }
 
 void Renderer::render_shadow_map()
@@ -566,7 +601,6 @@ void Renderer::render_shadow_map()
 	//maybe we need to do this like a uniform?
 	glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
 }
 
 //TODO: check only base file name somehow
@@ -606,7 +640,13 @@ void Renderer::render()
 {
 	//prevent other threads from writing to the queue
 	busy_queue.lock();
+	current_program = shading_programs[SHADER_DEPTH].programID;
 
+	glViewport(0, 0, 1024, 1024);
+	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
+	glClear(GL_DEPTH_BUFFER_BIT);
+
+	setup_light_perspectives(current_program);
 	for(uint i=0; i<render_queue.size(); i++)
 	{
 		Object_3D *render_data = render_queue[i]; 
@@ -615,6 +655,29 @@ void Renderer::render()
 			&(render_data->types), render_data->layouts, 
 			render_data->mesh_indices, render_data->render_instances);
 	}
+
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//maybe we need to do this like a uniform?
+	glUseProgram(current_program);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+	glViewport(0, 0, cam->getWidth(), cam->getHeight());
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	glActiveTexture(GL_TEXTURE0);
+	GLint loc = glGetUniformLocation(current_program, "depth_map");
+	glUniform1i(loc,0);
+	openGLerror();
+
+	current_program = shading_programs[SHADER_3D].programID;
+	for(uint i=0; i<render_queue.size(); i++)
+	{
+		Object_3D *render_data = render_queue[i]; 
+		//Render multiple instances of the current object
+		multi_render(render_data->VAO, &(render_data->VBOs), 
+			&(render_data->types), render_data->layouts, 
+			render_data->mesh_indices, render_data->render_instances);
+	}
+	openGLerror();
 
 	//Allow other threads to write to the queue
 	busy_queue.unlock();

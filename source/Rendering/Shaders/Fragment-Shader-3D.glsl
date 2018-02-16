@@ -26,10 +26,11 @@ in vec2 texture_coord;
 out vec4 outColor;//Final color of the pixel
 
 uniform sampler2D text;
+uniform samplerCube depth_map;
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
-uniform vec3 lum = vec3(80,70,1000);//A unique light position
+uniform vec3 lum = vec3(80,70,10);//A unique light position
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
@@ -47,5 +48,9 @@ void main()
 	outColor = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + 
 		vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
-  
+	vec3 temp = vertexPos-lum; 
+
+	float test = texture(depth_map, temp).r;
+
+	outColor = vec4(test);
 }

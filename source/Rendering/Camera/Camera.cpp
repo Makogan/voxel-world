@@ -119,6 +119,16 @@ float Camera::getFov()
 	return fov;
 }
 
+float Camera::getWidth()
+{
+	return width;
+}
+
+float Camera::getHeight()
+{
+	return height;
+}
+
 /**
  *	Get the view matrix of the camera
  */

@@ -68,6 +68,8 @@ class Camera
 		vec3 getSide();
 
 		float getFov();
+		float getWidth();
+		float getHeight();
 
 };
 //########################################################################################

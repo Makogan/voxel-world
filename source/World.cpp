@@ -465,7 +465,7 @@ void World::send_render_data(Renderer* handler)
                 float angle = acos(dot(c_dir, normalize(handler->cam->getForward())));
 
                 //If the angle is less than the current field of view send data to handler
-                if(angle < (handler->cam->getFov()))
+                //if(angle < (handler->cam->getFov()))
                     ((*loaded_chunks)(i,j,k))->send_render_data(handler);
             }
         }

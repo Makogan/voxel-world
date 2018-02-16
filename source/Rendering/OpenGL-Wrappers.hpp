@@ -70,13 +70,13 @@ class Shading_Program
 {
 public:
     GLuint programID;
-    Shader* vertex; 
-    Shader* geometry;
-    Shader* tesselation;
-    Shader* fragment;
-    Shader* compute;
+    Shader* vertex = NULL; 
+    Shader* geometry = NULL;
+    Shader* tesselation = NULL;
+    Shader* fragment = NULL;
+    Shader* compute = NULL;
 
-    Shading_Program();
+    Shading_Program(string*, string*, string*, string*);
 };
 
 class Texture
@@ -122,11 +122,7 @@ struct Light
 class Renderer
 {
     private:
-        vector<GLuint> shading_programs;        //!< Shading programs IDs
-        vector<Shader> vertex_shaders;          //!< Vertex shader IDs
-        vector<Shader> fragment_shaders;        //!< Fragment shader IDs
-        vector<Shader> geometry_shaders;
-        vector<Shader> tessellation_shaders;    //!< Tessellation shader IDs
+        vector<Shading_Program> shading_programs;        //!< Shading programs IDs
         vector<Object_3D*> render_queue;        //!< Queue of objects to render 
                                                 //!< in the current frame
                                 

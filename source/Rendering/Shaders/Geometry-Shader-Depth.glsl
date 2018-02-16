@@ -1,7 +1,7 @@
 #version 450
 
 layout (triangles) in;
-layout (triangle_strip, max_vertices=18) out;
+layout (triangle_strip, max_vertices=136) out;
 
 uniform mat4 shadowMatrices[6];
 

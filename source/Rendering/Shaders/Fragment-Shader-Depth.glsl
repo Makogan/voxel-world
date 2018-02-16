@@ -13,8 +13,8 @@
 
 in vec4 FragPos;
 
-uniform vec3 lightPos;
-uniform float far_plane;
+uniform vec3 lightPos = vec3(80,70,10);
+uniform float far_plane = 256;
 
 void main()
 {
