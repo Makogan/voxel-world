@@ -358,7 +358,7 @@ Renderer::Renderer(int width, int height)
 
 	//create the camera
 	set_camera(new Camera(mat3(1), 
-	vec3(0,0,10), width, height));
+	vec3(80,70,10), width, height));
 	//TODO: refactor this
 	create_shadow_map();
 	openGLerror();
@@ -555,6 +555,7 @@ void Renderer::create_shadow_map()
 		exit(0);
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 }
 
 void setup_light_perspectives(GLuint program)
@@ -568,22 +569,22 @@ void setup_light_perspectives(GLuint program)
 
 	std::vector<glm::mat4> shadowTransforms;
 	shadowTransforms.push_back(shadowProj * 
-		glm::lookAt(lightPos, lightPos + glm::vec3( 1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+		glm::lookAt(lightPos, lightPos + glm::vec3( 1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
 
 	shadowTransforms.push_back(shadowProj * 
-		glm::lookAt(lightPos, lightPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+		glm::lookAt(lightPos, lightPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
 
 	shadowTransforms.push_back(shadowProj * 
 		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
 
 	shadowTransforms.push_back(shadowProj * 
-		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0,-1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
 
 	shadowTransforms.push_back(shadowProj * 
-		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 0.0, 1.0), glm::vec3(0.0,-1.0, 0.0)));
+		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0)));
 
 	shadowTransforms.push_back(shadowProj * 
-		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 0.0,-1.0), glm::vec3(0.0,-1.0, 0.0)));
+		glm::lookAt(lightPos, lightPos + glm::vec3( 0.0, 0.0,-1.0), glm::vec3(0.0, -1.0, 0.0)));
 
 	GLint loc = glGetUniformLocation(program, "shadowMatrices");
 	glUniformMatrix4fv(loc, shadowTransforms.size(), GL_FALSE, (GLfloat*)shadowTransforms.data());
@@ -592,7 +593,7 @@ void setup_light_perspectives(GLuint program)
 
 void Renderer::render_shadow_map()
 {
-	glViewport(0, 0, 1024, 1024);
+	glViewport(0, 0, 2048, 2048);
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 	glClear(GL_DEPTH_BUFFER_BIT);
 	render();
@@ -641,10 +642,14 @@ void Renderer::render()
 	//prevent other threads from writing to the queue
 	busy_queue.lock();
 	current_program = shading_programs[SHADER_DEPTH].programID;
+	glUseProgram(current_program);
 
 	glViewport(0, 0, 1024, 1024);
 	glBindFramebuffer(GL_FRAMEBUFFER, FramebufferName);
 	glClear(GL_DEPTH_BUFFER_BIT);
+
+/*	glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, depth_map, 0);*/
 
 	setup_light_perspectives(current_program);
 	for(uint i=0; i<render_queue.size(); i++)
@@ -656,19 +661,23 @@ void Renderer::render()
 			render_data->mesh_indices, render_data->render_instances);
 	}
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	//maybe we need to do this like a uniform?
+	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
+	
 	glViewport(0, 0, cam->getWidth(), cam->getHeight());
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	glActiveTexture(GL_TEXTURE0);
+	glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, depth_map);
 	GLint loc = glGetUniformLocation(current_program, "depth_map");
-	glUniform1i(loc,0);
+	glUniform1i(loc,1);
 	openGLerror();
 
-	current_program = shading_programs[SHADER_3D].programID;
 	for(uint i=0; i<render_queue.size(); i++)
 	{
 		Object_3D *render_data = render_queue[i]; 
@@ -678,7 +687,7 @@ void Renderer::render()
 			render_data->mesh_indices, render_data->render_instances);
 	}
 	openGLerror();
-
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	//Allow other threads to write to the queue
 	busy_queue.unlock();
 }

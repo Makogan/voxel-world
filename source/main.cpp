@@ -110,15 +110,6 @@ void render_loop(GLFWwindow* window)
 	glPointSize(10.f);
 	
 	double prevTime = 0, currentTime=0;
-
-	mat4 test = Rendering_Handler->cam->getViewMatrix();
-	test = Rendering_Handler->cam->getPerspectiveMatrix()*test;
-
-	vec4 temp = vec4(0,0,1,0);
-
-	temp = test*temp;
-
-	cout << temp << endl;
 	
     while (!glfwWindowShouldClose(window))
 	{

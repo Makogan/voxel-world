@@ -51,6 +51,8 @@ void main()
 	vec3 temp = vertexPos-lum; 
 
 	float test = texture(depth_map, temp).r;
+	double d = length(temp);
 
-	outColor = vec4(test);
+	if(d>test*256 + 0.5)
+		outColor = vec4(test);
 }
