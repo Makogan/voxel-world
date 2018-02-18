@@ -50,6 +50,7 @@ void callBackInit(GLFWwindow* window);
 
 double calculateFPS(double prevTime, double currentTime);
 
+int openGLerror();
 //Create a GLFW window
 GLFWwindow* createWindow(GLFWwindow* other_window, bool);
 

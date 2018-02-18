@@ -14,9 +14,8 @@
 
 struct Light
 {
-  vec4 position;
+  vec4 position;//intensity here as well
   vec4 color;
-  double intensity;
 };
 
 in vec3 normal;//Normal to the vertex
@@ -26,7 +25,8 @@ in vec2 texture_coord;
 out vec4 outColor;//Final color of the pixel
 
 uniform sampler2D text;
-uniform samplerCube depth_map;
+uniform samplerCube depth_maps[];
+uniform Light lights[];
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
@@ -50,7 +50,7 @@ void main()
 
 	vec3 temp = vertexPos-lum; 
 
-	float test = texture(depth_map, temp).r;
+	float test = texture(depth_maps[0], temp).r;
 	double d = length(temp);
 
 	if(d>test*256 + 0.5)

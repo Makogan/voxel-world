@@ -23,6 +23,7 @@ Todo:
   Documentation:
     ☐ Improve documentation and comments @medium  
   Refactoring:
+    ☐ Fix header inclusion warnings between Renderer.hpp and OpenGL-Wrappers.hpp @medium 
     ☐ Reduce matrix passing into shaders so as to pass only one model matrix @medium 
     ✘ Evaluate and fix race condition @low @cancelled(18-02-12 01:07)
       (There is technically a race condition between the world thread and the render 
