@@ -32,17 +32,19 @@ uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
 //uniform vec3 lum = vec3(100,90,15); vec3(80,70,10);//A unique light position
 
-uniform vec3 lums[2] = {vec3(80,70,10), vec3(100,90,15)};
+uniform vec3 lums[2] = {vec3(80,70,10), vec3(80,90,50)};
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
 void main()
 {
 	outColor = vec4(0);
-	for(uint i=0 ; i<2; i++)
+
+	bool hit_by_light = false;
+	for(uint i=0 ; i<1; i++)
 	{
 		vec4 color = vec4(0);
-		vec3 lum = lums[i];
+		vec3 lum = lums[0];//lights[0].position.xyz;
 		vec3 l = vec3(lum-vertexPos);
 		if(length(l)>0)
 			l = normalize(l);
@@ -57,14 +59,16 @@ void main()
 
 		vec3 temp = vertexPos-lum; 
 
-		float test = texture(depth_maps, vec4(temp, 1)).r;
+		float test = texture(depth_maps, vec4(temp, 0)).r;
 		double d = length(temp);
 
-		if(d>test*256 + 0.5)
-			color = vec4(test/2);
+		if(d>test*256 + 0.5) //&& !hit_by_light)
+			color = vec4(test);
+		/*else
+			hit_by_light = true;*/
 
 		outColor += color;
 	}
 
-	outColor = outColor/2.f;
+	//outColor = outColor/2.f;
 }

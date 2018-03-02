@@ -52,12 +52,14 @@ class Renderer
                                                 //!< in the current frame
         vector<GLuint> FBOs;
         vector<Shadow_Map> shadow_maps;
+        vector<Light> light_sources;
 
         void draw();       
         void draw_shadow_maps(vector<Light>&);                    
 
         GLint inline get_uniform_location(string name);
         void inline load_uniform(mat4 matrix, string name);
+        void inline load_uniform(vec4 vector, string name);
         void inline load_uniform(vec3 vector, string name);
         void inline load_uniform(float num, string name);
         void inline load_uniform(int num, string name);
@@ -65,7 +67,7 @@ class Renderer
         void setup_light_perspectives(GLuint program, Light &light);
      
     public:
-        mutex busy_queue;           //!< Lock to synchronize queue W/R
+        mutex busy_queue;           //!< Lock to synchronize queue IO
         Camera *cam;                //!< Main (player) camera object
         GLuint current_program;     //!< Current shading program (program used to render)
 

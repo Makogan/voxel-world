@@ -90,7 +90,7 @@ class World
 
         Cube* operator()(int x, int y, int z);
         void center_frame(ivec3 offset);
-        void send_render_data(Renderer*);        
+        void send_render_data(Renderer*);      
 };
 
 extern World* the_world; //< global pointer to the world object

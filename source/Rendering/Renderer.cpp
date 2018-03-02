@@ -74,6 +74,14 @@ Renderer::Renderer(int width, int height)
 	set_camera(new Camera(mat3(1), 
 		vec3(80,70,10), width, height));
 
+	Light test1;
+	test1.position = vec4(80, 70, 10, 0); 
+	
+	Light test2;
+	test2.position = vec4(80,90,50, 0);
+	//vector<Light> temp = {test1, test2};
+	light_sources = {test1, test2};
+
 	openGLerror();
 }
 
@@ -138,6 +146,12 @@ void inline Renderer::load_uniform(mat4 matrix, string name)
 {
     GLint loc = get_uniform_location(name);
     glUniformMatrix4fv(loc, 1, GL_FALSE, value_ptr(matrix));
+}
+
+void inline Renderer::load_uniform(vec4 vector, string name)
+{
+    GLint loc = get_uniform_location(name);
+    glUniform4fv(loc, 1, (GLfloat*)&(vector));
 }
 
 void inline Renderer::load_uniform(vec3 vector, string name)
@@ -280,21 +294,19 @@ void Renderer::draw()
 }
 
 void Renderer::update_lighting()
-{
-	Light test1;
-	test1.position = vec4(80, 70, 10, 0); 
-	
-	Light test2;
-	test2.position = vec4(100,90,15,0);
-	//vector<Light> temp = {test1, test2};
-	vector<Light> temp = {test1, test2};
-	
-	draw_shadow_maps(temp);
+{	
+	draw_shadow_maps(light_sources);
 
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
 	
-	//for(uint i=0; i<shadow_maps.size(); i++)
+	for(uint i=0; i<light_sources.size(); i++)
+	{
+		load_uniform(light_sources[i].position, "lights[" + to_string(i) + "].position");
+		load_uniform(light_sources[i].color, "lights[" + to_string(i) + "].color");
+	}
+     
+	//for(uint i=0; i<shadow_maps.size(); i++)a
 	shadow_maps[0].load_to_GPU(current_program);
 }
 
