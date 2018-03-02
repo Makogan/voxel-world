@@ -104,7 +104,7 @@ class Shadow_Map : public Texture
 {
 public:
     Shadow_Map();
-    void load_to_GPU(GLuint, GLuint);
+    void load_to_GPU(GLuint);
 };
 
 struct Mesh

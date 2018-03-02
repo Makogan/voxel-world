@@ -288,13 +288,13 @@ Shadow_Map::Shadow_Map()
 	openGLerror();
 }
 
-void Shadow_Map::load_to_GPU(GLuint program, GLuint index)
+void Shadow_Map::load_to_GPU(GLuint program)
 {	
-/*	glUseProgram(program);
-	glActiveTexture(GL_TEXTURE1+ index);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	glUseProgram(program);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, textureID);
 
-	string name = "depth_maps[" + to_string(index) + "]";
+	string name = "depth_maps";
 
 	GLint loc = glGetUniformLocation(program, name.c_str());
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
@@ -306,7 +306,7 @@ void Shadow_Map::load_to_GPU(GLuint program, GLuint index)
 		return;
 	}
 	
-	glUniform1i(loc,1 + index);*/
+	glUniform1i(loc,1);
 }
 //########################################################################################
 

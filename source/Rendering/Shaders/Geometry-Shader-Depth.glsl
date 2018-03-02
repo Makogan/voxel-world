@@ -4,7 +4,7 @@ layout (triangles) in;
 layout (triangle_strip, max_vertices=136) out;
 
 uniform mat4 shadowMatrices[6];
-uniform int map_index = 0;
+uniform int map_index = 1;
 
 out vec4 FragPos; // FragPos from GS (output per emitvertex)
 

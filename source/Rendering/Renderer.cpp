@@ -286,6 +286,7 @@ void Renderer::update_lighting()
 	
 	Light test2;
 	test2.position = vec4(100,90,15,0);
+	//vector<Light> temp = {test1, test2};
 	vector<Light> temp = {test1, test2};
 	
 	draw_shadow_maps(temp);
@@ -293,8 +294,8 @@ void Renderer::update_lighting()
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
 	
-	for(uint i=0; i<shadow_maps.size(); i++)
-	shadow_maps[i].load_to_GPU(current_program, i);
+	//for(uint i=0; i<shadow_maps.size(); i++)
+	shadow_maps[0].load_to_GPU(current_program);
 }
 
 //TODO: refactor this into a memeber field and function of Renderer
@@ -316,8 +317,8 @@ void Renderer::render()
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
 	
-	for(uint i=0; i<shadow_maps.size(); i++)
-	shadow_maps[i].load_to_GPU(current_program, i);
+	//for(uint i=0; i<shadow_maps.size(); i++)
+	shadow_maps[0].load_to_GPU(current_program);
 
 
 	glViewport(0, 0, cam->getWidth(), cam->getHeight());
