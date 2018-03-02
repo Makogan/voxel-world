@@ -60,6 +60,7 @@ class Renderer
         void inline load_uniform(mat4 matrix, string name);
         void inline load_uniform(vec3 vector, string name);
         void inline load_uniform(float num, string name);
+        void inline load_uniform(int num, string name);
 
         void setup_light_perspectives(GLuint program, Light &light);
      
@@ -84,6 +85,7 @@ class Renderer
         void change_active_program(GLuint newProgram);      //Change the current shading program
 
         void update(GLFWwindow* window);                    //Update window (swap buffers, poll events, clear)
+        void update_lighting();
         void render();                                      //render
         void clear();                                       //clear render queue
 };

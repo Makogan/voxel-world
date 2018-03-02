@@ -64,13 +64,15 @@ Renderer::Renderer(int width, int height)
     
     FBOs.push_back(0);
     FBOs.push_back(0);
-    glGenFramebuffers(1, &FBOs[1]);
+	glGenFramebuffers(1, &FBOs[1]);
+	
+	shadow_maps.push_back(Shadow_Map());
 
     current_program = shading_programs[SHADER_3D].programID;
 
 	//create the camera
 	set_camera(new Camera(mat3(1), 
-	vec3(80,70,10), width, height));
+		vec3(80,70,10), width, height));
 
 	openGLerror();
 }
@@ -148,6 +150,12 @@ void inline Renderer::load_uniform(float num, string name)
 {
     GLint loc = get_uniform_location(name);
     glUniform1f(loc, num);
+}
+
+void inline Renderer::load_uniform(int num, string name)
+{
+    GLint loc = get_uniform_location(name);
+    glUniform1i(loc, num);
 }
 /** 
  * 	Update general rendering values
@@ -231,14 +239,16 @@ void Renderer::draw_shadow_maps(vector<Light> &lights)
     current_program = shading_programs[SHADER_DEPTH].programID;
     glUseProgram(current_program);
 
-    shadow_maps.resize(lights.size());
+    //shadow_maps.resize(lights.size());
 
     glViewport(0, 0, 2048, 2048);
     glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_SHADOW_MAP]);
     
     for(uint i=0; i<lights.size(); i++)
     {
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadow_maps[i].textureID, 0);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadow_maps[0].textureID, 0);
+		
+		load_uniform((int)i, "map_index");
 
         glDrawBuffer(GL_NONE); 
         glReadBuffer(GL_NONE);
@@ -269,37 +279,55 @@ void Renderer::draw()
 	}
 }
 
-extern GLuint FramebufferNamet;
-extern GLuint depth_mapt;
+void Renderer::update_lighting()
+{
+	Light test1;
+	test1.position = vec4(80, 70, 10, 0); 
+	
+	Light test2;
+	test2.position = vec4(100,90,15,0);
+	vector<Light> temp = {test1, test2};
+	
+	draw_shadow_maps(temp);
+
+	current_program = shading_programs[SHADER_3D].programID;
+	glUseProgram(current_program);
+	
+	for(uint i=0; i<shadow_maps.size(); i++)
+	shadow_maps[i].load_to_GPU(current_program, i);
+}
+
+//TODO: refactor this into a memeber field and function of Renderer
+extern bool changed;
 /**
  * Render all elements in the current render queue
  */
 void Renderer::render()
 {
-    Light test1;
-	test1.position = vec4(80, 70, 10, 0); 
-	
-	Light test2;
-	test2.position = vec4(100,90,15,0);
-    vector<Light> temp = {test1, test2};
     //prevent other threads from writing to the queue
-    busy_queue.lock();
-    
-    draw_shadow_maps(temp);
+	busy_queue.lock();
+	
+	if(changed)
+	{
+		update_lighting();
+		changed = false;
+	}
 
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
 	
+	for(uint i=0; i<shadow_maps.size(); i++)
+	shadow_maps[i].load_to_GPU(current_program, i);
+
+
 	glViewport(0, 0, cam->getWidth(), cam->getHeight());
     glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_DEFAULT]);
     
-    for(uint i=0; i<shadow_maps.size(); i++)
-        shadow_maps[i].load_to_GPU(current_program, i);
-
 	draw();
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	openGLerror();
+
 	//Allow other threads to write to the queue
 	busy_queue.unlock();
 }

@@ -9,6 +9,9 @@ Todo:
       (Need continents and oceans, also river and lake generation would be nice)
     ☐ Research river and biome generation @high 
   Coding:
+    ☐ Re-design shadowing pipeline @low 
+      (We can get a maximum of 32 lights by redering a coloured scene, tehn render a
+      binary shadowed scene, then shade based on the shadowed values)
     ☐ Create more shaders and create the code to select them appropriately
     ☐ Modify shaders to have multiple textures and potentially mesh information @medium 
     ☐ Smooth cube edges to create less blocky feeling @medium  

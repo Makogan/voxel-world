@@ -257,24 +257,32 @@ void Texture::clear()
 */
 //========================================================================================
 
+bool once=true;
+GLuint shadowMapArray;
 Shadow_Map::Shadow_Map()
 {
-	/*GLint temp; 
-	glGetIntegerv(GL_MAX_TEXTURE_UNITS, &temp);
-	cout << temp << endl;*/
-	glGenTextures(1, &textureID);
+	if(once)
+	{
+		glGenTextures(1, &shadowMapArray);
+		once = false;
 
-	const unsigned int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
-	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-	for (unsigned int i = 0; i < 6; ++i)
+		glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, shadowMapArray);
+		glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY,1, GL_DEPTH_COMPONENT32F, 2048, 2048, 6*10);
+
+		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);  
+	}
+
+	textureID = shadowMapArray;
+
+	//const unsigned int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
+	//glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+	/*for (unsigned int i = 0; i < 6; ++i)
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, 
-				SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); 
-
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);  
+				SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); */
 
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	openGLerror();
@@ -282,10 +290,7 @@ Shadow_Map::Shadow_Map()
 
 void Shadow_Map::load_to_GPU(GLuint program, GLuint index)
 {	
-	glUseProgram(program);
-
-	
-	/*glUseProgram(program);
+/*	glUseProgram(program);
 	glActiveTexture(GL_TEXTURE1+ index);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
