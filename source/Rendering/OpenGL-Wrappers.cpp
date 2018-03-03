@@ -253,61 +253,27 @@ void Texture::clear()
 
 //========================================================================================
 /*
-*	Shadow_Map Functions:
+*	Texture Functions:
 */
 //========================================================================================
 
-bool once=true;
-GLuint shadowMapArray;
-Shadow_Map::Shadow_Map()
+Voxel_Map::Voxel_Map(float width, float depth, float height)
 {
-	if(once)
-	{
-		glGenTextures(1, &shadowMapArray);
-		once = false;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_3D, textureID);
 
-		glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, shadowMapArray);
-		glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY,1, GL_DEPTH_COMPONENT32F, 2048, 2048, 6*10);
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, width, height, depth, 0, GL_RGBA, 
+		GL_INT, NULL);
 
-		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);  
-	}
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
-	textureID = shadowMapArray;
-
-	//const unsigned int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;
-	//glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
-	/*for (unsigned int i = 0; i < 6; ++i)
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, 
-				SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL); */
-
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	openGLerror();
+	// Clean up
+	glBindTexture(target, 0);
 }
 
-void Shadow_Map::load_to_GPU(GLuint program)
-{	
-	glUseProgram(program);
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, textureID);
-
-	string name = "depth_maps";
-
-	GLint loc = glGetUniformLocation(program, name.c_str());
-	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
-	{
-		cerr << "Error returned when trying to find depth_map uniform."
-			<< "\nuniform: " << name 
-			<< "\nError num: " << loc
-			<< endl;
-		return;
-	}
-	
-	glUniform1i(loc,1);
-}
 //########################################################################################
 
 //========================================================================================

@@ -51,11 +51,9 @@ class Renderer
         vector<Object_3D*> render_queue;        //!< Queue of objects to render 
                                                 //!< in the current frame
         vector<GLuint> FBOs;
-        vector<Shadow_Map> shadow_maps;
         vector<Light> light_sources;
 
-        void draw();       
-        void draw_shadow_maps(vector<Light>&);                    
+        void draw();                     
 
         GLint inline get_uniform_location(string name);
         void inline load_uniform(mat4 matrix, string name);
@@ -63,8 +61,6 @@ class Renderer
         void inline load_uniform(vec3 vector, string name);
         void inline load_uniform(float num, string name);
         void inline load_uniform(int num, string name);
-
-        void setup_light_perspectives(GLuint program, Light &light);
      
     public:
         mutex busy_queue;           //!< Lock to synchronize queue IO
@@ -76,6 +72,9 @@ class Renderer
         ~Renderer();                        //Destructor
         
         void set_camera(Camera *new_cam);               //Set the main camera
+
+        void set_voxelizer_origin(ivec3);
+        void set_voxelizer_dimensions(float width, float depth, float height);
         
         void add_data(Object_3D*);                          //Add rendering info to the render queue
 
@@ -87,7 +86,6 @@ class Renderer
         void change_active_program(GLuint newProgram);      //Change the current shading program
 
         void update(GLFWwindow* window);                    //Update window (swap buffers, poll events, clear)
-        void update_lighting();
         void render();                                      //render
         void clear();                                       //clear render queue
 };

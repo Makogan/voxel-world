@@ -42,6 +42,11 @@ ostream &operator<<(ostream &os, vec3 &v)
     return os << "(" << v.x <<", "<< v.y << ", "<< v.z <<")";
 }
 
+ostream &operator<<(ostream &os, ivec3 &v)
+{
+    return os << "(" << v.x <<", "<< v.y << ", "<< v.z <<")";
+}
+
 /**
 * Print a vec4
 */

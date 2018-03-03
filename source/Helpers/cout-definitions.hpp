@@ -38,6 +38,7 @@ ostream &operator<<(ostream &os, vec2 &v);
 * Print a vec3
 */
 ostream &operator<<(ostream &os, vec3 &v);
+ostream &operator<<(ostream &os, ivec3 &v);
 /*
 * Print a vec4
 */

@@ -24,16 +24,31 @@ layout(std430, binding = 3) buffer instance_buffer
 };
 
 out vec3 normal; 
-out vec3 vertexPos; //projected vertex
 out vec2 texture_coord;
 
-uniform mat4 view = mat4(1); //Camera orientation and position
-uniform mat4 proj = mat4(1); //The projection parameters (FOV, viewport dimensions)
+uniform float width = 128;
+uniform float depth = 128;
+uniform float height = 128;
+
+uniform float voxel_size = 1;
+uniform vec3 origin = vec3(0,0,0);
+
+uniform float level=0;
 
 void main()
 {
-    texture_coord = texture_coordinate;
-    gl_Position = proj*view*(vec4(position, 1.0) + vec4(vec3(cubes_info[gl_InstanceID]),0));
+    texture_coord = texture_coordinate; 
+    vec4 pos = (vec4(position, 1.0) + vec4(vec3(cubes_info[gl_InstanceID]),0));
+
+    pos-=vec4(origin, 0);
+
+    pos.x = (2.f*pos.x-width)/(width);
+    pos.y = (2.f*pos.y-depth)/(depth);
+
+    pos.z -= level;
+    pos.z *= 1.f/voxel_size;
+
+    gl_Position = pos;
+
     normal = normalize(norm);
-    vertexPos = vec3(vec4(position+vec3(cubes_info[gl_InstanceID]), 1.0)); //calculate the transformed pos
 }

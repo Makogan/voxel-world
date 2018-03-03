@@ -25,7 +25,6 @@ in vec2 texture_coord;
 out vec4 outColor;//Final color of the pixel
 
 uniform sampler2D text;
-uniform samplerCubeArray depth_maps;
 uniform Light lights[];
 
 uniform vec4 color = vec4(1);//Default color
@@ -58,14 +57,6 @@ void main()
 			vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
 		vec3 temp = vertexPos-lum; 
-
-		float test = texture(depth_maps, vec4(temp, 0)).r;
-		double d = length(temp);
-
-		if(d>test*256 + 0.5) //&& !hit_by_light)
-			color = vec4(test);
-		/*else
-			hit_by_light = true;*/
 
 		outColor += color;
 	}

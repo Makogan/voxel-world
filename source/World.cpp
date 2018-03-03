@@ -398,21 +398,18 @@ World::~World()
     delete(loaded_chunks);
 }
 
-bool changed = false;
 /**
  * Center the frame around \a position \a
  */ 
 void World::center_frame(ivec3 position)
 {
-    //changed=false;
     ivec3 distance = 
         position - origin - ivec3(h_radius/2, h_radius/2, v_radius/2)*CHUNK_DIMS;
     if(abs(distance.x) >= CHUNK_DIMS || abs(distance.y) >= CHUNK_DIMS 
-        || -(distance.z) >= CHUNK_DIMS)
+        || abs(distance.z) >= CHUNK_DIMS)
     {
         origin+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
         loaded_chunks->shift(distance/CHUNK_DIMS);
-        changed=true;
     }
 }
 

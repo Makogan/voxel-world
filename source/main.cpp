@@ -113,8 +113,17 @@ void render_loop(GLFWwindow* window)
 	
     while (!glfwWindowShouldClose(window))
 	{
+		//cout << the_world->origin << endl;
+
 		auto start_time = std::chrono::steady_clock::now();
 		Rendering_Handler->update(window);
+
+		Rendering_Handler->set_voxelizer_origin(the_world->origin);
+		Rendering_Handler->set_voxelizer_dimensions(
+			(the_world->h_radius-1)*CHUNK_DIMS, 
+			(the_world->h_radius-1)*CHUNK_DIMS, 
+			(the_world->v_radius-1)*CHUNK_DIMS
+		);
 
 		currentTime=glfwGetTime();
 		double elapsed = currentTime-prevTime;

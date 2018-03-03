@@ -41,6 +41,7 @@ class Texture;
 class Mesh;
 class Object_3D;
 class Renderer;
+class Voxel_Map;
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -100,10 +101,9 @@ public:
     void clear();
 };
 
-class Shadow_Map : public Texture
+class Voxel_Map : public Texture
 {
-public:
-    Shadow_Map();
+    Voxel_Map(float, float, float);
     void load_to_GPU(GLuint);
 };
 
