@@ -38,6 +38,7 @@ Renderer::Renderer(){}
  * calls. It's intended to be unique but has not been implemented as a singleton
  * be weary!
  */
+Voxel_Map *vMap;
 Renderer::Renderer(int width, int height)
 {
 	render_queue.reserve(4096);
@@ -65,11 +66,13 @@ Renderer::Renderer(int width, int height)
     FBOs.push_back(0);
 	glGenFramebuffers(1, &FBOs[1]);
 
+	vMap = new Voxel_Map(7*16, 7*16, 4*16);
+
     current_program = shading_programs[SHADER_3D].programID;
 
 	//create the camera
 	set_camera(new Camera(mat3(1), 
-		vec3(80,70,10), width, height));
+		vec3(0,0,0), width, height));
 
 	openGLerror();
 }
@@ -230,14 +233,31 @@ void Renderer::render()
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);
 
+	glViewport(0, 0, 7*16, 7*16);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_TEXTURE]);
+
+	for(uint i=0; i<4*16; i++)
+	{
+		glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, 
+			vMap->textureID, 0, i);
+
+		glClearColor(0.f, 0.f, 1.f, 1.0f);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+		load_uniform((float)i, "level");
+		draw();
+	}
+
 	glViewport(0, 0, cam->getWidth(), cam->getHeight());
     glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_DEFAULT]);
-    
+	current_program = shading_programs[SHADER_3D].programID;
+	glUseProgram(current_program);
+
+	vMap->load_to_GPU(current_program);
+	
 	draw();
 
 	openGLerror();
-
-	current_program = shading_programs[SHADER_3D].programID;
 
 	//Allow other threads to write to the queue
 	busy_queue.unlock();
@@ -256,6 +276,16 @@ void Renderer::set_voxelizer_origin(ivec3 origin)
 
 void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 {
+	current_program = shading_programs[SHADER_VOXELIZER].programID;
+	glUseProgram(current_program);
+
+	load_uniform(width, "width");
+	load_uniform(height, "height");
+	load_uniform(depth, "depth");
+
+	current_program = shading_programs[SHADER_3D].programID;
+	glUseProgram(current_program);
+	
 	load_uniform(width, "width");
 	load_uniform(height, "height");
 	load_uniform(depth, "depth");

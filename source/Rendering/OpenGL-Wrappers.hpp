@@ -103,6 +103,7 @@ public:
 
 class Voxel_Map : public Texture
 {
+public:
     Voxel_Map(float, float, float);
     void load_to_GPU(GLuint);
 };

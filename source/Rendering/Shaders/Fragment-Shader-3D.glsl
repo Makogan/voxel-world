@@ -25,7 +25,11 @@ in vec2 texture_coord;
 out vec4 outColor;//Final color of the pixel
 
 uniform sampler2D text;
-uniform Light lights[];
+uniform sampler3D voxel_map;
+
+uniform float width = 128;
+uniform float depth = 128;
+uniform float height = 128;
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
@@ -61,5 +65,11 @@ void main()
 		outColor += color;
 	}
 
-	//outColor = outColor/2.f;
+	vec3 pos = vertexPos;
+	pos.x = (2.f*pos.x-width+2)/(width-2);
+    pos.y = (2.f*pos.y-depth+2)/(depth-2);
+
+	pos.z *= 1.f/(height);
+
+	outColor = texture(voxel_map, pos);
 }

@@ -263,7 +263,7 @@ Voxel_Map::Voxel_Map(float width, float depth, float height)
 	glBindTexture(GL_TEXTURE_3D, textureID);
 
 	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, width, height, depth, 0, GL_RGBA, 
-		GL_INT, NULL);
+		GL_FLOAT, NULL);
 
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -271,7 +271,26 @@ Voxel_Map::Voxel_Map(float width, float depth, float height)
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// Clean up
-	glBindTexture(target, 0);
+	glBindTexture(GL_TEXTURE_3D, 0);
+}
+
+void Voxel_Map::load_to_GPU(GLuint program)
+{
+	glUseProgram(program);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_3D, textureID);
+
+	GLint loc = glGetUniformLocation(program, "voxel_map");
+	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
+	{
+		cerr << "Error returned when trying to find texture uniform."
+			<< "\nuniform: vocel_map"
+			<< "Error num: " << loc
+			<< endl;
+		return;
+	}
+	
+	glUniform1i(loc,1);
 }
 
 //########################################################################################
