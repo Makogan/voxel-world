@@ -45,6 +45,13 @@ vec4 fetchVoxel(vec3 pos)
 	return voxelVal;
 }
 
+vec4 grabVoxel(vec3 pos)
+{
+	vec4 voxelVal = texelFetch(voxel_map, ivec3(round(pos)), 0);
+
+	return voxelVal;
+}
+
 float sign(float val)
 {
 	if(val > 0)
@@ -110,16 +117,16 @@ void main()
 	{
 		count++;
 		//start = get_next_voxel(start, direction);
-		start += direction*0.2;
-		vec4 voxel_val = fetchVoxel(start+direction*0.1);
+		start += direction*0.02;
+		vec4 voxel_val = grabVoxel(start+direction*0.1);
 
-		if (voxel_val.w>0 && length(vertexPos-start)>1.5)
+		if (voxel_val.w>0 && length(vertexPos-start)>0.01)
 		{
-			color /= 2.f;
+			color 	/= 2.0f;
 			break;
 		}
 	}
-	while(count < 50);
+	while(count < 250);
 
 	outColor = color;
 }
