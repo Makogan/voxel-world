@@ -262,7 +262,7 @@ Voxel_Map::Voxel_Map(float width, float depth, float height)
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_3D, textureID);
 
-	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, width, height, depth, 0, GL_RGBA, 
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, width, depth, height, 0, GL_RGBA, 
 		GL_FLOAT, NULL);
 
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

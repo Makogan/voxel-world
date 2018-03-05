@@ -73,6 +73,7 @@ void Cube::initialize()
     //TODO: turn this into a list of textures
     //Load texture information to GPU (currently single, change to array)
     textures[0]->load_to_GPU(Rendering_Handler->current_program);
+    textures[0]->load_to_GPU(Rendering_Handler->shading_programs[1].programID);
 }
 
 /**

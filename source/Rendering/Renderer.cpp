@@ -72,7 +72,7 @@ Renderer::Renderer(int width, int height)
 
 	//create the camera
 	set_camera(new Camera(mat3(1), 
-		vec3(0,0,0), width, height));
+		vec3(0,0,10), width, height));
 
 	openGLerror();
 }
@@ -241,7 +241,7 @@ void Renderer::render()
 		glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, 
 			vMap->textureID, 0, i);
 
-		glClearColor(0.f, 0.f, 1.f, 1.0f);
+		glClearColor(0.f, 0.f, 0.f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		load_uniform((float)i, "level");
@@ -279,13 +279,6 @@ void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);
 
-	load_uniform(width, "width");
-	load_uniform(height, "height");
-	load_uniform(depth, "depth");
-
-	current_program = shading_programs[SHADER_3D].programID;
-	glUseProgram(current_program);
-	
 	load_uniform(width, "width");
 	load_uniform(height, "height");
 	load_uniform(depth, "depth");

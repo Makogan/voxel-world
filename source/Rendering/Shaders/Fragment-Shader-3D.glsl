@@ -27,49 +27,99 @@ out vec4 outColor;//Final color of the pixel
 uniform sampler2D text;
 uniform sampler3D voxel_map;
 
-uniform float width = 128;
-uniform float depth = 128;
-uniform float height = 128;
-
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
 //uniform vec3 lum = vec3(100,90,15); vec3(80,70,10);//A unique light position
 
-uniform vec3 lums[2] = {vec3(80,70,10), vec3(80,90,50)};
+uniform vec3 lums[2] = {vec3(0,0,10), vec3(80,90,50)};
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
+vec4 fetchVoxel(vec3 pos)
+{
+	pos += vec3(1,1,0);
+	vec4 voxelVal = texelFetch(voxel_map, ivec3(pos-vec3(0.4999, 0.4999, 0)), 0);
+	if(voxelVal.w==0)
+		voxelVal = texelFetch(voxel_map, ivec3(pos-vec3(0.5001, 0.5001, 0)), 0);
+
+	return voxelVal;
+}
+
+float sign(float val)
+{
+	if(val > 0)
+		return 1.f;
+	else if(val < 0)
+		return -1.f;
+
+	else return 0.f;
+}
+vec3 get_next_voxel(vec3 start, vec3 direction)
+{
+	direction = normalize(direction);
+
+	float xdir, ydir, zdir;
+	xdir = direction.x;
+	ydir = direction.y;
+	zdir = direction.z;
+
+	float next_x = int(start.x)+sign(xdir);//add voxel size coefficient ehre
+	float next_y = int(start.y)+sign(ydir);
+	float next_z = int(start.z)+sign(zdir);
+
+	vec3 offset = vec3(next_x, next_y, next_z) - start;
+
+	float x_coeff, y_coeff, z_coeff;
+
+	x_coeff = offset.x/xdir; 
+	y_coeff = offset.y/ydir; 
+	z_coeff = offset.z/zdir; 
+
+	float coeff = min(abs(x_coeff), abs(y_coeff));
+	coeff = min(coeff, abs(z_coeff));
+
+	return start + direction*coeff;
+}
+
 void main()
 {
+	vec3 pos = vertexPos;
+	//pos += vec3(1,1,0);
+
 	outColor = vec4(0);
 
-	bool hit_by_light = false;
-	for(uint i=0 ; i<1; i++)
+	vec4 color = vec4(0);
+	vec3 lum = lums[0];
+	vec3 l = vec3(lum-vertexPos);
+	if(length(l)>0)
+		l = normalize(l);
+	vec3 c = vec3(fetchVoxel(pos));
+	vec3 n = normalize(normal);
+	vec3 e = cameraPos-vertexPos;
+	e = normalize(e);
+	vec3 h = normalize(e+l);
+
+	color = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + 
+		vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
+
+	int count =0;
+	vec3 start = vertexPos;
+	vec3 direction = normalize(lums[0] - vertexPos);
+
+	do
 	{
-		vec4 color = vec4(0);
-		vec3 lum = lums[0];//lights[0].position.xyz;
-		vec3 l = vec3(lum-vertexPos);
-		if(length(l)>0)
-			l = normalize(l);
-		vec3 c = vec3(texture(text,abs(texture_coord)));
-		vec3 n = normalize(normal);
-		vec3 e = cameraPos-vertexPos;
-		e = normalize(e);
-		vec3 h = normalize(e+l);
+		count++;
+		//start = get_next_voxel(start, direction);
+		start += direction*0.2;
+		vec4 voxel_val = fetchVoxel(start+direction*0.1);
 
-		color = vec4(c*(vec3(0.5)+0.5*max(0,dot(n,l))) + 
-			vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
-
-		vec3 temp = vertexPos-lum; 
-
-		outColor += color;
+		if (voxel_val.w>0 && length(vertexPos-start)>1.5)
+		{
+			color /= 2.f;
+			break;
+		}
 	}
+	while(count < 50);
 
-	vec3 pos = vertexPos;
-	pos.x = (2.f*pos.x-width+2)/(width-2);
-    pos.y = (2.f*pos.y-depth+2)/(depth-2);
-
-	pos.z *= 1.f/(height);
-
-	outColor = texture(voxel_map, pos);
+	outColor = color;
 }

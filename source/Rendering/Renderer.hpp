@@ -46,7 +46,8 @@ class Object_3D;
 */
 class Renderer
 {
-    private:
+  //  private:
+public:
         vector<Shading_Program> shading_programs;        //!< Shading programs IDs
         vector<Object_3D*> render_queue;        //!< Queue of objects to render 
                                                 //!< in the current frame

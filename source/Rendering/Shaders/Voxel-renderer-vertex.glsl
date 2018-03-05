@@ -44,18 +44,21 @@ void main()
     vec4 pos = (vec4(position, 1.0) + vec4(vec3(cubes_info[gl_InstanceID]),0));
 
     //pos-=vec4(origin, 0);
+    pos+=ivec4(1,1,-1,0);
 
     h = (pos.z)/(height);
 
-    pos.x = (2.f*pos.x-width+2)/(width-2);
-    pos.y = (2.f*pos.y-depth+2)/(depth-2);
+    pos.x = (2.f*pos.x-width)/(width);
+    pos.y = (2.f*pos.y-depth)/(depth);
 
     pos.z -= level;
-    pos.z *= 1.f/voxel_size;
+    //pos.z *= 1.f/voxel_size;
+    //pos.z = 0.9;
 
     gl_Position = pos;
 
     normalized_pos = vec3(pos);
 
     normal = normalize(norm);
+    texture_coord = texture_coordinate;
 }
