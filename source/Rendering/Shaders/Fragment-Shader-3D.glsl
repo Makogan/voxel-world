@@ -173,7 +173,7 @@ void main()
 		vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
 	int count =0;
-	vec3 start = vertexPos + vec3(0.4999,0.4999,0.4999);
+	vec3 start = vertexPos;
 	vec3 direction = normalize(lums[0] - vertexPos);
 
 	//color = vec4(1,0,0,0);
@@ -182,14 +182,13 @@ void main()
 	{
 		count++;
 		//start = get_voxel(start, direction);
-		start = get_next_voxel(start, direction);
-		//start += direction*0.02;
+		//start = get_next_voxel(start, direction);
+		start += direction*0.02;
 		vec4 voxel_val = grabVoxel(start);
 
-		//if (voxel_val.w>0 && length(vertexPos-start)>0.0001)
+		if (voxel_val.w>0 && length(vertexPos-start)>0.01)
 		{
 			color /= 2.0f;
-			color = vec4(abs(coeff));
 			break;
 		}
 		
