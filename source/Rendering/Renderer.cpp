@@ -282,6 +282,13 @@ void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 	load_uniform(width, "width");
 	load_uniform(height, "height");
 	load_uniform(depth, "depth");
+
+	current_program = shading_programs[SHADER_3D].programID;
+	glUseProgram(current_program);
+
+	load_uniform(width, "width");
+	load_uniform(height, "height");
+	load_uniform(depth, "depth");
 }
 
 /**

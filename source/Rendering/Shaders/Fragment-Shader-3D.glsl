@@ -27,6 +27,10 @@ out vec4 outColor;//Final color of the pixel
 uniform sampler2D text;
 uniform sampler3D voxel_map;
 
+uniform float width;
+uniform float depth;
+uniform float height;
+
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
 
@@ -36,10 +40,13 @@ uniform vec3 cameraDir = vec3(0);
 
 vec4 fetchVoxel(vec3 pos)
 {
-	pos += vec3(1,1,0);
-	vec4 voxelVal = texelFetch(voxel_map, ivec3(pos-vec3(0.4999, 0.4999, 0)), 0);
-	if(voxelVal.w==0)
-		voxelVal = texelFetch(voxel_map, ivec3(pos-vec3(0.5001, 0.5001, 0)), 0);
+	pos += vec3(1,1,0)+vec3(0.001);
+
+	pos.x /= width;
+	pos.y /= depth;
+	pos.z /= height;
+
+	vec4 voxelVal = texture(voxel_map, pos);
 
 	return voxelVal;
 }
@@ -178,23 +185,7 @@ void main()
 
 	//color = vec4(1,0,0,0);
 
-	do
-	{
-		count++;
-		//start = get_voxel(start, direction);
-		start = get_next_voxel(start, direction);
-		//start += direction*0.02;
-		vec4 voxel_val = grabVoxel(start);
-
-		//if (voxel_val.w>0 && length(vertexPos-start)>0.0001)
-		{
-			color /= 2.0f;
-			color = vec4(abs(coeff));
-			break;
-		}
-		
-	}
-	while(count < 250);
+	color = fetchVoxel(vertexPos);
 
 	outColor = color;
 }

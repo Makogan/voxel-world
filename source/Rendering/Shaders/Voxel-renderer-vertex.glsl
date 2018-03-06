@@ -28,6 +28,7 @@ out vec3 normal;
 out vec2 texture_coord;
 
 out float h;
+out float l;
 
 uniform float width = 128;
 uniform float depth = 128;
@@ -61,4 +62,5 @@ void main()
 
     normal = normalize(norm);
     texture_coord = texture_coordinate;
+    l = level;
 }
