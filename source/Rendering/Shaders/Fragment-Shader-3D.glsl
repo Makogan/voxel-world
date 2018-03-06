@@ -27,9 +27,9 @@ out vec4 outColor;//Final color of the pixel
 uniform sampler2D text;
 uniform sampler3D voxel_map;
 
-uniform float width;
-uniform float depth;
-uniform float height;
+uniform float width = 128;
+uniform float depth = 128;
+uniform float height = 128;
 
 uniform vec4 color = vec4(1);//Default color
 //TODO: make this an array
@@ -40,31 +40,42 @@ uniform vec3 cameraDir = vec3(0);
 
 vec4 fetchVoxel(vec3 pos)
 {
-	pos += vec3(1,1,0)+vec3(0.001);
-
-	pos.x /= width;
-	pos.y /= depth;
-	pos.z /= height;
-
-	vec4 voxelVal = texture(voxel_map, pos);
+	pos += vec3(1,1,0);
+	vec4 voxelVal = texelFetch(voxel_map, ivec3(pos-vec3(0.4999, 0.4999, 0)), 0);
+	if(voxelVal.w==0)
+		voxelVal = texelFetch(voxel_map, ivec3(pos-vec3(0.5001, 0.5001, 0)), 0);
 
 	return voxelVal;
 }
 
 vec4 grabVoxel(vec3 pos)
 {
-	//pos += vec3(0.5,0.5,0);
-	vec4 voxelVal = texelFetch(voxel_map, ivec3(round(pos)), 0);
+	pos = /*vec3(0.5,0.5,0.5);*/round(pos);
+
+	pos.x /= (width-1);
+	pos.y /= (depth-1);
+	pos.z /= (height-1);
+
+	vec4 voxelVal = texture(voxel_map, pos);
 
 	return voxelVal;
 }
 
+	#define voxel_size 1.0f
 float bound(float val)
 {
-	if(val > 0)
-		return 1.f;
-	return 0.f;
+	if(val >= 0)
+		return voxel_size/2.f;
+	return -voxel_size/2.f;
 }
+
+float map_to_range(float x, float min ,float max)
+{
+	float step = max - min;
+
+	return x - round(x/step)*step;
+}
+
 float coeff;
 vec3 get_next_voxel(vec3 start, vec3 direction)
 {
@@ -76,10 +87,9 @@ vec3 get_next_voxel(vec3 start, vec3 direction)
 	zdir = direction.z;
 
 	float m_x, m_y, m_z; //mapped components at [0,voxel_size] of position
-	#define voxel_size 1.0f
-	m_x = mod(start.x, voxel_size);
-	m_y = mod(start.y, voxel_size);
-	m_z = mod(start.z, voxel_size);
+	m_x = map_to_range(start.x, -voxel_size/2.f, voxel_size/2.f);
+	m_y = map_to_range(start.y, -voxel_size/2.f, voxel_size/2.f);
+	m_z = map_to_range(start.z, -voxel_size/2.f, voxel_size/2.f);
 
 	float bound_x, bound_y, bound_z;
 	bound_x = bound(xdir);
@@ -124,9 +134,9 @@ vec3 get_voxel(vec3 start, vec3 direction)
 
 	ivec3 discretized_pos = ivec3(start);
 
-	vec3 n_x = vec3(sign(direction.x), 0,0);
-	vec3 n_y = vec3(0, sign(direction.y),0);	
-	vec3 n_z = vec3(0, 0,sign(direction.z));
+	vec3 n_x = vec3(-sign(direction.x), 0,0);
+	vec3 n_y = vec3(0, -sign(direction.y),0);	
+	vec3 n_z = vec3(0, 0,-sign(direction.z));
 
 	float bound_x, bound_y, bound_z;
 
@@ -153,7 +163,7 @@ vec3 get_voxel(vec3 start, vec3 direction)
 		t_z = 1.f/0.f;
 
 	t_modem = min(t_x, t_y);
-		t_modem = min(t_modem, t_z);
+	t_modem = min(t_modem, t_z);
 
 	return start + direction*t_modem;
 }
@@ -180,12 +190,27 @@ void main()
 		vec3(0.1)*max(0,pow(dot(h,n), 100)), 1);
 
 	int count =0;
-	vec3 start = vertexPos + vec3(0.4999,0.4999,0.4999);
+	vec3 start = vertexPos;
 	vec3 direction = normalize(lums[0] - vertexPos);
 
 	//color = vec4(1,0,0,0);
 
-	color = fetchVoxel(vertexPos);
+	do
+	{
+		count++;
+		start = get_voxel(start, direction);
+		//start = get_next_voxel(start, direction);
+		//start += direction*0.02;
+		vec4 voxel_val = grabVoxel(start);
+
+		if (voxel_val.w>0 && length(vertexPos-start)>0.01)
+		{
+			color /= 2.0f;
+			break;
+		}
+		
+	}
+	while(count < 250);
 
 	outColor = color;
 }

@@ -26,9 +26,9 @@ layout(std430, binding = 3) buffer instance_buffer
 out vec3 normalized_pos;
 out vec3 normal; 
 out vec2 texture_coord;
+out float l;
 
 out float h;
-out float l;
 
 uniform float width = 128;
 uniform float depth = 128;
