@@ -28,8 +28,6 @@ out vec3 normal;
 out vec2 texture_coord;
 out float l;
 
-out float h;
-
 uniform float width = 128;
 uniform float depth = 128;
 uniform float height = 128;
@@ -45,9 +43,9 @@ void main()
     vec4 pos = (vec4(position, 1.0) + vec4(vec3(cubes_info[gl_InstanceID]),0));
 
     //pos-=vec4(origin, 0);
-    pos+=ivec4(1,1,-1,0);
+    //pos+=vec4(0.5,0.5,0.5,0);
+    pos+=vec4(1,1,-1,0);
 
-    h = (pos.z)/(height);
 
     pos.x = (2.f*pos.x-width)/(width);
     pos.y = (2.f*pos.y-depth)/(depth);

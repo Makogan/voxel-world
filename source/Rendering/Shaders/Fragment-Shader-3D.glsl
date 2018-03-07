@@ -32,6 +32,8 @@ uniform float depth = 128;
 uniform float height = 128;
 
 uniform vec4 color = vec4(1);//Default color
+
+uniform float voxel_size =  0.1;
 //TODO: make this an array
 
 uniform vec3 lums[2] = {vec3(0,0,10), vec3(80,90,50)};
@@ -50,18 +52,33 @@ vec4 fetchVoxel(vec3 pos)
 
 vec4 grabVoxel(vec3 pos)
 {
-	pos = /*vec3(0.5,0.5,0.5);*/round(pos);
+	//pos += vec3(0.5);
+
+	pos = round(pos);
 
 	pos.x /= (width-1);
 	pos.y /= (depth-1);
 	pos.z /= (height-1);
 
 	vec4 voxelVal = texture(voxel_map, pos);
+	//vec4 voxelVal = texelFetch(voxel_map, ivec3(pos), 0);
 
 	return voxelVal;
 }
+/*
+pos += vec3(0.5,0.5,0.5);//+vec3(0.0001);
 
-	#define voxel_size 1.0f
+	//pos = round(pos);
+
+	pos.x /= (width);
+	pos.y /= (depth);
+	pos.z /= (height);
+
+	vec4 voxelVal = texture(voxel_map, pos);
+	//vec4 voxelVal = texelFetch(voxel_map, ivec3(pos), 0);
+
+	return voxelVal;
+*/
 float bound(float val)
 {
 	if(val >= 0)
@@ -127,12 +144,27 @@ float planeIntersection(vec3 ray, vec3 origin, vec3 n, vec3 q)
 	return -1;
 }
 
+float voxel_coord(float x)
+{
+	x += voxel_size/2.f;
+	float result = floor(x/voxel_size)*voxel_size - voxel_size/2.f;
+
+	if(mod(result, voxel_size/2.f) == 0)
+		result-=voxel_size;
+	
+	return result;
+}
+
 float t_modem;
 vec3 get_voxel(vec3 start, vec3 direction)
 {
 	direction = normalize(direction);
 
-	ivec3 discretized_pos = ivec3(start);
+	vec3 discretized_pos;
+
+	discretized_pos.x = voxel_coord(start.x);
+	discretized_pos.y = voxel_coord(start.y);
+	discretized_pos.z = voxel_coord(start.z);
 
 	vec3 n_x = vec3(-sign(direction.x), 0,0);
 	vec3 n_y = vec3(0, -sign(direction.y),0);	
@@ -147,13 +179,13 @@ vec3 get_voxel(vec3 start, vec3 direction)
 	float t_x, t_y, t_z;
 
 	t_x = planeIntersection(direction, start, n_x, 
-		discretized_pos+ivec3(bound_x,0,0));
+		discretized_pos+vec3(bound_x,0,0));
 	
 	t_y = planeIntersection(direction, start, n_y, 
-		discretized_pos+ivec3(0,bound_y,0));
+		discretized_pos+vec3(0,bound_y,0));
 
 	t_z = planeIntersection(direction, start, n_z, 
-		discretized_pos+ivec3(0,0,bound_z));
+		discretized_pos+vec3(0,0,bound_z));
 
 	if(t_x < 0)
 		t_x = 1.f/0.f;
@@ -168,10 +200,17 @@ vec3 get_voxel(vec3 start, vec3 direction)
 	return start + direction*t_modem;
 }
 
+bool out_of_bounds(vec3 pos)
+{
+	if(pos.x < 0 || pos.x > width || pos.y <0 || pos.y > depth || pos.z < 0 || pos.z > height)
+		return true;
+
+	return false;
+}
+
 void main()
 {
 	vec3 pos = vertexPos;
-	//pos += vec3(1,1,0);
 
 	outColor = vec4(0);
 
@@ -193,17 +232,16 @@ void main()
 	vec3 start = vertexPos;
 	vec3 direction = normalize(lums[0] - vertexPos);
 
-	//color = vec4(1,0,0,0);
-
+	//color = grabVoxel(vertexPos);
 	do
 	{
 		count++;
-		start = get_voxel(start, direction);
+		//start = get_voxel(start, direction);
 		//start = get_next_voxel(start, direction);
-		//start += direction*0.02;
-		vec4 voxel_val = grabVoxel(start);
+		start += direction*0.02f;
+		vec4 voxel_val = grabVoxel(vertexPos+vec3(0,0,0.5));//grabVoxel(start);
 
-		if (voxel_val.w>0 && length(vertexPos-start)>0.01)
+		if (voxel_val.w>0 && length(start-vertexPos)>0.1)
 		{
 			color /= 2.0f;
 			break;
