@@ -29,6 +29,6 @@ vec4 colors[] = {vec4(0,0,1,1), vec4(0,1,0,1), vec4(0,1,1,1),
 void main()
 {
     //outColor = colors[int(l)%6]*(abs(normalized_pos.x*normalized_pos.y)+0.4);//vec4(vec3(texture(text, texture_coord)), 1);
-    outColor = vec4(vec3(test), 1.0);
+    outColor = vec4(vec3(test)/10, 1.0);
 
 }

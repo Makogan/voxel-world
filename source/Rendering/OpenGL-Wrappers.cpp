@@ -83,7 +83,7 @@ Shader::Shader(string file, GLenum type)
 		cerr<< endl << source <<endl;
 		cerr << endl << log <<endl;
 	}
-	type = GL_VERTEX_SHADER;
+	type = type;
 }
 
 /**
@@ -146,13 +146,15 @@ Shading_Program::Shading_Program(string *vs, string *ts, string *gs, string *fs)
 	openGLerror();
 	glAttachShader(programID, vertex->shaderID);
 	openGLerror();
-	glAttachShader(programID, fragment->shaderID);
-	openGLerror();
-
+	
 	if(tesselation!=NULL)
 		glAttachShader(programID, tesselation->shaderID);
 	if(geometry!=NULL)
 		glAttachShader(programID, geometry->shaderID);
+
+	glAttachShader(programID, fragment->shaderID);
+	openGLerror();
+
 	openGLerror();
 
 	glLinkProgram(programID);
