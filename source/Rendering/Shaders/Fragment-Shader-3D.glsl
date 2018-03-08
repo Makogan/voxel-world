@@ -33,106 +33,31 @@ uniform float height = 128;
 
 uniform vec4 color = vec4(1);//Default color
 
-uniform float voxel_size =  0.1;
+uniform float voxel_size = 1;
 //TODO: make this an array
 
 uniform vec3 lums[2] = {vec3(0,0,10), vec3(80,90,50)};
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
-vec4 fetchVoxel(vec3 pos)
-{
-	pos += vec3(1,1,0);
-	vec4 voxelVal = texelFetch(voxel_map, ivec3(pos-vec3(0.4999, 0.4999, 0)), 0);
-	if(voxelVal.w==0)
-		voxelVal = texelFetch(voxel_map, ivec3(pos-vec3(0.5001, 0.5001, 0)), 0);
-
-	return voxelVal;
-}
-
 vec4 grabVoxel(vec3 pos)
 {
-	//pos += vec3(0.5);
-
-	pos = round(pos);
-
-	pos.x /= (width-1);
-	pos.y /= (depth-1);
-	pos.z /= (height-1);
-
-	vec4 voxelVal = texture(voxel_map, pos);
-	//vec4 voxelVal = texelFetch(voxel_map, ivec3(pos), 0);
-
-	return voxelVal;
-}
-/*
-pos += vec3(0.5,0.5,0.5);//+vec3(0.0001);
-
-	//pos = round(pos);
+	vec4 voxelVal = texelFetch(voxel_map, ivec3((pos)), 0);
 
 	pos.x /= (width);
 	pos.y /= (depth);
 	pos.z /= (height);
 
-	vec4 voxelVal = texture(voxel_map, pos);
-	//vec4 voxelVal = texelFetch(voxel_map, ivec3(pos), 0);
+	//vec4 voxelVal = texture(voxel_map, pos);
 
 	return voxelVal;
-*/
+}
+
 float bound(float val)
 {
 	if(val >= 0)
 		return voxel_size/2.f;
 	return -voxel_size/2.f;
-}
-
-float map_to_range(float x, float min ,float max)
-{
-	float step = max - min;
-
-	return x - round(x/step)*step;
-}
-
-float coeff;
-vec3 get_next_voxel(vec3 start, vec3 direction)
-{
-	direction = normalize(direction);
-
-	float xdir, ydir, zdir;
-	xdir = direction.x;
-	ydir = direction.y;
-	zdir = direction.z;
-
-	float m_x, m_y, m_z; //mapped components at [0,voxel_size] of position
-	m_x = map_to_range(start.x, -voxel_size/2.f, voxel_size/2.f);
-	m_y = map_to_range(start.y, -voxel_size/2.f, voxel_size/2.f);
-	m_z = map_to_range(start.z, -voxel_size/2.f, voxel_size/2.f);
-
-	float bound_x, bound_y, bound_z;
-	bound_x = bound(xdir);
-	bound_y = bound(ydir);
-	bound_z = bound(zdir);
-
-	float x_coeff, y_coeff, z_coeff;
-
-	x_coeff = (bound_x-m_x)/xdir;
-	y_coeff = (bound_y-m_y)/ydir;
-	z_coeff = (bound_z-m_z)/zdir;
-
-	coeff = min(abs(x_coeff), abs(y_coeff));
-	coeff = min(coeff, abs(z_coeff));
-
-	return start + direction*coeff;
-}
-
-float sign(float x)
-{
-	if(x > 0)
-		return 1;
-	else if(x <0 )
-		return -1;
-
-	return 0;
 }
 
 float planeIntersection(vec3 ray, vec3 origin, vec3 n, vec3 q)
@@ -155,7 +80,6 @@ float voxel_coord(float x)
 	return result;
 }
 
-float t_modem;
 vec3 get_voxel(vec3 start, vec3 direction)
 {
 	direction = normalize(direction);
@@ -194,15 +118,16 @@ vec3 get_voxel(vec3 start, vec3 direction)
 	if(t_z < 0)
 		t_z = 1.f/0.f;
 
-	t_modem = min(t_x, t_y);
-	t_modem = min(t_modem, t_z);
+	float t = min(t_x, t_y);
+	t = min(t, t_z);
 
-	return start + direction*t_modem;
+	return start + direction*t;
 }
 
 bool out_of_bounds(vec3 pos)
 {
-	if(pos.x < 0 || pos.x > width || pos.y <0 || pos.y > depth || pos.z < 0 || pos.z > height)
+	if(pos.x < 0 || pos.x > width || pos.y <0 || pos.y > depth 
+		|| pos.z < 0 || pos.z > height)
 		return true;
 
 	return false;
@@ -232,14 +157,10 @@ void main()
 	vec3 start = vertexPos;
 	vec3 direction = normalize(lums[0] - vertexPos);
 
-	//color = grabVoxel(vertexPos);
 	do
 	{
-		count++;
-		//start = get_voxel(start, direction);
-		//start = get_next_voxel(start, direction);
-		start += direction*0.02f;
-		vec4 voxel_val = grabVoxel(vertexPos+vec3(0,0,0.5));//grabVoxel(start);
+		start = get_voxel(start, direction);
+		vec4 voxel_val = grabVoxel(start);
 
 		if (voxel_val.w>0 && length(start-vertexPos)>0.1)
 		{
@@ -248,7 +169,7 @@ void main()
 		}
 		
 	}
-	while(count < 250);
+	while(!out_of_bounds(start));
 
 	outColor = color;
 }

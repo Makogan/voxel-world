@@ -68,7 +68,7 @@ Renderer::Renderer(int width, int height)
 
 	vMap = new Voxel_Map(7*16, 7*16, 4*16);
 
-    current_program = shading_programs[SHADER_3D].programID;
+	current_program = shading_programs[SHADER_3D].programID;
 
 	//create the camera
 	set_camera(new Camera(mat3(1), 
@@ -233,10 +233,12 @@ void Renderer::render()
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);
 
+	glDepthFunc(GL_LESS);
+
 	glViewport(0, 0, 7*16, 7*16);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_TEXTURE]);
 
-	for(uint i=0; i<4*16; i++)
+	for(int i=0; i<4*16; i++)
 	{
 		glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, 
 			vMap->textureID, 0, i);
@@ -266,6 +268,7 @@ void Renderer::render()
 void Renderer::set_voxelizer_origin(ivec3 origin)
 {
 	vec3 o = vec3(origin);
+	//cout << origin << endl;
 	//o.z = 0;
 
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
