@@ -44,8 +44,8 @@ Renderer::Renderer(int width, int height)
 	render_queue.reserve(4096);
 
 	string s1, s2, s3;
-	s1 = "./Shaders/Vertex-Shader-3D.glsl";
-	s2 = "./Shaders/Fragment-Shader-3D.glsl";
+	s1 = "./Shaders/3D-shader-vertex.glsl";
+	s2 = "./Shaders/3D-shader-fragment.glsl";
 	shading_programs.push_back(Shading_Program(
 		&s1,
 		NULL,
@@ -249,6 +249,8 @@ void Renderer::render()
 		load_uniform((float)i, "level");
 		draw();
 	}
+
+	glGenerateTextureMipmap(vMap->textureID);
 
 	glViewport(0, 0, cam->getWidth(), cam->getHeight());
     glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_DEFAULT]);

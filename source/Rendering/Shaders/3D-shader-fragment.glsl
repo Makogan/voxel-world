@@ -1,6 +1,6 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 /**
- *	@file		Fragment-Shader-3D.glsl
+ *	@file		3D-shader-fragment.glsl
  *	@author		Camilo Talero
  *
  *
@@ -33,7 +33,11 @@ uniform float height = 128;
 
 uniform vec4 color = vec4(1);//Default color
 
-uniform float voxel_size = 1;
+uniform float mip_maps = 1;
+uniform float base_voxel_size = 0.1;
+
+float voxel_size = base_voxel_size;
+float current_mip_map = 0;
 //TODO: make this an array
 
 uniform vec3 lums[2] = {vec3(0,0,10), vec3(80,90,50)};
@@ -42,7 +46,7 @@ uniform vec3 cameraDir = vec3(0);
 
 vec4 grabVoxel(vec3 pos)
 {
-	vec4 voxelVal = texelFetch(voxel_map, ivec3((pos)), 0);
+	vec4 voxelVal = texelFetch(voxel_map, ivec3((pos)), int(current_mip_map));
 
 	pos.x /= (width);
 	pos.y /= (depth);
@@ -136,6 +140,7 @@ bool out_of_bounds(vec3 pos)
 void main()
 {
 	vec3 pos = vertexPos;
+	//pos - vec3(0.5);
 
 	outColor = vec4(0);
 
@@ -157,19 +162,38 @@ void main()
 	vec3 start = vertexPos;
 	vec3 direction = normalize(lums[0] - vertexPos);
 
+	start += direction*base_voxel_size*0.1;
+
+	current_mip_map = mip_maps;
+	voxel_size = base_voxel_size*pow(2, mip_maps);
+	vec4 collision= vec4(0);
 	do
 	{
-		start = get_voxel(start, direction);
+		count++;
+		//start += direction*0.09;
 		vec4 voxel_val = grabVoxel(start);
 
-		if (voxel_val.w>0 && length(start-vertexPos)>0.1)
+		if (voxel_val.w>0 && current_mip_map >=0)
 		{
-			color /= 2.0f;
-			break;
+			if(current_mip_map > 0)
+			{
+				current_mip_map--;
+				voxel_size = base_voxel_size*pow(2, mip_maps);
+			}
+
+			else
+				collision = voxel_val;
+			//break;
 		}
+
+		else
+			start = get_voxel(start, direction);
 		
 	}
-	while(!out_of_bounds(start));
+	while(!out_of_bounds(start) && count < 3000);
+
+	if(collision.w>0)
+		color /= 2.f;
 
 	outColor = color;
 }

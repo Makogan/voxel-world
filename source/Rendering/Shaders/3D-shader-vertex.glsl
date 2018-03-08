@@ -1,6 +1,6 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 /**
- *  @file       Vertex-Shader-3D.glsl
+ *  @file       3D-shader-vertex.glsl
  *	@author 	Camilo Talero
  *
  *
