@@ -34,7 +34,7 @@ enum FBO_type {FBO_DEFAULT=0, FBO_TEXTURE};
 Renderer::Renderer(){}
 
 /**
- * Contructor for the Renderer class. Creates a renderer object that handles all render
+ * Constructor for the Renderer class. Creates a renderer object that handles all render
  * calls. It's intended to be unique but has not been implemented as a singleton
  * be weary!
  */
@@ -67,9 +67,10 @@ Renderer::Renderer(int width, int height)
     FBOs.push_back(0);
 	glGenFramebuffers(1, &FBOs[1]);
 
-	vMap = new Voxel_Map(7*16, 7*16, 4*16);
+	vMap = new Voxel_Map(7*16*2, 7*16*2, 4*16*2);
 
 	current_program = shading_programs[SHADER_3D].programID;
+	glUseProgram(current_program);
 
 	//create the camera
 	set_camera(new Camera(mat3(1), 
@@ -159,6 +160,12 @@ void inline Renderer::load_uniform(float num, string name)
     glUniform1f(loc, num);
 }
 
+void inline Renderer::load_uniform(double num, string name)
+{
+    GLint loc = get_uniform_location(name);
+    glUniform1f(loc, num);
+}
+
 void inline Renderer::load_uniform(int num, string name)
 {
     GLint loc = get_uniform_location(name);
@@ -234,20 +241,16 @@ void Renderer::render()
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);
 
-	glViewport(0, 0, 7*16, 7*16);
+	glViewport(0, 0, 7*16*2, 7*16*2);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_TEXTURE]);
 
-	//for(int i=0; i<4*16; i++)
-	{
-		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-			vMap->textureID, 0);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		vMap->textureID, 0);
 
-		glClearColor(0.f, 0.f, 0.f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.f, 0.f, 0.f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		//load_uniform((float)i, "level");
-		draw();
-	}
+	draw();	
 
 	glGenerateTextureMipmap(vMap->textureID);
 
@@ -287,12 +290,16 @@ void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 	load_uniform(height, "height");
 	load_uniform(depth, "depth");
 
+	load_uniform(0.5, "voxel_size");
+
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
 
 	load_uniform(width, "width");
 	load_uniform(height, "height");
 	load_uniform(depth, "depth");
+
+	load_uniform(0.5*0.1, "base_voxel_size");
 }
 
 /**

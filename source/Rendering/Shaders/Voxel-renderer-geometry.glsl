@@ -15,7 +15,11 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices=136) out;
 
+out float h;
+
 uniform float height = 128;
+
+uniform float voxel_size = 1;
 
 void main()
 {
@@ -25,13 +29,14 @@ void main()
         for(int i = 0; i < 3; i++) // for each triangle's vertices
         {
             vec4 pos = gl_in[i].gl_Position;
-            pos.z = 0.5;
+            h = pos.z;
+
+            pos.z -= (layer+1);
         
-           /* if(voffset >=0 && voffset < voxel_size*0.999)
+            if(pos.z >=0 && pos.z < voxel_size*0.9999)
                 pos.z = 1;
             else 
-                pos.z = 2;*/
-
+                pos.z = 2;
             gl_Position = pos;
             EmitVertex();
         }    

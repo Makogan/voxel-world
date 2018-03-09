@@ -61,6 +61,7 @@ public:
         void inline load_uniform(vec4 vector, string name);
         void inline load_uniform(vec3 vector, string name);
         void inline load_uniform(float num, string name);
+        void inline load_uniform(double num, string name);
         void inline load_uniform(int num, string name);
      
     public:
