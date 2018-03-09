@@ -69,8 +69,15 @@ int main(int argc, char **argv)
 	glfwMakeContextCurrent(window);
 
 	Rendering_Handler = new Renderer(width, height);
+	
+	
+	glDebugMessageCallback(	GL_error_callback, NULL);
+	glEnable(GL_DEBUG_OUTPUT);								//DEBUG :D
+	glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS);	
+
 
 	Cube::initialize();
+	openGLerror();
 
 	//World thread
 	the_world = new World();
@@ -102,6 +109,7 @@ int main(int argc, char **argv)
 //main render loop
 void render_loop(GLFWwindow* window)
 {
+	
 	//Set default OpenGL values for rendering
 	//glClearDepth(0);
 	//glDepthFunc(GL_GREATER);

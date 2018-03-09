@@ -218,6 +218,7 @@ void Renderer::add_data(Object_3D* data)
 
 void Renderer::draw()
 {
+	
 	for(uint i=0; i<render_queue.size(); i++)
 	{
 		Object_3D *render_data = render_queue[i]; 
@@ -226,6 +227,7 @@ void Renderer::draw()
 			&(render_data->types), render_data->layouts, 
 			render_data->mesh_indices, render_data->render_instances);
 	}
+	
 }
 
 //TODO: refactor this into a memeber field and function of Renderer
