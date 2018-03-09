@@ -25,12 +25,10 @@ out vec3 normalized_pos;
 out vec3 normal; 
 out vec2 texture_coord;
 out float l;
-
 out float test;
 
 uniform float width = 128;
 uniform float depth = 128;
-uniform float height = 128;
 
 uniform float voxel_size = 1;
 uniform vec3 origin = vec3(0,0,0);
@@ -45,15 +43,7 @@ void main()
     pos.x = (2.f*pos.x-width+1)/(width-1);
     pos.y = (2.f*pos.y-depth+1)/(depth-1);
 
-    pos.z = cubes_info[gl_InstanceID].z;
-
     test = pos.z + 1;
-    pos.z -= level;
-
-    if(pos.z >=0 && pos.z < voxel_size*0.999)
-        pos.z = 1;
-    else 
-        pos.z = 2;
 
     gl_Position = pos;
 

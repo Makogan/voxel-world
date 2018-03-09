@@ -107,6 +107,7 @@ int openGLerror()
 			cerr<< "Undefined error, you messed up big time now."
 				<< endl;
 	}
+
 	return errorNum;
 }
 //########################################################################################

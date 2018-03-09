@@ -33,7 +33,7 @@ uniform float height = 128;
 
 uniform vec4 color = vec4(1);//Default color
 
-uniform float mip_maps = 1;
+uniform float mip_maps = 0;
 uniform float base_voxel_size = 0.1;
 
 float voxel_size = base_voxel_size;
@@ -48,9 +48,9 @@ vec4 grabVoxel(vec3 pos)
 {
 	vec4 voxelVal = texelFetch(voxel_map, ivec3((pos)), int(current_mip_map));
 
-	pos.x /= (width);
-	pos.y /= (depth);
-	pos.z /= (height);
+	pos.x /= (width-1);
+	pos.y /= (depth-1);
+	pos.z /= (height-1);
 
 	//vec4 voxelVal = texture(voxel_map, pos);
 
@@ -173,7 +173,7 @@ void main()
 		//start += direction*0.09;
 		vec4 voxel_val = grabVoxel(start);
 
-		if (voxel_val.w>0 && current_mip_map >=0)
+		if (voxel_val.w>0 && current_mip_map >=0 && length(start-vertexPos)>0.1)
 		{
 			if(current_mip_map > 0)
 			{
@@ -190,7 +190,7 @@ void main()
 			start = get_voxel(start, direction);
 		
 	}
-	while(!out_of_bounds(start) && count < 3000);
+	while(!out_of_bounds(start) && count < 250);
 
 	if(collision.w>0)
 		color /= 2.f;

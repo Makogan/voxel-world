@@ -54,11 +54,12 @@ Renderer::Renderer(int width, int height)
 	));
 
 	s1 = "./Shaders/Voxel-renderer-vertex.glsl";
+	s2 = "./Shaders/Voxel-renderer-geometry.glsl";
 	s3 = "./Shaders/Voxel-renderer-fragment.glsl";
 	shading_programs.push_back(Shading_Program(
 		&s1,
 		NULL,
-		NULL,
+		&s2,
 		&s3
     ));
     
@@ -233,20 +234,18 @@ void Renderer::render()
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);
 
-	glDepthFunc(GL_LESS);
-
 	glViewport(0, 0, 7*16, 7*16);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_TEXTURE]);
 
-	for(int i=0; i<4*16; i++)
+	//for(int i=0; i<4*16; i++)
 	{
-		glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, 
-			vMap->textureID, 0, i);
+		glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+			vMap->textureID, 0);
 
 		glClearColor(0.f, 0.f, 0.f, 0.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		load_uniform((float)i, "level");
+		//load_uniform((float)i, "level");
 		draw();
 	}
 
