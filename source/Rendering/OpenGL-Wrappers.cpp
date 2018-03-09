@@ -147,10 +147,14 @@ Shading_Program::Shading_Program(string *vs, string *ts, string *gs, string *fs)
 	glAttachShader(programID, vertex->shaderID);
 	openGLerror();
 	
-	if(tesselation!=NULL)
+	if(tesselation!=NULL){
 		glAttachShader(programID, tesselation->shaderID);
-	if(geometry!=NULL)
+		openGLerror();
+	}
+	if(geometry!=NULL){
 		glAttachShader(programID, geometry->shaderID);
+		openGLerror();
+	}
 
 	glAttachShader(programID, fragment->shaderID);
 	openGLerror();
@@ -226,6 +230,8 @@ Texture::~Texture(){}
 //TODO: docuemnt
 void Texture::load_to_GPU(GLuint program)
 {
+	if(program == Rendering_Handler->shading_programs[1].programID)
+		return;
 	glUseProgram(program);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
@@ -356,3 +362,55 @@ Object_3D::Object_3D(Mesh *mesh)
 	mesh_indices = mesh->indices.size();
 }
 //########################################################################################
+
+//#define lcase(X)	case(X): cout << #X << endl; break;
+#define lcase(X) ;
+
+
+void GL_error_callback(GLenum source, GLenum type, GLuint id,
+   GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
+	{
+		//free((void*)42);
+	/*
+	if( true && severity != GL_DEBUG_SEVERITY_NOTIFICATION){
+
+	cout << "GL ERROR CALLBACK: " << endl;
+	cout << "Source: " << source << " : ";
+	switch (source){
+		lcase(GL_DEBUG_SOURCE_API)
+		lcase(GL_DEBUG_SOURCE_WINDOW_SYSTEM)
+		lcase(GL_DEBUG_SOURCE_SHADER_COMPILER)
+		lcase(GL_DEBUG_SOURCE_THIRD_PARTY)
+		lcase(GL_DEBUG_SOURCE_APPLICATION)
+		lcase(GL_DEBUG_SOURCE_OTHER)				//THESE ARN'T DEFINED?
+	}  
+
+	cout << "Type: " <<  type << " : ";
+	switch (type){
+		lcase(GL_DEBUG_TYPE_ERROR)
+		lcase(GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR)
+		lcase(GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR)
+		lcase(GL_DEBUG_TYPE_PORTABILITY)
+		lcase(GL_DEBUG_TYPE_PERFORMANCE)
+		lcase(GL_DEBUG_TYPE_MARKER)
+		lcase(GL_DEBUG_TYPE_PUSH_GROUP)
+		lcase(GL_DEBUG_TYPE_POP_GROUP)
+		lcase(GL_DEBUG_TYPE_OTHER)
+	}
+		
+	cout << "ID: " << id << endl;
+	cout << "Serverity: " << severity << " : ";
+	switch (severity){
+		lcase(GL_DEBUG_SEVERITY_HIGH)
+		lcase(GL_DEBUG_SEVERITY_MEDIUM)
+		lcase(GL_DEBUG_SEVERITY_LOW)
+		lcase(GL_DEBUG_SEVERITY_NOTIFICATION)
+	}
+	cout << "Length: " << length << endl;
+	cout << "Message: " << message << endl;
+	cout << "UserParam: " << userParam << endl;
+	cout << "END: GL ERROR CALLBACK: " << endl;
+
+	
+	}*/
+}

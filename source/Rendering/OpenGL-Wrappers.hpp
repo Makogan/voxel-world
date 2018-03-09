@@ -159,3 +159,6 @@ void Object_3D::set_instance_data(Renderer* handler, vector<T> info)
     render_instances = info.size();
 }
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+void GL_error_callback(GLenum source, GLenum type, GLuint id,
+   GLenum severity, GLsizei length, const GLchar* message, const void* userParam);

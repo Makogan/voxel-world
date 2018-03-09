@@ -27,10 +27,10 @@ void main()
             vec4 pos = gl_in[i].gl_Position;
             pos.z = 0.5;
         
-           /* if(voffset >=0 && voffset < voxel_size*0.999)
-                pos.z = 1;
-            else 
-                pos.z = 2;*/
+           // if(voffset >=0 && voffset < voxel_size*0.999)
+           //     pos.z = 1;
+           // else 
+           //     pos.z = 2;
 
             gl_Position = pos;
             EmitVertex();
