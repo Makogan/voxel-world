@@ -77,8 +77,6 @@ GLFWwindow* create_context(GLFWwindow* other_window, bool visible)
  */
 int openGLerror()
 {
-
-	glFinish();
 	//Check all possible error codes
 	GLenum errorNum = glGetError();
 	switch(errorNum)

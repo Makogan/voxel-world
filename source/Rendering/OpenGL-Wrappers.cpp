@@ -82,6 +82,8 @@ Shader::Shader(string file, GLenum type)
 
 		cerr<< endl << source <<endl;
 		cerr << endl << log <<endl;
+
+		exit(-1);
 	}
 	type = type;
 }
@@ -140,12 +142,9 @@ Shading_Program::Shading_Program(string *vs, string *ts, string *gs, string *fs)
 	if(gs!=NULL)
 		geometry = new Shader(*gs, GL_GEOMETRY_SHADER);
 
-	openGLerror();
 	//Initialize and create the first rendering program
 	programID = glCreateProgram();
-	openGLerror();
 	glAttachShader(programID, vertex->shaderID);
-	openGLerror();
 	
 	if(tesselation!=NULL)
 		glAttachShader(programID, tesselation->shaderID);
@@ -153,12 +152,26 @@ Shading_Program::Shading_Program(string *vs, string *ts, string *gs, string *fs)
 		glAttachShader(programID, geometry->shaderID);
 
 	glAttachShader(programID, fragment->shaderID);
-	openGLerror();
-
-	openGLerror();
 
 	glLinkProgram(programID);
-	openGLerror();
+	GLint isLinked = 0;
+	glGetProgramiv(programID, GL_LINK_STATUS, &isLinked);
+	if (isLinked == GL_FALSE)
+	{
+		GLint maxLength = 0;
+		glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &maxLength);
+	
+		// The maxLength includes the NULL character
+		string infoLog(maxLength, ' ');
+		glGetProgramInfoLog(programID, maxLength, &maxLength, &infoLog[0]);
+	
+		// The program is useless now. So delete it.
+		glDeleteProgram(programID);
+	
+		cerr << endl << infoLog <<endl;
+
+		exit(-1);
+	}
 }
 //########################################################################################
 
@@ -223,7 +236,7 @@ Texture::Texture(const char* filename, GLuint target)
  */
 Texture::~Texture(){}
 
-//TODO: docuemnt
+//TODO: document
 void Texture::load_to_GPU(GLuint program)
 {
 	if(program == Rendering_Handler->shading_programs[1].programID)

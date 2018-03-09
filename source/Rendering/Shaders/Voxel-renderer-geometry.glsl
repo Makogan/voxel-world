@@ -31,9 +31,9 @@ void main()
             vec4 pos = gl_in[i].gl_Position;
             h = pos.z;
 
-            pos.z -= (layer+1);
+            pos.z -= (layer+1)*voxel_size;
         
-            if(pos.z >=0 && pos.z < voxel_size*0.9999)
+            if(pos.z >=0 && pos.z <= voxel_size)
                 pos.z = 1;
             else 
                 pos.z = 2;

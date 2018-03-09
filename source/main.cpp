@@ -14,6 +14,8 @@
  *	http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
  *	http://www.glfw.org/docs/latest/
  *	http://eastfarthing.com/blog/2015-04-21-noise/
+ *	http://www.seas.upenn.edu/~pcozzi/OpenGLInsights/OpenGLInsights-SparseVoxelization.pdf
+ *	https://github.com/Friduric/voxel-cone-tracing
  */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -69,15 +71,8 @@ int main(int argc, char **argv)
 	glfwMakeContextCurrent(window);
 
 	Rendering_Handler = new Renderer(width, height);
-	
-	
-	glDebugMessageCallback(	GL_error_callback, NULL);
-	glEnable(GL_DEBUG_OUTPUT);								//DEBUG :D
-	glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS);	
-
 
 	Cube::initialize();
-	openGLerror();
 
 	//World thread
 	the_world = new World();
@@ -138,7 +133,7 @@ void render_loop(GLFWwindow* window)
 		Rendering_Handler->render();
 		prevTime=currentTime;
 
-		//cout << 1.d/elapsed << endl;
+		cout << 1.d/elapsed << endl;
 		auto end_time = start_time + frame_duration(1);
 		glFinish();
 		std::this_thread::sleep_until(end_time);

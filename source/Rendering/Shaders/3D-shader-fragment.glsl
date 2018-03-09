@@ -40,19 +40,14 @@ float voxel_size = base_voxel_size;
 float current_mip_map = 0;
 //TODO: make this an array
 
-uniform vec3 lums[2] = {vec3(0,0,10), vec3(80,90,50)};
+uniform vec3 lums[2] = {vec3(40,40,10), vec3(80,90,50)};
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
 vec4 grabVoxel(vec3 pos)
 {
+	pos *= 1.f/base_voxel_size;
 	vec4 voxelVal = texelFetch(voxel_map, ivec3((pos)), int(current_mip_map));
-
-	pos.x /= (width-1);
-	pos.y /= (depth-1);
-	pos.z /= (height-1);
-
-	//vec4 voxelVal = texture(voxel_map, pos);
 
 	return voxelVal;
 }
@@ -77,9 +72,6 @@ float voxel_coord(float x)
 {
 	x += voxel_size/2.f;
 	float result = floor(x/voxel_size)*voxel_size - voxel_size/2.f;
-
-	if(mod(result, voxel_size/2.f) == 0)
-		result-=voxel_size;
 	
 	return result;
 }
@@ -165,35 +157,26 @@ void main()
 	start += direction*base_voxel_size*0.1;
 
 	current_mip_map = mip_maps;
-	voxel_size = base_voxel_size*pow(2, mip_maps);
+	voxel_size = base_voxel_size*pow(2, mip_maps)*0.1;
 	vec4 collision= vec4(0);
 	do
 	{
 		count++;
-		//start += direction*0.09;
 		vec4 voxel_val = grabVoxel(start);
 
-		if (voxel_val.w>0 && current_mip_map >=0 && length(start-vertexPos)>0.1)
+		if (voxel_val.w>0 )
 		{
-			if(current_mip_map > 0)
-			{
-				current_mip_map--;
-				voxel_size = base_voxel_size*pow(2, mip_maps);
-			}
-
-			else
-				collision = voxel_val;
-			//break;
+			if(voxel_val.w>0)
+				color /= 2.f;
+			break;
 		}
 
-		else
-			start = get_voxel(start, direction);
+		//start = get_voxel(start, direction);
+		start += direction*0.05;
 		
 	}
-	while(!out_of_bounds(start) && count < 250);
+	while(!out_of_bounds(start) && count < 500);
 
-	if(collision.w>0)
-		color /= 2.f;
 
 	outColor = color;
 }

@@ -1,4 +1,4 @@
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 /**
  *  @file 		Renderer.cpp
  *	@author		Camilo Talero
@@ -8,13 +8,13 @@
  *
  *   @brief Renderer class implementation
  */
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /*
 *	Includes and macros
 */
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #include "Renderer.hpp"
 
@@ -254,7 +254,7 @@ void Renderer::render()
 
 	draw();	
 
-	glGenerateTextureMipmap(vMap->textureID);
+	//glGenerateTextureMipmap(vMap->textureID);
 
 	glViewport(0, 0, cam->getWidth(), cam->getHeight());
     glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_DEFAULT]);
@@ -301,7 +301,7 @@ void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 	load_uniform(height, "height");
 	load_uniform(depth, "depth");
 
-	load_uniform(0.5*0.1, "base_voxel_size");
+	load_uniform(0.5, "base_voxel_size");
 }
 
 /**
