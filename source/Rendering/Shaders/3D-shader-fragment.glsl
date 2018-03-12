@@ -53,21 +53,17 @@ float sign(float x)
 	return 0;
 }
 
-vec4 grabVoxel(vec3 pos)
+vec4 grabVoxel(vec3 pos, vec3 direction)
 {
-	pos *= 1.f/base_voxel_size;
-	vec4 voxelVal = texelFetch(voxel_map, ivec3((pos)), int(current_mip_map));
 
-/*	pos += vec3(-0.0001*voxel_size);
-	vec4 voxelVal2 = texelFetch(voxel_map, ivec3((pos)), int(current_mip_map));
+	vec3 temp = pos;
 
-	if(voxelVal2.w > 0)
-		voxelVal = voxelVal2;*/
+	pos *= 1.f/voxel_size;
 
-	/**pos.x /= (width);
-	pos.y /= (depth);
-	pos.z /= (height);
-	vec4 voxelVal = texture(voxel_map, pos);*/
+	pos.x /= (width-1);
+	pos.y /= (depth-1);
+	pos.z /= (height-1);
+	vec4 voxelVal = texture(voxel_map, pos);
 
 	return voxelVal;
 }
@@ -88,6 +84,7 @@ float planeIntersection(vec3 ray, vec3 origin, vec3 n, vec3 q)
 	return -1;
 }
 
+float t;
 vec3 voxel_traversal(vec3 pos, vec3 direction)
 {
 	vec3 discretized_pos = floor(pos/voxel_size)*voxel_size;
@@ -103,15 +100,10 @@ vec3 voxel_traversal(vec3 pos, vec3 direction)
 	n_y = vec3(0,step_y,0);
 	n_z = vec3(0, 0,step_z);
 
-	step_x *= voxel_size;
-	step_y *= voxel_size;
-	step_z *= voxel_size;
-
 	float t_x, t_y, t_z;
-
-	t_x = (discretized_pos.x + bound(direction.x) - pos.x)/direction.x;
-	t_y = (discretized_pos.y + bound(direction.y) - pos.y)/direction.y;
-	t_z = (discretized_pos.z + bound(direction.z) - pos.z)/direction.z;
+	t_x = ((discretized_pos.x + bound(direction.x) - pos.x)/direction.x);
+	t_y = ((discretized_pos.y + bound(direction.y) - pos.y)/direction.y);
+	t_z = ((discretized_pos.z + bound(direction.z) - pos.z)/direction.z);
 
 	if(t_x <= 0)
 		t_x = 1.f/0.f;
@@ -120,7 +112,7 @@ vec3 voxel_traversal(vec3 pos, vec3 direction)
 	if(t_z <= 0)
 		t_z = 1.f/0.f;
 
-	float t = min(t_x, t_y);
+	t = min(t_x, t_y);
 	t = min(t, t_z);
 
 	return pos + t*direction;
@@ -130,7 +122,8 @@ vec3 get_voxel(vec3 start, vec3 direction)
 {
 	direction = normalize(direction);
 
-	vec3 discretized_pos = floor(start/voxel_size)*voxel_size;
+	vec3 discretized_pos;
+	discretized_pos = floor(start/voxel_size)*voxel_size;
 
 	vec3 n_x = vec3(sign(direction.x), 0,0);
 	vec3 n_y = vec3(0, sign(direction.y),0);	
@@ -160,7 +153,7 @@ vec3 get_voxel(vec3 start, vec3 direction)
 	if(t_zp <= 0)
 		t_zp = 1.f/0.f;
 
-	float t = min(t_xp, t_yp);
+	t = min(t_xp, t_yp);
 	t = min(t, t_zp);
 
 	return start + direction*t;
@@ -186,7 +179,7 @@ void main()
 	vec3 l = vec3(lum-vertexPos);
 	if(length(l)>0)
 		l = normalize(l);
-	vec3 c = vec3(1,1,1);//vec3(fetchVoxel(pos));
+	vec3 c = vec3(texture(text, texture_coord));//vec3(1,1,1);//vec3(fetchVoxel(pos));
 	vec3 n = normalize(normal);
 	vec3 e = cameraPos-vertexPos;
 	e = normalize(e);
@@ -207,20 +200,22 @@ void main()
 	do
 	{
 		count++;
-		vec4 voxel_val = grabVoxel(start);
-
+		vec4 voxel_val = grabVoxel(start, direction);
+		start = get_voxel(start, direction);
+		//start = voxel_traversal(start, direction);
 		if (voxel_val.w>0 )
 		{
 			if(voxel_val.w>0)
+			{
 				color /= 2.f;
-			break;
+					color = vec4(t);
+				break;
+			}
 		}
-
-		start = get_voxel(start, direction);
-		//start = voxel_traversal(start, direction);
 		//start += direction*0.01;
 	}
-	while(!out_of_bounds(start) && count < 1000);
+	while(!out_of_bounds(start) && count < 50);
+	
 
 	outColor = color;
 }

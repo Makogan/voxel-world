@@ -249,7 +249,7 @@ void Renderer::render()
     //prevent other threads from writing to the queue
 	busy_queue.lock();
 
-	current_program = shading_programs[2].programID;
+	current_program = shading_programs[1].programID;
 	glUseProgram(current_program);
 
 	glViewport(0, 0, 7*16-1, 7*16-1);
@@ -261,9 +261,9 @@ void Renderer::render()
 	glClearColor(0.f, 0.f, 0.f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
-	//draw();	
+	draw();	
 
 	//glGenerateTextureMipmap(vMap->textureID);
 
