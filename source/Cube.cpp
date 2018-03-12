@@ -45,7 +45,7 @@ vector<Texture*> Cube::textures;
 //!
 //! Global texture and mesh source file strings
 //! 
-vector<string> texture_source_files = {"Assets/Textures/Face_Orientation.png"};
+vector<string> texture_source_files = {"Assets/Textures/white_cube.png"};
 vector<string> obj_source_files = {"Assets/Objs/cube.obj"};
 
 /**

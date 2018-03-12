@@ -208,13 +208,13 @@ void main()
 			if(voxel_val.w>0)
 			{
 				color /= 2.f;
-					color = vec4(t);
+					//color = vec4(t);
 				break;
 			}
 		}
-		//start += direction*0.01;
+		start += direction*0.01;
 	}
-	while(!out_of_bounds(start) && count < 50);
+	while(!out_of_bounds(start) && count < 30);
 	
 
 	outColor = color;
