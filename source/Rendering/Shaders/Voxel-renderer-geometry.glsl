@@ -33,7 +33,7 @@ void main()
 
             pos.z -= (layer+1)*voxel_size;
         
-            if(pos.z >=0 && pos.z <= voxel_size)
+            if(pos.z >=0 && pos.z < voxel_size*0.9)
                 pos.z = 1;
             else 
                 pos.z = 2;

@@ -61,13 +61,22 @@ Renderer::Renderer(int width, int height)
 		NULL,
 		&s2,
 		&s3
+	));
+	
+	s1 = "./Shaders/test-vertex.glsl";
+	s3 = "./Shaders/test-fragment.glsl";
+	shading_programs.push_back(Shading_Program(
+		&s1,
+		NULL,
+		NULL,
+		&s3
     ));
     
     FBOs.push_back(0);
     FBOs.push_back(0);
 	glGenFramebuffers(1, &FBOs[1]);
 
-	vMap = new Voxel_Map(7*16*2, 7*16*2, 4*16*2);
+	vMap = new Voxel_Map(7*16-1, 7*16-1, 4*16-1);
 
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
@@ -240,10 +249,10 @@ void Renderer::render()
     //prevent other threads from writing to the queue
 	busy_queue.lock();
 
-	current_program = shading_programs[SHADER_VOXELIZER].programID;
+	current_program = shading_programs[2].programID;
 	glUseProgram(current_program);
 
-	glViewport(0, 0, 7*16*2, 7*16*2);
+	glViewport(0, 0, 7*16-1, 7*16-1);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_TEXTURE]);
 
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -252,7 +261,9 @@ void Renderer::render()
 	glClearColor(0.f, 0.f, 0.f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	draw();	
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	//draw();	
 
 	//glGenerateTextureMipmap(vMap->textureID);
 
@@ -292,7 +303,7 @@ void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 	load_uniform(height, "height");
 	load_uniform(depth, "depth");
 
-	load_uniform(0.5, "voxel_size");
+	load_uniform(1.f, "voxel_size");
 
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
@@ -301,7 +312,7 @@ void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 	load_uniform(height, "height");
 	load_uniform(depth, "depth");
 
-	load_uniform(0.5, "base_voxel_size");
+	load_uniform(1.f, "base_voxel_size");
 }
 
 /**
