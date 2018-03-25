@@ -1,0 +1,27 @@
+# Ignore Extensions #
+
+*.exe
+*.log
+
+# Ignore directories #
+
+.vscode
+build
+
+# Ignore  CMake files and Make #
+
+Makefile
+
+*CMake*
+
+!CMakeLists.txt
+
+# Ignore doxygen files
+
+*html/d*
+*documentation*
+!refman.pdf
+
+# Ignore executable
+
+*voxel-world*
