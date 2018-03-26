@@ -76,8 +76,6 @@ Renderer::Renderer(int width, int height)
     FBOs.push_back(0);
 	glGenFramebuffers(1, &FBOs[1]);
 
-	vMap = new Voxel_Map(7*16-1, 7*16-1, 4*16-1);
-
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
 
@@ -252,7 +250,7 @@ void Renderer::render()
 	current_program = shading_programs[1].programID;
 	glUseProgram(current_program);
 
-	glViewport(0, 0, 7*16-1, 7*16-1);
+	glViewport(0, 0, (7*16-1)/0.5, (7*16-1)/0.5);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_TEXTURE]);
 
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -296,23 +294,16 @@ void Renderer::set_voxelizer_origin(ivec3 origin)
 
 void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 {
+	vMap = new Voxel_Map(7*16, 7*16, 4*16, 0.5);
+
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);
-
-	load_uniform(width, "width");
-	load_uniform(height, "height");
-	load_uniform(depth, "depth");
-
-	load_uniform(1.f, "voxel_size");
+	vMap->load_dimensions_to_GPU(current_program);
 
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
+	vMap->load_dimensions_to_GPU(current_program);
 
-	load_uniform(width, "width");
-	load_uniform(height, "height");
-	load_uniform(depth, "depth");
-
-	load_uniform(1.f, "voxel_size");
 }
 
 /**

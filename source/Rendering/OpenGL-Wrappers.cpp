@@ -274,12 +274,18 @@ void Texture::clear()
 */
 //========================================================================================
 
-Voxel_Map::Voxel_Map(float width, float depth, float height)
+Voxel_Map::Voxel_Map(float w, float d, float h, float v)
 {
+	width = w;
+	depth = d;
+	height = h;
+	voxel_size = v;
+
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_3D, textureID);
 
-	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, width, depth, height, 0, GL_RGBA, 
+	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA, 
+		(width-1)/v, (depth-1)/v, (height-1)/v, 0, GL_RGBA, 
 		GL_FLOAT, NULL);
 
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -312,14 +318,21 @@ void Voxel_Map::load_to_GPU(GLuint program)
 
 void Voxel_Map::load_dimensions_to_GPU(GLuint program)
 {
-	/*current_program = shading_programs[SHADER_VOXELIZER].programID;
-	glUseProgram(current_program);
+	glUseProgram(program);
 
-	load_uniform(width, "width");
-	load_uniform(height, "height");
-	load_uniform(depth, "depth");
+	GLint loc = glGetUniformLocation(program, "width");
+	glUniform1f(loc, width/voxel_size);
 
-	load_uniform(voxel_size, "voxel_size");*/
+	loc = glGetUniformLocation(program, "height");
+	glUniform1f(loc, height/voxel_size);
+
+	loc = glGetUniformLocation(program, "depth");
+	glUniform1f(loc, depth/voxel_size);
+
+	loc = glGetUniformLocation(program, "voxel_size");
+	glUniform1f(loc, voxel_size);
+
+	openGLerror();
 }
 //########################################################################################
 

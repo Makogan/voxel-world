@@ -21,7 +21,7 @@ uniform float height = 128;
 uniform float width = 128;
 uniform float depth = 128;
 
-uniform float voxel_size = 1;
+uniform float voxel_size = 0;
 uniform vec3 origin = vec3(0,0,0);
 
 
@@ -72,12 +72,14 @@ void main()
                 pos.y = low_bounds.y;
             }
 
+            pos /= voxel_size;
+
             pos.x = (2.f*pos.x-width+1)/(width-1);
             pos.y = (2.f*pos.y-depth+1)/(depth-1);
 
             pos.z -= (layer+1)*voxel_size;
         
-            if(pos.z >=0 && pos.z < voxel_size*0.9)
+            if(pos.z >=0 && pos.z <= 1)
                 pos.z = 1;
             else 
                 pos.z = 2;
