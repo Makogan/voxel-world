@@ -1,4 +1,4 @@
-//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+//^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 /**
  *  @file 		Renderer.cpp
  *	@author		Camilo Talero
@@ -8,13 +8,13 @@
  *
  *   @brief Renderer class implementation
  */
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /*
 *	Includes and macros
 */
-//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 #include "Renderer.hpp"
 
@@ -34,7 +34,7 @@ enum FBO_type {FBO_DEFAULT=0, FBO_TEXTURE};
 Renderer::Renderer(){}
 
 /**
- * Contructor for the Renderer class. Creates a renderer object that handles all render
+ * Constructor for the Renderer class. Creates a renderer object that handles all render
  * calls. It's intended to be unique but has not been implemented as a singleton
  * be weary!
  */
@@ -44,8 +44,8 @@ Renderer::Renderer(int width, int height)
 	render_queue.reserve(4096);
 
 	string s1, s2, s3;
-	s1 = "./Shaders/Vertex-Shader-3D.glsl";
-	s2 = "./Shaders/Fragment-Shader-3D.glsl";
+	s1 = "./Shaders/3D-shader-vertex.glsl";
+	s2 = "./Shaders/3D-shader-fragment.glsl";
 	shading_programs.push_back(Shading_Program(
 		&s1,
 		NULL,
@@ -54,7 +54,17 @@ Renderer::Renderer(int width, int height)
 	));
 
 	s1 = "./Shaders/Voxel-renderer-vertex.glsl";
+	s2 = "./Shaders/Voxel-renderer-geometry.glsl";
 	s3 = "./Shaders/Voxel-renderer-fragment.glsl";
+	shading_programs.push_back(Shading_Program(
+		&s1,
+		NULL,
+		&s2,
+		&s3
+	));
+	
+	s1 = "./Shaders/test-vertex.glsl";
+	s3 = "./Shaders/test-fragment.glsl";
 	shading_programs.push_back(Shading_Program(
 		&s1,
 		NULL,
@@ -66,9 +76,10 @@ Renderer::Renderer(int width, int height)
     FBOs.push_back(0);
 	glGenFramebuffers(1, &FBOs[1]);
 
-	vMap = new Voxel_Map(7*16, 7*16, 4*16);
+	vMap = new Voxel_Map(7*16-1, 7*16-1, 4*16-1);
 
-    current_program = shading_programs[SHADER_3D].programID;
+	current_program = shading_programs[SHADER_3D].programID;
+	glUseProgram(current_program);
 
 	//create the camera
 	set_camera(new Camera(mat3(1), 
@@ -122,9 +133,9 @@ void Renderer::multi_render(GLuint VAO, vector<GLuint> *VBOs,
 /**
  * Error checking and message function for uniforms.
  */ 
-GLint inline Renderer::get_uniform_location(string name)
+GLint inline get_uniform_location(string name)
 {
-    GLint loc = glGetUniformLocation(current_program, name.c_str());
+    GLint loc = glGetUniformLocation(Rendering_Handler->current_program, name.c_str());
 	if(loc == GL_INVALID_VALUE || loc==GL_INVALID_OPERATION)
 	{
 		cerr << "Error returned when trying to find uniform " << name << endl;
@@ -134,31 +145,37 @@ GLint inline Renderer::get_uniform_location(string name)
     return loc;
 }
 
-void inline Renderer::load_uniform(mat4 matrix, string name)
+void inline load_uniform(mat4 matrix, string name)
 {
     GLint loc = get_uniform_location(name);
     glUniformMatrix4fv(loc, 1, GL_FALSE, value_ptr(matrix));
 }
 
-void inline Renderer::load_uniform(vec4 vector, string name)
+void inline load_uniform(vec4 vector, string name)
 {
     GLint loc = get_uniform_location(name);
     glUniform4fv(loc, 1, (GLfloat*)&(vector));
 }
 
-void inline Renderer::load_uniform(vec3 vector, string name)
+void inline load_uniform(vec3 vector, string name)
 {
     GLint loc = get_uniform_location(name);
     glUniform3fv(loc, 1, (GLfloat*)&(vector));
 }
 
-void inline Renderer::load_uniform(float num, string name)
+void inline load_uniform(float num, string name)
 {
     GLint loc = get_uniform_location(name);
     glUniform1f(loc, num);
 }
 
-void inline Renderer::load_uniform(int num, string name)
+void inline load_uniform(double num, string name)
+{
+    GLint loc = get_uniform_location(name);
+    glUniform1f(loc, num);
+}
+
+void inline load_uniform(int num, string name)
 {
     GLint loc = get_uniform_location(name);
     glUniform1i(loc, num);
@@ -210,6 +227,7 @@ void Renderer::add_data(Object_3D* data)
 
 void Renderer::draw()
 {
+	
 	for(uint i=0; i<render_queue.size(); i++)
 	{
 		Object_3D *render_data = render_queue[i]; 
@@ -218,6 +236,7 @@ void Renderer::draw()
 			&(render_data->types), render_data->layouts, 
 			render_data->mesh_indices, render_data->render_instances);
 	}
+	
 }
 
 //TODO: refactor this into a memeber field and function of Renderer
@@ -230,23 +249,23 @@ void Renderer::render()
     //prevent other threads from writing to the queue
 	busy_queue.lock();
 
-	current_program = shading_programs[SHADER_VOXELIZER].programID;
+	current_program = shading_programs[1].programID;
 	glUseProgram(current_program);
 
-	glViewport(0, 0, 7*16, 7*16);
+	glViewport(0, 0, 7*16-1, 7*16-1);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_TEXTURE]);
 
-	for(uint i=0; i<4*16; i++)
-	{
-		glFramebufferTexture3D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_3D, 
-			vMap->textureID, 0, i);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
+		vMap->textureID, 0);
 
-		glClearColor(0.f, 0.f, 0.f, 0.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glClearColor(0.f, 0.f, 0.f, 0.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		load_uniform((float)i, "level");
-		draw();
-	}
+	//glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+	draw();	
+
+	//glGenerateTextureMipmap(vMap->textureID);
 
 	glViewport(0, 0, cam->getWidth(), cam->getHeight());
     glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_DEFAULT]);
@@ -266,6 +285,7 @@ void Renderer::render()
 void Renderer::set_voxelizer_origin(ivec3 origin)
 {
 	vec3 o = vec3(origin);
+	//cout << origin << endl;
 	//o.z = 0;
 
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
@@ -282,6 +302,17 @@ void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 	load_uniform(width, "width");
 	load_uniform(height, "height");
 	load_uniform(depth, "depth");
+
+	load_uniform(1.f, "voxel_size");
+
+	current_program = shading_programs[SHADER_3D].programID;
+	glUseProgram(current_program);
+
+	load_uniform(width, "width");
+	load_uniform(height, "height");
+	load_uniform(depth, "depth");
+
+	load_uniform(1.f, "voxel_size");
 }
 
 /**

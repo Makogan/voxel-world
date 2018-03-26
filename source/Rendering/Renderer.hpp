@@ -37,6 +37,20 @@ class Object_3D;
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 /*
+*	Helper Function Declarations
+*/
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+GLint inline get_uniform_location(string name);
+void inline load_uniform(mat4 matrix, string name);
+void inline load_uniform(vec4 vector, string name);
+void inline load_uniform(vec3 vector, string name);
+void inline load_uniform(float num, string name);
+void inline load_uniform(double num, string name);
+void inline load_uniform(int num, string name);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+/*
 *	Structure definitions
 */
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -55,13 +69,6 @@ public:
         vector<Light> light_sources;
 
         void draw();                     
-
-        GLint inline get_uniform_location(string name);
-        void inline load_uniform(mat4 matrix, string name);
-        void inline load_uniform(vec4 vector, string name);
-        void inline load_uniform(vec3 vector, string name);
-        void inline load_uniform(float num, string name);
-        void inline load_uniform(int num, string name);
      
     public:
         mutex busy_queue;           //!< Lock to synchronize queue IO
