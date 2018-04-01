@@ -45,12 +45,13 @@ Renderer::Renderer(int width, int height)
 
 	string s1, s2, s3;
 	s1 = "./Shaders/3D-shader-vertex.glsl";
-	s2 = "./Shaders/3D-shader-fragment.glsl";
+	s2 = "./Shaders/3D-shader-geometry.glsl";
+	s3 = "./Shaders/3D-shader-fragment.glsl";
 	shading_programs.push_back(Shading_Program(
 		&s1,
 		NULL,
-		NULL,
-		&s2
+		&s2,
+		&s3
 	));
 
 	s1 = "./Shaders/Voxel-renderer-vertex.glsl";
@@ -63,15 +64,6 @@ Renderer::Renderer(int width, int height)
 		&s3
 	));
 	
-	s1 = "./Shaders/test-vertex.glsl";
-	s3 = "./Shaders/test-fragment.glsl";
-	shading_programs.push_back(Shading_Program(
-		&s1,
-		NULL,
-		NULL,
-		&s3
-    ));
-    
     FBOs.push_back(0);
     FBOs.push_back(0);
 	glGenFramebuffers(1, &FBOs[1]);
@@ -82,6 +74,10 @@ Renderer::Renderer(int width, int height)
 	//create the camera
 	set_camera(new Camera(mat3(1), 
 		vec3(0,0,10), width, height));
+
+	glEnable(GL_CULL_FACE); 
+	glFrontFace(GL_CW);
+	glCullFace(GL_FRONT);
 
 	openGLerror();
 }
@@ -192,11 +188,13 @@ void Renderer::update(GLFWwindow* window)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	//Update general uniform values in the rendering program
+	current_program = shading_programs[SHADER_3D].programID;
     glUseProgram(current_program);
     load_uniform(cam->getViewMatrix(), "view");
     load_uniform(cam->getPerspectiveMatrix(), "proj");
-    load_uniform(cam->getPosition(), "camPos");
-    load_uniform(cam->getForward(), "cameraDir");
+    load_uniform(cam->getPosition(), "cameraPos");
+	load_uniform(cam->getForward(), "cameraDir");
+	load_uniform(cam->getFov()+6, "fov");
 
 	glUseProgram(0);
 }
@@ -237,8 +235,6 @@ void Renderer::draw()
 	
 }
 
-//TODO: refactor this into a memeber field and function of Renderer
-extern bool changed;
 /**
  * Render all elements in the current render queue
  */
@@ -247,7 +243,7 @@ void Renderer::render()
     //prevent other threads from writing to the queue
 	busy_queue.lock();
 
-	current_program = shading_programs[1].programID;
+	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);
 
 	glViewport(0, 0, (7*16-1)/0.5, (7*16-1)/0.5);

@@ -321,13 +321,13 @@ void Voxel_Map::load_dimensions_to_GPU(GLuint program)
 	glUseProgram(program);
 
 	GLint loc = glGetUniformLocation(program, "width");
-	glUniform1f(loc, width/voxel_size);
+	glUniform1f(loc, (width-1)/voxel_size);
 
 	loc = glGetUniformLocation(program, "height");
-	glUniform1f(loc, height/voxel_size);
+	glUniform1f(loc, (height-1)/voxel_size);
 
 	loc = glGetUniformLocation(program, "depth");
-	glUniform1f(loc, depth/voxel_size);
+	glUniform1f(loc, (depth-1)/voxel_size);
 
 	loc = glGetUniformLocation(program, "voxel_size");
 	glUniform1f(loc, voxel_size);

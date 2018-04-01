@@ -73,11 +73,12 @@ void main()
             }
 
             pos /= voxel_size;
+            pos.w = 1;
 
-            pos.x = (2.f*pos.x-width+1)/(width-1);
-            pos.y = (2.f*pos.y-depth+1)/(depth-1);
+            pos.x = (2.f*pos.x-width)/(width);
+            pos.y = (2.f*pos.y-depth)/(depth);
 
-            pos.z -= (layer+1)*voxel_size;
+            pos.z -= (layer+1);
         
             if(pos.z >=0 && pos.z <= 1)
                 pos.z = 1;

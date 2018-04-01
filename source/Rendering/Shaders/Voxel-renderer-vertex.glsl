@@ -1,10 +1,6 @@
 //^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 /**
-<<<<<<< HEAD
- *  @file       Vertex-Shader-3D.glsl
-=======
- *  @file       3D-shader-vertex.glsl
->>>>>>> broken_branch
+ *  @file       Voxel-renderer-vertex.glsl
  *	@author 	Camilo Talero
  *
  *

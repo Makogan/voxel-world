@@ -39,7 +39,7 @@ uniform float voxel_size = 1;
 float current_mip_map = 0;
 //TODO: make this an array
 
-vec3 lums[2] = {vec3(0,0,10), vec3(80,90,50)};
+vec3 lums[2] = {vec3(40,40,10), vec3(80,90,50)};
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
@@ -54,14 +54,13 @@ float sign(float x)
 
 vec4 grabVoxel(vec3 pos, vec3 direction)
 {
-
 	vec3 temp = pos;
 
 	pos *= 1.f/voxel_size;
 
-	pos.x /= (width-1);
-	pos.y /= (depth-1);
-	pos.z /= (height-1);
+	pos.x /= (width);
+	pos.y /= (depth);
+	pos.z /= (height);
 	vec4 voxelVal = texture(voxel_map, pos);
 
 	return voxelVal;
@@ -166,19 +165,20 @@ void main()
 	do
 	{
 		count++;
+		//start += direction*0.01;
 		vec4 voxel_val = grabVoxel(start, direction);
 		start = get_voxel(start, direction);
 		if (voxel_val.w>0 )
 		{
 			if(voxel_val.w>0)
 			{
-				color *= length(start-vertexPos)/10;
+				//color *= length(start-vertexPos)/10;
+				color *= 0.5;
 				break;
 			}
 		}
 	}
-	while(!out_of_bounds(start) && count < 30);
-	
+	while(!out_of_bounds(start) && count < 50);
 
 	outColor = color;
 }
