@@ -24,7 +24,6 @@ layout(std430, binding = 3) buffer instance_buffer
 out vec3 normal; 
 out vec2 texture_coord;
 
-
 void main()
 {
     texture_coord = texture_coordinate; 

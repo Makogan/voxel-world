@@ -100,12 +100,12 @@ public:
 
 class Voxel_Map : public Texture
 {
+public:
     float width;
     float height;
     float depth;
     float voxel_size = 1;
 
-public:
     Voxel_Map(float, float, float, float);
     void load_to_GPU(GLuint);
     void load_dimensions_to_GPU(GLuint);

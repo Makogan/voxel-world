@@ -31,6 +31,8 @@ uniform float width = 128;
 uniform float depth = 128;
 uniform float height = 128;
 
+uniform vec3 origin = vec3(0,0,0);
+
 uniform vec4 color = vec4(1);//Default color
 
 uniform float mip_maps = 0;
@@ -39,7 +41,7 @@ uniform float voxel_size = 1;
 float current_mip_map = 0;
 //TODO: make this an array
 
-vec3 lums[2] = {vec3(40,40,10), vec3(80,90,50)};
+vec3 lums[2] = {vec3(160,160,50), vec3(80,90,50)};
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
@@ -52,9 +54,9 @@ float sign(float x)
 	return 0;
 }
 
-vec4 grabVoxel(vec3 pos, vec3 direction)
+vec4 grabVoxel(vec3 pos)
 {
-	vec3 temp = pos;
+	//pos -= origin;
 
 	pos *= 1.f/voxel_size;
 
@@ -165,20 +167,20 @@ void main()
 	do
 	{
 		count++;
-		//start += direction*0.01;
-		vec4 voxel_val = grabVoxel(start, direction);
-		start = get_voxel(start, direction);
+		start += direction*0.01;
+		vec4 voxel_val = grabVoxel(start);
+		//start = get_voxel(start, direction);
 		if (voxel_val.w>0 )
 		{
 			if(voxel_val.w>0)
 			{
-				//color *= length(start-vertexPos)/10;
-				color *= 0.5;
+				color *= length(start-vertexPos)/10 + 0.1;
+				//color *= 0.5;
 				break;
 			}
 		}
 	}
-	while(!out_of_bounds(start) && count < 50);
+	while(!out_of_bounds(start) && count < 200);
 
 	outColor = color;
 }

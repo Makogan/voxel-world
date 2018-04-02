@@ -113,7 +113,6 @@ void render_loop(GLFWwindow* window)
 	glPointSize(10.f);
 	
 	double prevTime = 0, currentTime=0;
-	Rendering_Handler->set_voxelizer_origin(the_world->origin);
 	Rendering_Handler->set_voxelizer_dimensions(
 		(the_world->h_radius)*CHUNK_DIMS, 
 		(the_world->h_radius)*CHUNK_DIMS, 
@@ -127,11 +126,12 @@ void render_loop(GLFWwindow* window)
 		Rendering_Handler->update(window);
 
 		currentTime=glfwGetTime();
+		Rendering_Handler->set_voxelizer_origin(the_world->origin);
 		double elapsed = currentTime-prevTime;
 		Rendering_Handler->render();
 		prevTime=currentTime;
 
-		cout << 1.d/elapsed << endl;
+		//cout << 1.d/elapsed << endl;
 		auto end_time = start_time + frame_duration(1);
 		glFinish();
 		std::this_thread::sleep_until(end_time);
@@ -147,7 +147,7 @@ void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 	while (!glfwWindowShouldClose(window))
 	{
 			auto start_time = std::chrono::steady_clock::now();
-			//the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
+			the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
 			the_world->send_render_data(Rendering_Handler);
 			glFinish();
 			auto end_time = (start_time + world_duration(1));	

@@ -246,7 +246,7 @@ void Renderer::render()
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);
 
-	glViewport(0, 0, (7*16-1)/0.5, (7*16-1)/0.5);
+	glViewport(0, 0, (vMap->width-1)/vMap->voxel_size, (vMap->depth-1)/vMap->voxel_size);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBOs[FBO_TEXTURE]);
 
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -278,19 +278,23 @@ void Renderer::render()
 
 void Renderer::set_voxelizer_origin(ivec3 origin)
 {
-	vec3 o = vec3(origin);
 	//cout << origin << endl;
 	//o.z = 0;
 
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);
 
-	load_uniform(o, "origin");
+	load_uniform(origin, "origin");
+
+	current_program = shading_programs[SHADER_3D].programID;
+	glUseProgram(current_program);
+
+	load_uniform(origin, "origin");
 }
 
 void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 {
-	vMap = new Voxel_Map(7*16, 7*16, 4*16, 0.5);
+	vMap = new Voxel_Map(width, depth, height, 1);
 
 	current_program = shading_programs[SHADER_VOXELIZER].programID;
 	glUseProgram(current_program);

@@ -409,6 +409,7 @@ void World::center_frame(ivec3 position)
         || abs(distance.z) >= CHUNK_DIMS)
     {
         origin+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
+        cout << origin << endl;
         loaded_chunks->shift(distance/CHUNK_DIMS);
     }
 }
@@ -463,10 +464,7 @@ void World::send_render_data(Renderer* handler)
                 //Find the angle in between the looking direction and the relative chunk
                 //direction
                 float angle = acos(dot(c_dir, normalize(handler->cam->getForward())));
-
-                //If the angle is less than the current field of view send data to handler
-                //if(angle < (handler->cam->getFov()))
-                    ((*loaded_chunks)(i,j,k))->send_render_data(handler);
+                ((*loaded_chunks)(i,j,k))->send_render_data(handler);
             }
         }
     }
