@@ -239,6 +239,7 @@ Texture::~Texture(){}
 //TODO: document
 void Texture::load_to_GPU(GLuint program)
 {
+	//TODO: this needs to eb handled better
 	if(program == Rendering_Handler->shading_programs[1].programID)
 		return;
 	glUseProgram(program);

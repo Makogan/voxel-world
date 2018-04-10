@@ -115,8 +115,8 @@ void Chunk::create_cubes(vec3 offset)
     for(int i=0; i<CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS; i++)
     {
         //Sample Perlin noise function
-        double height = 20.d*noise_2D((double)(i/(CHUNK_DIMS*CHUNK_DIMS)) + offset[0], 
-            (double)((i/CHUNK_DIMS)%CHUNK_DIMS + offset[1]));
+        double height = 40.d*noise_2D((double)(i/(CHUNK_DIMS*CHUNK_DIMS)) + offset[0], 
+            (double)((i/CHUNK_DIMS)%CHUNK_DIMS + offset[1])) + 10;
         
         //initialize cube object if needed
         if(chunk_cubes[i]==NULL)
@@ -132,7 +132,7 @@ void Chunk::create_cubes(vec3 offset)
                 i%CHUNK_DIMS + offset[2]));
 
         //Check if the chunk is above the heightmap
-        if(double(i%CHUNK_DIMS) + offset[2]>height)
+        if(double(i%CHUNK_DIMS) + offset[2]>height && double(i%CHUNK_DIMS) + offset[2]> 1)
             chunk_cubes[i]->transparent = true;
     }
 }

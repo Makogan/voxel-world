@@ -25,8 +25,6 @@
 *	Renderer Class implementation:
 */
 //========================================================================================
-enum Shader_type {SHADER_3D=0, SHADER_VOXELIZER};
-enum FBO_type {FBO_DEFAULT=0, FBO_TEXTURE};
 
 /**
  *	Default constructor for the Renderer Class
@@ -73,7 +71,7 @@ Renderer::Renderer(int width, int height)
 
 	//create the camera
 	set_camera(new Camera(mat3(1), 
-		vec3(0,0,10), width, height));
+		vec3(7*16/2,7*16/2,4*16/2), width, height));
 
 	glEnable(GL_CULL_FACE); 
 	glFrontFace(GL_CW);
@@ -281,15 +279,14 @@ void Renderer::set_voxelizer_origin(ivec3 origin)
 	//cout << origin << endl;
 	//o.z = 0;
 
-	current_program = shading_programs[SHADER_VOXELIZER].programID;
-	glUseProgram(current_program);
-
-	load_uniform(origin, "origin");
-
+	//origin = vec3(0);
 	current_program = shading_programs[SHADER_3D].programID;
 	glUseProgram(current_program);
+	load_uniform(vec3(origin), "origin");
 
-	load_uniform(origin, "origin");
+	current_program = shading_programs[SHADER_VOXELIZER].programID;
+	glUseProgram(current_program);
+	load_uniform(vec3(origin), "origin");
 }
 
 void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
@@ -312,5 +309,13 @@ void Renderer::set_voxelizer_dimensions(float width, float depth, float height)
 void Renderer::clear()
 {
 	render_queue.clear();
+}
+
+GLuint Renderer::setShadingProgram(Shader_type)
+{
+	current_program = shading_programs[SHADER_3D].programID;
+	glUseProgram(current_program);
+
+	return current_program;
 }
 //########################################################################################

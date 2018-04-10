@@ -33,6 +33,9 @@ class Shadow_Map;
 class Mesh;
 class Light;
 class Object_3D;
+
+enum Shader_type {SHADER_3D=0, SHADER_VOXELIZER};
+enum FBO_type {FBO_DEFAULT=0, FBO_TEXTURE};
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -67,6 +70,8 @@ public:
                                                 //!< in the current frame
         vector<GLuint> FBOs;
         vector<Light> light_sources;
+
+        GLuint setShadingProgram(Shader_type);
 
         void draw();                     
      

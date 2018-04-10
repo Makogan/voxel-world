@@ -54,7 +54,7 @@ void main()
         gl_Layer = layer; // built-in variable that specifies to which layer we render.
         for(int i = 0; i < 3; i++) // for each triangle's vertices
         {
-            vec4 pos = gl_in[i].gl_Position; //- vec4(origin,0);
+            vec4 pos = gl_in[i].gl_Position;//vec4(origin,0);
             h = pos.z;
 
             vec4 low_bounds = floor(pos/voxel_size)*voxel_size;

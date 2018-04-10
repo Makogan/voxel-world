@@ -126,7 +126,7 @@ void render_loop(GLFWwindow* window)
 		Rendering_Handler->update(window);
 
 		currentTime=glfwGetTime();
-		Rendering_Handler->set_voxelizer_origin(the_world->origin);
+		//Rendering_Handler->set_voxelizer_origin(the_world->origin);
 		double elapsed = currentTime-prevTime;
 		Rendering_Handler->render();
 		prevTime=currentTime;
@@ -147,7 +147,7 @@ void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 	while (!glfwWindowShouldClose(window))
 	{
 			auto start_time = std::chrono::steady_clock::now();
-			the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
+			//the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
 			the_world->send_render_data(Rendering_Handler);
 			glFinish();
 			auto end_time = (start_time + world_duration(1));	

@@ -12,6 +12,8 @@
 
 #version 450
 
+#define M_PI 3.1415926535897932384626433832795
+
 struct Light
 {
   vec4 position;//intensity here as well
@@ -41,7 +43,7 @@ uniform float voxel_size = 1;
 float current_mip_map = 0;
 //TODO: make this an array
 
-vec3 lums[2] = {vec3(160,160,50), vec3(80,90,50)};
+vec3 lums[2] = {vec3(160,160,100), vec3(80,90,50)};
 uniform vec3 cameraPos = vec3(0);//The position of the camera in the world
 uniform vec3 cameraDir = vec3(0);
 
@@ -56,7 +58,7 @@ float sign(float x)
 
 vec4 grabVoxel(vec3 pos)
 {
-	//pos -= origin;
+	pos -= origin;
 
 	pos *= 1.f/voxel_size;
 
@@ -170,17 +172,15 @@ void main()
 		start += direction*0.01;
 		vec4 voxel_val = grabVoxel(start);
 		//start = get_voxel(start, direction);
-		if (voxel_val.w>0 )
+		if(voxel_val.w>0)
 		{
-			if(voxel_val.w>0)
-			{
-				color *= length(start-vertexPos)/10 + 0.1;
-				//color *= 0.5;
-				break;
-			}
+			color *= (atan(length(start-vertexPos)*0.1)/(M_PI/2.f))*0.85 + 0.15;
+			//color *= voxel_val;
+			break;
 		}
 	}
 	while(!out_of_bounds(start) && count < 200);
 
 	outColor = color;
+	//outColor = vec4(origin, 0)/1000;
 }
