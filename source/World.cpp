@@ -115,8 +115,8 @@ void Chunk::create_cubes(vec3 offset)
     for(int i=0; i<CHUNK_DIMS*CHUNK_DIMS*CHUNK_DIMS; i++)
     {
         //Sample Perlin noise function
-        double height = 20.d*noise_2D((double)(i/(CHUNK_DIMS*CHUNK_DIMS)) + offset[0], 
-            (double)((i/CHUNK_DIMS)%CHUNK_DIMS + offset[1]));
+        double height = 40.d*noise_2D((double)(i/(CHUNK_DIMS*CHUNK_DIMS)) + offset[0], 
+            (double)((i/CHUNK_DIMS)%CHUNK_DIMS + offset[1])) + 10;
         
         //initialize cube object if needed
         if(chunk_cubes[i]==NULL)
@@ -132,7 +132,7 @@ void Chunk::create_cubes(vec3 offset)
                 i%CHUNK_DIMS + offset[2]));
 
         //Check if the chunk is above the heightmap
-        if(double(i%CHUNK_DIMS) + offset[2]>height)
+        if(double(i%CHUNK_DIMS) + offset[2]>height && double(i%CHUNK_DIMS) + offset[2]> 1)
             chunk_cubes[i]->transparent = true;
     }
 }
@@ -403,13 +403,13 @@ World::~World()
  */ 
 void World::center_frame(ivec3 position)
 {
-
     ivec3 distance = 
         position - origin - ivec3(h_radius/2, h_radius/2, v_radius/2)*CHUNK_DIMS;
     if(abs(distance.x) >= CHUNK_DIMS || abs(distance.y) >= CHUNK_DIMS 
-        || -(distance.z) >= CHUNK_DIMS)
+        || abs(distance.z) >= CHUNK_DIMS)
     {
         origin+=((distance)/CHUNK_DIMS)*CHUNK_DIMS;
+        cout << origin << endl;
         loaded_chunks->shift(distance/CHUNK_DIMS);
     }
 }
@@ -445,8 +445,9 @@ void World::send_render_data(Renderer* handler)
 {
     //Prevent other threads from using the queue
     handler->busy_queue.lock();
+
     //Clear the queue
-    handler->clear();
+	handler->clear();
 
     //get camera position
     vec3 p_pos = handler->cam->getPosition();
@@ -463,10 +464,7 @@ void World::send_render_data(Renderer* handler)
                 //Find the angle in between the looking direction and the relative chunk
                 //direction
                 float angle = acos(dot(c_dir, normalize(handler->cam->getForward())));
-
-                //If the angle is less than the current field of view send data to handler
-                //if(angle < (handler->cam->getFov()))
-                    ((*loaded_chunks)(i,j,k))->send_render_data(handler);
+                ((*loaded_chunks)(i,j,k))->send_render_data(handler);
             }
         }
     }

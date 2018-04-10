@@ -14,6 +14,8 @@
  *	http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
  *	http://www.glfw.org/docs/latest/
  *	http://eastfarthing.com/blog/2015-04-21-noise/
+ *	http://www.seas.upenn.edu/~pcozzi/OpenGLInsights/OpenGLInsights-SparseVoxelization.pdf
+ *	https://github.com/Friduric/voxel-cone-tracing
  */
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -37,7 +39,7 @@
 //========================================================================================
 
 typedef std::chrono::duration<int, std::ratio<1, 60>> frame_duration;
-typedef std::chrono::duration<int, std::ratio<1, 600>> world_duration;
+typedef std::chrono::duration<int, std::ratio<1, 60>> world_duration;
 
 //########################################################################################
 
@@ -102,6 +104,7 @@ int main(int argc, char **argv)
 //main render loop
 void render_loop(GLFWwindow* window)
 {
+	
 	//Set default OpenGL values for rendering
 	//glClearDepth(0);
 	//glDepthFunc(GL_GREATER);
@@ -110,13 +113,20 @@ void render_loop(GLFWwindow* window)
 	glPointSize(10.f);
 	
 	double prevTime = 0, currentTime=0;
+	Rendering_Handler->set_voxelizer_dimensions(
+		(the_world->h_radius)*CHUNK_DIMS, 
+		(the_world->h_radius)*CHUNK_DIMS, 
+		(the_world->v_radius)*CHUNK_DIMS
+	);
 	
     while (!glfwWindowShouldClose(window))
 	{
+
 		auto start_time = std::chrono::steady_clock::now();
 		Rendering_Handler->update(window);
 
 		currentTime=glfwGetTime();
+		//Rendering_Handler->set_voxelizer_origin(the_world->origin);
 		double elapsed = currentTime-prevTime;
 		Rendering_Handler->render();
 		prevTime=currentTime;
@@ -137,7 +147,7 @@ void update_loop(GLFWwindow* window, GLFWwindow* o_window)
 	while (!glfwWindowShouldClose(window))
 	{
 			auto start_time = std::chrono::steady_clock::now();
-			the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
+			//the_world->center_frame(ivec3(Rendering_Handler->cam->getPosition()));
 			the_world->send_render_data(Rendering_Handler);
 			glFinish();
 			auto end_time = (start_time + world_duration(1));	

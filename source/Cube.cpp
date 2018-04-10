@@ -45,6 +45,7 @@ vector<Texture*> Cube::textures;
 //!
 //! Global texture and mesh source file strings
 //! 
+//vector<string> texture_source_files = {"Assets/Textures/Pixel2.png"};
 vector<string> texture_source_files = {"Assets/Textures/white_cube.png"};
 vector<string> obj_source_files = {"Assets/Objs/cube.obj"};
 
@@ -69,10 +70,15 @@ void Cube::initialize()
         meshes[i]->indices = vector<uint>();
         for(uint j=0; j<meshes[i]->vertices.size(); j++)
             meshes[i]->indices.push_back(j);
+
+        openGLerror();
     }
     //TODO: turn this into a list of textures
     //Load texture information to GPU (currently single, change to array)
     textures[0]->load_to_GPU(Rendering_Handler->current_program);
+    openGLerror();
+    //textures[0]->load_to_GPU(Rendering_Handler->shading_programs[1].programID);
+    openGLerror();
 }
 
 /**

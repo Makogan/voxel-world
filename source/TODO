@@ -9,6 +9,9 @@ Todo:
       (Need continents and oceans, also river and lake generation would be nice)
     ☐ Research river and biome generation @high 
   Coding:
+    ☐ Re-design shadowing pipeline @low 
+      (We can get a maximum of 32 lights by redering a coloured scene, tehn render a
+      binary shadowed scene, then shade based on the shadowed values)
     ☐ Create more shaders and create the code to select them appropriately
     ☐ Modify shaders to have multiple textures and potentially mesh information @medium 
     ☐ Smooth cube edges to create less blocky feeling @medium  
@@ -23,6 +26,7 @@ Todo:
   Documentation:
     ☐ Improve documentation and comments @medium  
   Refactoring:
+    ☐ Fix header inclusion warnings between Renderer.hpp and OpenGL-Wrappers.hpp @medium 
     ☐ Reduce matrix passing into shaders so as to pass only one model matrix @medium 
     ✘ Evaluate and fix race condition @low @cancelled(18-02-12 01:07)
       (There is technically a race condition between the world thread and the render 
